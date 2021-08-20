@@ -10,6 +10,47 @@ const userMenus: IMenuLayout = {
 					name: 'menus:scam_3d',
 					path: 'routes:base.scam_3d',
 					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'information_load',
+					name: 'menus:calibration',
+					path: 'routes:base.calibration',
+					icon: 'fas fa-file-invoice',
+				}
+			]
+		},
+		{
+			name: 'menus:reports',
+			modules: [
+				{
+					permission: 'reports',
+					name: 'menus:information',
+					path: 'routes:base.information',
+					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'reports',
+					name: 'menus:records',
+					path: 'routes:base.records',
+					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'reports',
+					name: 'menus:dashboard',
+					path: 'routes:base.dashboard',
+					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'reports',
+					name: 'menus:measurement',
+					path: 'routes:base.measurement',
+					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'reports',
+					name: 'menus:projection',
+					path: 'routes:base.projection',
+					icon: 'fas fa-file-invoice',
 				}
 			]
 		}

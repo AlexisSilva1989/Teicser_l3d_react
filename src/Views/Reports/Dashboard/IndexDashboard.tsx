@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 
-export const IndexScam3d = () => {
+export const IndexDashboard = () => {
 	return (
 		<>
-			IndexScam3d
+			IndexDashboard
 		</>
 	);
 };

@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 
-export const IndexScam3d = () => {
+export const IndexCalibration = () => {
 	return (
 		<>
-			IndexScam3d
+			IndexCalibration
 		</>
 	);
 };

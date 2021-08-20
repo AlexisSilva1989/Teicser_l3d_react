@@ -595,6 +595,10 @@
 	"labels:titles.wantChangeStatus": "¿Desea cambiar el estatus?",
 	"labels:titles.status": "Estatus",
 	"labels:titles.valuation": "Valoración",
+	"labels:titles.variable_simulation": "Variables para simulación",
+	"labels:titles.changes_of_senses": "Cambio de sentidos de giro para cada cuantos millones",
+
+
 	"labels:titles.active": "Activo",
 	"labels:titles.deactived": "Desactivado",
 	"labels:titles.article": "Artículo",
@@ -624,7 +628,7 @@
 	
 
 	"links:common.download_report": "Descargar reporte",
-
+	"forms:inputs.date_project": "fecha a proyectar",
 	"forms:inputs.typeQuotation": "Tipo de cotización",
 	"forms:inputs.number_invoice": "número de factura",
 	"forms:inputs.date_invoice": "fecha facturación",
@@ -701,6 +705,8 @@
 	"forms:inputs.probability": "probabilidad",
 	"forms:inputs.probability_of_close": "probabilidad de cierre",
 	"forms:inputs.persons_count": "# Personas",
+	"forms:inputs.days_project": "dias de proyección",
+
 	"forms:inputs.name": "nombre",
 	"forms:inputs.rut": "rut",
 	"forms:inputs.shipping_address": "dirección de envio",
@@ -1783,6 +1789,13 @@
 	"columns:email": "correo",	
 
 	"menus:scam_3d": "scam 3d",
+	"menus:information": "informes",
+	"menus:calibration": "calibración",
+
+	"menus:records": "archivos",
+	"menus:projection": "proyección",
+	"menus:measurement": "medición",
+	"menus:dashboard": "dashboard",
 
 	"menus:information_load": "Cargar información",
 
@@ -1890,6 +1903,10 @@
 	"menus:working_times": "Utilización de HH",
 	"menus:specialties_payments": "Especialidad",
 	"menus:company":"Perfil de empresa",
+	"titles:measurement": "Medición",
+	"titles:projection_variable": "Proyección de variables operacionales",
+	"titles:variable_simulation": "variable de simulación",
+
 	"titles:catalogo": "catálogos",
 	"titles:cobranza": "cobranza",
 	"titles:subcatalogos": "subcatálogos",
@@ -2275,6 +2292,14 @@
 	"routes:base.root": "/",
 
 	"routes:base.scam_3d": "scam_3d",
+	"routes:base.information": "informes",
+	"routes:base.calibration": "calibración",
+
+	"routes:base.records": "archivos",
+	"routes:base.projection": "proyeccion",
+	"routes:base.measurement": "medicion",
+	"routes:base.dashboard": "dashboard",
+
 
 	"routes:base.servicesAndProducts": "servicios_productos",
 	"routes:base.reports": "reportes",
