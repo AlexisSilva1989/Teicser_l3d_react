@@ -1,0 +1,53 @@
+{
+	// Use IntelliSense para saber los atributos posibles.
+	// Mantenga el puntero para ver las descripciones de los existentes atributos.
+	// Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "chrome",
+			"request": "launch",
+			"name": "Launch Chrome",
+			"url": "https://localhost:3000",
+			"webRoot": "${workspaceFolder}/src/",
+			"sourceMaps": true,
+			"sourceMapPathOverrides": {
+				"webpack:///*": "/*"
+			},
+			"breakOnLoad": true,
+			"runtimeExecutable": "C:/Program Files (x86)/Google/Chrome Dev/Application/chrome.exe"
+		},
+		{
+			"type": "firefox",
+			"request": "launch",
+			"reAttach": true,
+			"profile": "dev-edition-default",
+			"keepProfileChanges": true,
+			"name": "Launch firefox dev",
+			"url": "https://localhost:3000/",
+			"webRoot": "${workspaceFolder}/src/",
+			"pathMappings": [
+				{
+					"url": "http://localhost:3000",
+					"path": "${workspaceFolder}/src/"
+				}
+			]
+		},
+		{
+			"type": "firefox",
+			"request": "launch",
+			"reAttach": true,
+			"profile": "default-release",
+			"keepProfileChanges": true,
+			"name": "Launch firefox",
+			"url": "http://localhost:3000/",
+			"webRoot": "${workspaceFolder}/src/",
+			"pathMappings": [
+				{
+					"url": "http://localhost:3000",
+					"path": "${workspaceFolder}/src/"
+				}
+			]
+		}
+	]
+}

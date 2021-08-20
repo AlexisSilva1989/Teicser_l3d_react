@@ -1,0 +1,78 @@
+.dropzone.filepicker {
+  text-align: center;
+  padding: 30px;
+  min-height: 60px;
+  background-color: #fafafa;
+  border: 1px solid rgba(42,42,42,.05);
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px 0 rgba(43,43,43,.1);
+}
+
+/* Icon */
+
+.filepicker-file-icon {
+  position: relative;
+  display: inline-block;
+  margin: 1.5em 0 2.5em 0;
+  padding-left: 45px;
+  color: #646464;
+  &::before {
+    position: absolute;
+    top: -7px;
+    left: 0;
+    width: 29px;
+    height: 34px;
+    content: '';
+    border: solid 2px #646464;
+    border-radius: 2px;
+  }
+  &::after {
+    font-size: 11px;
+    line-height: 1.3;
+    position: absolute;
+    top: 9px;
+    left: -4px;
+    padding: 0 2px;
+    content: 'file';
+    content: attr(data-filetype);
+    text-align: right;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #646464;
+  }
+  .fileCorner {
+    position: absolute;
+    top: -7px;
+    left: 22px;
+    width: 0;
+    height: 0;
+    border-width: 11px 0 0 11px;
+    border-style: solid;
+    border-color: white transparent transparent #920035;
+  }
+}
+
+.dropzone {
+  .dz-message {
+    margin: 0;
+  }
+  .dz-preview {
+    &.dz-image-preview {
+      background: transparent;
+    }
+    &.dz-error {
+      .dz-error-message, .dz-error-mark, .dz-progress {
+        display: none;
+      }
+    }
+    .dz-success-mark {
+      opacity: 0.6;
+    }
+    &:hover {
+      .dz-success-mark {
+        opacity: 0;
+      }
+    }
+  }
+}

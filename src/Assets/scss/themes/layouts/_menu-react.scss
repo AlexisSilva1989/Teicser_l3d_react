@@ -1,0 +1,29 @@
+.pcoded-navbar.menu-light .pcoded-inner-navbar .pcoded-submenu li > a.active{
+  color:$primary-color;
+}
+body.able-pro-rtl .pcoded-navbar .pcoded-inner-navbar > li a .pcoded-micon{
+  margin-left: 0 !important;
+}
+.pcoded-navbar.menu-light.theme-horizontal .pcoded-inner-navbar > li a.active{
+  color: $primary-color;
+  background: transparent;
+}
+body.able-pro-dark{
+  .search-bar{
+    background: lighten($dark-layout, 7%);
+  }
+}
+.pcoded-header[class*='header-'] .btn-link{
+  color:#fff;
+}
+
+@media only screen and (max-width: 991px){
+  .pcoded-header[class*='header-'] .btn-link{
+    color:#535763;
+  }
+}
+.pcoded-navbar.menu-light .pcoded-inner-navbar > li > a.active{
+  /*background: $primary-color;*/
+  color: #fff;
+  /*box-shadow: 0 10px 5px -8px rgba(0, 0, 0, 0.4);*/
+}

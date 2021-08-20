@@ -1,0 +1,12 @@
+.tab-user-card {
+  .nav-pills {
+    background: #ecf0f5;
+    padding: 20px;
+    border-radius: 5px;
+  }
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.active{
+  background: $primary-color;
+  border-color: $primary-color;
+}

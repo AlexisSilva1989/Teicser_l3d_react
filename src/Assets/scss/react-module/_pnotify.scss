@@ -1,0 +1,35 @@
+[ui-pnotify].ui-pnotify {
+
+  .brighttheme.ui-pnotify-container {
+    padding: 18px;
+    width: 300px !important;
+    .brighttheme-icon-closer,
+    .brighttheme-icon-sticker {
+      font-size: 12px;
+    }
+    .ui-pnotify-title {
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    .ui-pnotify-confirm,
+    .ui-pnotify-text {
+      margin: 0;
+      font-size: 12px;
+    }
+  }
+
+  .ui-pnotify-icon {
+    .fa-spinner {
+      margin-right: 8px;
+      margin-top: 2px;
+    }
+  }
+
+  &.stack-bar-bottom,
+  &.stack-bar-top {
+    width: 100% !important;
+    .brighttheme.ui-pnotify-container {
+      width: 100% !important;
+    }
+  }
+}

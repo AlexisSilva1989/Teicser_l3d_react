@@ -1,0 +1,36 @@
+a.dropdown-item {
+    line-height: normal;
+}
+
+button.dropdown-toggle {
+    &>span {
+        padding: 4px;
+        border-radius: 5px;
+
+        &:hover {
+            background-color: rgba($color: black, $alpha: 0.1);
+            transition: 0.15s;
+        }
+
+        &.sign-dd::after {
+            content: ' \25BC';
+        }
+    }
+}
+
+.dropdown-menu{
+    &.chk-size {
+        max-height: 300px;
+        overflow-y: scroll;
+    }
+
+    .dropdown-item {
+        width: 250px;
+    
+        &:hover {
+            background-color: rgba($color: black, $alpha: 0.35);
+            transition: 0.25s;
+        }
+    }
+}
+

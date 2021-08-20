@@ -1,0 +1,518 @@
+/**======================================================================
+=========================================================================
+Template Name: Able Pro Admin Template
+Author: Phoenixcoded
+supports: https://phoenixcoded.ticksy.com
+File: style.css
+=========================================================================
+=========================================================================
+  == Table of Contents==
+	- Generic classes
+		-	Margin, Padding, Font class, text align, position, floating, overflow, background class, text color, display class, boarder class
+	- Theme Elements
+		-	Accordion, Button, tabs, typography, buttons, box shadow, Lable & Badges, Alert, Pagination, Breadcumb, Cards, Collapse,
+        -   Carousel, Grid, Progress, Model, tooltip, popover, Datepicker, Gridstack, lightbox, notification, Nestable, pnotify, rating,
+        -   Rangeslider, Slider, Syntax Highlighter, Tour, Treeview, Toolbar, Session Timeout, Session idle Timeout, offline, Animation
+    - Forms
+        -   Forms Elements, Advance Form Control, Validation, Masking, Wizard, Picker, Select
+	- Pages
+		-   authentication, Maintenance, Maps, Landing page messages, task, Todo, Notes, Charts, Icons, Gallery, Editors,
+        -   Invoice, Full Calender, File Upload,
+=================================================================================
+=================================================================================== */
+
+// React Select Search
+@import "react-select-search";
+
+// Theme Font
+@import "themes/font/theme-font";
+
+// theme scrollbar
+@import "themes/plugin/perfect-scrollbar";
+
+// main framework
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "settings/custom-variables";
+@import "settings/theme-variables";
+
+// ng module
+@import "react-module/react-module";
+
+// bootstrap
+@import "~bootstrap/scss/bootstrap";
+
+// icon
+@import "themes/font/next-icon";
+@import "themes/font/feather";
+@import "themes/font/fontawesome";
+@import "themes/font/flaticon";
+@import "themes/font/cryptofont";
+
+// bootstrap css
+@import "themes/bootstrap-overlay/card";
+@import "themes/bootstrap-overlay/button";
+@import "themes/bootstrap-overlay/radiobox-checkbox";
+@import "themes/bootstrap-overlay/switches";
+@import "themes/bootstrap-overlay/badge";
+
+@import "themes/general";
+@import "themes/generic";
+@import "themes/plugin/animate";
+
+// theme layouts
+@import "themes/layouts/menu-lite";
+@import "themes/layouts/menu-react";
+@import "layout-dark";
+@import "layout-rtl";
+
+// Dashboard Widgets
+@import "themes/dashboard/widget";
+
+// custom plugin
+@import "themes/plugin/sweatalert";
+@import "themes/plugin/lightbox";
+@import "themes/plugin/notification";
+@import "themes/plugin/pnotify";
+@import "themes/plugin/bar-rating";
+@import "themes/plugin/rangeslider";
+@import "themes/plugin/daterange";
+@import "themes/plugin/tags-input";
+@import "themes/plugin/maxlength";
+@import "themes/plugin/wizard";
+@import "themes/plugin/select2";
+@import "themes/plugin/data-tables";
+
+// Charts
+@import "themes/plugin/highcharts";
+@import "themes/plugin/peitychart";
+
+// pages
+@import "themes/pages/authentication";
+@import "themes/pages/maintaince";
+@import "themes/pages/pages";
+@import "themes/pages/help-desk";
+@import "themes/pages/fullcalender";
+@import "themes/pages/icon-lauouts";
+@import "themes/pages/user";
+@import "themes/pages/task-board";
+@import "themes/pages/masonry-gallery";
+
+// custom
+@import "themes/custom";
+
+input.form-control {
+  border-radius: 0.25rem !important;
+  border: 1px solid #e3eaef !important;
+  padding: 5px !important;
+}
+
+.ListModule .btn {
+  padding: 0.375rem 0.75rem !important;
+}
+
+.logo {
+  aspect-ratio: 16 / 9;
+  width: 60%;
+  object-fit: contain;
+  max-height: 60px;
+}
+
+
+
+.Timeline-Day .d-flex,
+.Timeline-Segment {
+  min-height: 20px;
+}
+
+.ServerSelectionModal input.form-control {
+  background-color: white !important;
+}
+
+.rc-time-picker.form-control {
+  border: none !important;
+}
+
+.rc-time-picker-input {
+  height: 100% !important;
+}
+
+.z-front {
+  z-index: 9999;
+}
+
+.pcoded-navbar .pcoded-inner-navbar li:not(.pcoded-hasmenu) > a.active {
+  /* color: #00bcd4 !important;*/
+  color: #fff !important;
+  background: #4680ff;
+}
+
+li:not(.pcoded-hasmenu) .active .badge-warning {
+  background-color: #00bcd4 !important;
+}
+
+li:not(.pcoded-hasmenu) .active .text-warning {
+  color: #00bcd4 !important;
+}
+
+.pcoded-navbar.navbar-collapsed .badge {
+  display: none;
+}
+
+.pcoded-navbar.navbar-collapsed:hover .badge {
+  display: block;
+  transition: 1s;
+}
+
+.login {
+  .login-brand {
+    letter-spacing: 0.15rem;
+  }
+
+  .login-form {
+    input {
+      background: transparent;
+      color: var(--light) !important;
+      border-radius: 0px !important;
+      border-width: 0px 0px 1px 0px !important;
+      border-color: rgba($color: #ffffff, $alpha: 0.25) !important;
+      transition: border-color 0.5s;
+      &:focus {
+        background: transparent;
+        border-color: rgba($color: #ffffff, $alpha: 0.75) !important;
+        transition: border-color 0.5s;
+      }
+    }
+    button {
+      background: var(--dark) !important;
+      border-color: var(--secondary) !important;
+      color: var(--light) !important;
+
+      &:hover {
+        background: rgba($color: #ffffff, $alpha: 0.15) !important;
+      }
+    }
+  }
+}
+
+.api-pick {
+  .input-group {
+    border-radius: 0px !important;
+    border-bottom-style: solid;
+    border-width: 0px 0px 1px 0px !important;
+    border-color: rgba($color: #000000, $alpha: 0.25) !important;
+    transition: border-color 0.5s;
+
+    .api-pick-search:hover,
+    .api-pick-input:hover,
+    .api-pick-clear:hover {
+      background-color: rgba($color: #000000, $alpha: 0.15) !important;
+      transition: background-color 0.3s;
+    }
+
+    &:hover {
+      border-color: rgba($color: #000000, $alpha: 0.75) !important;
+      transition: border-color 0.5s;
+    }
+
+    .api-pick-search > i,
+    .api-pick-input,
+    .api-pick-clear > i {
+      border: none !important;
+      background-color: transparent !important;
+      transition: background-color 0.3s;
+    }
+
+    .api-pick-search > i,
+    .api-pick-clear > i {
+      margin-top: 0.25rem;
+    }
+
+    .api-pick-input {
+      border-radius: 0 !important;
+    }
+  }
+}
+
+.api-dropdown {
+  .input-group {
+    border-radius: 0px !important;
+    border-bottom-style: solid;
+    border-width: 0px 0px 1px 0px !important;
+    border-color: rgba($color: #000000, $alpha: 0.25) !important;
+    transition: border-color 0.5s;
+    transition: background-color 0.3s;
+
+    &:hover, &.disabled {
+      border-color: rgba($color: #000000, $alpha: 0.75) !important;
+      background-color: rgba($color: #000000, $alpha: 0.05) !important;
+      transition: border-color 0.5s;
+      transition: background-color 0.3s;
+    }
+
+    &::before {
+      // Based on https://fabriceleven.com/design/clever-way-to-change-the-drop-down-selector-arrow-icon/
+      content: ">";
+      position: absolute;
+      font: 20px "Consolas", monospace;
+      font-weight: bold;
+      transform: rotate(90deg);
+      top: 0.6rem;
+      left: 1rem;
+    }
+    .api-dropdown-input {
+      padding-left: 2.5rem;
+      appearance: none;
+      border: none !important;
+      background-color: transparent !important;
+    }
+  }
+}
+.m-t-7-px{
+  margin-top: 4px;
+}
+
+.msig-search {
+  .input-group {
+    height: 35px;
+    border-radius: 0px !important;
+    border-bottom-style: solid;
+    border-width: 0px 0px 1px 0px !important;
+    border-color: rgba($color: #000000, $alpha: 0.25) !important;
+    transition: border-color 0.5s;
+    transition: background-color 0.3s;
+
+    &:hover {
+      border-color: rgba($color: #000000, $alpha: 0.75) !important;
+      background-color: rgba($color: #000000, $alpha: 0.05) !important;
+      transition: border-color 0.5s;
+      transition: background-color 0.3s;
+    }
+    .msig-search-input, 
+    .msig-search-icon,
+    .msig-search-icon > i {
+      border: none !important;
+      background-color: transparent !important;
+    }
+
+    .msig-search-icon > i {
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.msig-datepicker {
+  .input-group {
+    border-radius: 0px !important;
+    border-bottom-style: solid;
+    border-width: 0px 0px 1px 0px !important;
+    border-color: rgba($color: #000000, $alpha: 0.25) !important;
+    transition: border-color 0.5s;
+    transition: background-color 0.3s;
+    flex-wrap: nowrap !important;
+
+    &:hover {
+      border-color: rgba($color: #000000, $alpha: 0.75) !important;
+      background-color: rgba($color: #000000, $alpha: 0.05) !important;
+      transition: border-color 0.5s;
+      transition: background-color 0.3s;
+    }
+    .msig-datepicker-input, 
+    .msig-datepicker-icon,
+    .msig-datepicker-icon > i {
+      border: none !important;
+      background-color: transparent !important;      
+    }
+
+    .msig-datepicker-input.readonly,
+    .msig-datepicker-icon.readonly {
+        background-color: rgba($color: #000000, $alpha: 0.05) !important;
+    }
+
+    .msig-datepicker-icon > i {
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.react-datepicker-wrapper{
+  width: 100%;
+}
+
+.msig-textbox {
+  .input-group {
+    border-radius: 0px !important;
+    border-bottom-style: solid;
+    border-width: 0px 0px 1px 0px !important;
+    border-color: rgba($color: #000000, $alpha: 0.25) !important;
+    transition: border-color 0.5s;
+    transition: background-color 0.3s;
+
+    &:hover {
+      border-color: rgba($color: #000000, $alpha: 0.75) !important;
+      background-color: rgba($color: #000000, $alpha: 0.05) !important;
+      transition: border-color 0.5s;
+      transition: background-color 0.3s;
+    }
+    .msig-textbox-input {
+      border: none !important;
+      background-color: transparent !important;
+      &.readonly {
+        background-color: rgba($color: #000000, $alpha: 0.05) !important;
+      }
+    }
+  }
+}
+
+.msig-report-download {
+  .msig-report-download-icon {
+    margin-top: 2.25rem;
+  }
+  .msig-report-download-square {
+    background-color: rgba($color: #000000, $alpha: 0.15) !important;
+    transition: background-color 0.3s;
+  }
+
+  &:hover .msig-report-download-square {
+    background-color: var(--success) !important;
+    transition: background-color 0.3s;
+  }
+}
+
+.msig-quotation-pdf-download {
+  cursor: pointer;
+  height: 100%;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: var(--success);
+    transition: background-color 0.3s;
+  }
+}
+
+.change-symbol {
+  position: absolute;
+  bottom: 1rem;
+  right: 0.5rem;
+  z-index: 999999;
+}
+
+#ui-datepicker-div {
+  z-index: 999999 !important;
+  position: absolute !important;
+}
+
+.msig-subquotation-details-pic {
+  width: '100%';
+  border: '1px solid gray';
+  max-height: '400px';
+  object-fit: 'cover';
+}
+
+.bg-c-orange {
+  background-color: #ad6a05;
+}
+
+.bg-c-grey {
+  background-color: #7c7c7c;
+}
+
+.bg-c-darkgreen {
+  background-color: #5d8035;
+}
+
+
+.nav {
+  z-index: 0 !important;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+  color: #FFF !important;
+}
+
+.react-toast-notifications__container {
+  top: 8% !important;
+}
+
+
+/*modificado*/
+.badge {
+  font-size: 80%;
+  padding: 0.35em 0.6em;
+  font-weight: 600;
+  margin-top: 6px;
+  float: right;
+}
+
+.titulo-subcotizacion{
+  color: #c53c9c !important;
+  font-size: 16px;
+  text-indent: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.sub-titulo-subcotizacion{
+  color: black !important;
+  font-size: 13px;
+  text-indent: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.card-servicio{
+  border: #504b4b 1px solid;
+  padding: 13px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.height-700px {
+  height: 350px !important;
+}
+
+.table-no-paginate {
+  height: 200px;
+  overflow-y: auto !important;
+}
+
+.td-payment-bill{
+  padding: 20px;
+  font-size: 14px !important;
+  font-weight: 600;
+}
+
+.img-check {
+  width: 3% !important;
+  margin: auto;
+}
+
+.float-none{
+  float: "none"
+}
+.title-card-ods {
+  font-size: 17px;
+}
+
+.style-blanco {
+  background: #FFF;
+}
+
+
+
+html {
+  font-size: 12px;
+  /* line-height: 1.5; */
+  color: #000;
+  background: #ddd;
+  /* -moz-box-sizing: border-box;
+  box-sizing: border-box */
+}
+
+.bank, .col, .info, .logoholder, .me, [class*=col-] {
+  vertical-align: top;
+  display: inline-block;
+  font-size: 1rem;
+  min-height: 1px;
+}

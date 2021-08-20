@@ -1,0 +1,27 @@
+/* AdministrarRoles.tsx*/
+
+.table.prueba th{
+    padding: 0;
+}
+
+.table.prueba td{
+    padding: 0;
+    width: 100px;
+}
+
+#modulos {
+    text-align: center;
+    font-weight: bold;
+}
+
+#modulo {
+    font-weight: bold;
+}
+
+/* Diseño Select_Search*/
+
+#select {
+    width: 100%;
+    height: 32px;
+    border-color: #E3EAEF;
+}
