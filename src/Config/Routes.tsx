@@ -5,7 +5,7 @@ import { ListaUsuarios } from "../Views/Configuracion/ListaUsuarios";
 import { AdministrarRoles } from "../Views/Configuracion/AdministrarRoles";
 import { AgregarUsuario } from "../Views/Configuracion/AgregarUsuario";
 import { Home } from "../Views/Home";
-import { IndexScam3d } from "../Views/InformationLoad/Sacm3d/IndexScam3d";
+import { IndexScam3d } from "../Views/InformationLoad/sacm3d/IndexScam3d";
 import { IndexCalibration } from "../Views/InformationLoad/Calibration/IndexCalibration";
 
 import { IndexInformation } from "../Views/Reports/Information/IndexInformation";
