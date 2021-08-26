@@ -196,7 +196,7 @@ export const ApiTable = <T extends unknown = any>(props: Props<T>) => {
 
 			function titleCellFunction(row: T) {
 				if(typeof column.selector === 'string') { return ''; }
-				const selectorResult = column.selector!(row);
+				const selectorResult = column.selector!(row, 1);
 				var cadena = ""
 				if(typeof selectorResult !== 'string') { return selectorResult; }
 				if(selectorResult.length > 45){
