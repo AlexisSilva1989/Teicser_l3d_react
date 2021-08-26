@@ -113,13 +113,13 @@ const Navigation = (props: Props) => {
 		</div>
 	);
 	if (window.outerWidth < 992) {
-		navContent = (
-			<EnhancedOutsideClick>
-				<div className='navbar-wrapper'>
-					<EnhancedNavContent menus={props.menus} />
-				</div>
-			</EnhancedOutsideClick>
-		);
+		// navContent = (
+		// 	<EnhancedOutsideClick>
+		// 		<div className='navbar-wrapper'>
+		// 			<EnhancedNavContent menus={props.menus} />
+		// 		</div>
+		// 	</EnhancedOutsideClick>
+		// );
 	}
 
 	return (
