@@ -1788,7 +1788,7 @@
 	"columns:telefono": "teléfono",
 	"columns:email": "correo",	
 
-	"menus:scam_3d": "scam 3d",
+	"menus:scam_3d": "scan 3d",
 	"menus:information": "informes",
 	"menus:calibration": "calibración",
 
@@ -1796,7 +1796,8 @@
 	"menus:projection": "proyección",
 	"menus:measurement": "medición",
 	"menus:dashboard": "dashboard",
-
+	"menus:simulation_days": "simulación 30 días",
+	
 	"menus:information_load": "Cargar información",
 
 
@@ -1906,6 +1907,7 @@
 	"titles:measurement": "Medición",
 	"titles:projection_variable": "Proyección de variables operacionales",
 	"titles:variable_simulation": "variable de simulación",
+	"titles:simulation_prediction_days": "simulación de desgaste con predicción de variables operacionales a 30 días",
 
 	"titles:catalogo": "catálogos",
 	"titles:cobranza": "cobranza",
@@ -2291,14 +2293,17 @@
 	"routes:elements.catalogo": "catálogo",
 	"routes:base.root": "/",
 
-	"routes:base.scam_3d": "scam_3d",
+	"routes:base.scam_3d": "scan_3d",
 	"routes:base.information": "informes",
 	"routes:base.calibration": "calibración",
 
 	"routes:base.records": "archivos",
 	"routes:base.projection": "proyeccion",
+	"routes:base.projectionDays": "proyeccion_dias",
+	"routes:base.projectionCampaign": "proyeccion_campania",
 	"routes:base.measurement": "medicion",
 	"routes:base.dashboard": "dashboard",
+	"routes:base.simulation_days": "simulacion",
 
 
 	"routes:base.servicesAndProducts": "servicios_productos",

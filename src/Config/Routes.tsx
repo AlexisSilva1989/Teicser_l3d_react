@@ -17,6 +17,7 @@ import { IndexProjection } from "../Views/Reports/Projection/IndexProjection";
 import Parametros from "../Views/Configuracion/Parametros";
 import { ModificarEmpresa } from "../Views/Configuracion/Empresa/ModificarEmpresa";
 import { CambiarContrasena } from "../Views/Auth/CambiarContrasena";
+import { SimulacionDias } from "../Views/Reports/Projection/SimulacionDias";
 
 interface Route {
   path: string;
@@ -79,6 +80,12 @@ const routes: RouteGroup[] = [
     prefix: "routes:base.projection",
     routes: [
       { path: "routes:meta.base", component: <IndexProjection /> },
+    ],
+  },
+  {
+    prefix: "routes:base.simulation_days",
+    routes: [
+      { path: "routes:meta.base", component: <SimulacionDias /> },
     ],
   },
   {
