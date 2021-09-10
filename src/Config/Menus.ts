@@ -23,7 +23,7 @@ const userMenus: IMenuLayout = {
 			name: 'menus:reports',
 			modules: [
 				{
-					permission: 'reports',
+					permission: 'information_load',
 					name: 'menus:information',
 					path: 'routes:base.information',
 					icon: 'fas fa-file-invoice',
