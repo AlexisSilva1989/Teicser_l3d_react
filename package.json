@@ -93,6 +93,7 @@
 		"react-big-calendar": "^0.33.2",
 		"react-bootstrap": "^1.0.0",
 		"react-chartjs-2": "^2.7.6",
+		"react-charts": "^2.0.0-beta.7",
 		"react-clear-cache": "^1.4.12",
 		"react-color": "^2.17.3",
 		"react-compound-timer": "^1.2.0",
