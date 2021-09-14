@@ -1791,6 +1791,7 @@
 	"menus:scam_3d": "scan 3d",
 	"menus:information": "informes",
 	"menus:calibration": "calibración",
+	"menus:operational_data": "datos operacionales",
 
 	"menus:records": "archivos",
 	"menus:projection": "proyección",
@@ -2013,8 +2014,7 @@
 	"titles:modify_machine_alt.banqueteria": "modificar servicios",
 	"titles:modify_machine_alt.reparacion_de_maquinaria": "modificar equipo",
 	"titles:modify_machine_alt.generica": "modificar servicio / equipo",
-
-
+	"titles:operational_data": "Carga de variables operacionales",
 	"titles:systems": "sistemas",
 	"titles:add_system": "agregar sistema",
 	"titles:add_seccion": "agregar sección",
@@ -2296,6 +2296,8 @@
 	"routes:base.scam_3d": "scan_3d",
 	"routes:base.information": "informes",
 	"routes:base.calibration": "calibración",
+	"routes:base.operational_data": "datos_operacionales",
+
 
 	"routes:base.records": "archivos",
 	"routes:base.projection": "proyeccion",

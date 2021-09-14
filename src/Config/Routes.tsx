@@ -19,6 +19,9 @@ import { ModificarEmpresa } from "../Views/Configuracion/Empresa/ModificarEmpres
 import { CambiarContrasena } from "../Views/Auth/CambiarContrasena";
 import { SimulacionDias } from "../Views/Reports/Projection/SimulacionDias";
 
+import { IndexOperationalData } from "../Views/InformationLoad/OperationalData/IndexOperationalData";
+
+
 interface Route {
   path: string;
   exact?: boolean;
@@ -50,6 +53,12 @@ const routes: RouteGroup[] = [
     prefix: "routes:base.calibration",
     routes: [
       { path: "routes:meta.base", component: <IndexCalibration /> },
+    ],
+  },
+  {
+    prefix: "routes:base.operational_data",
+    routes: [
+      { path: "routes:meta.base", component: <IndexOperationalData /> },
     ],
   },
   {

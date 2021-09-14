@@ -13,6 +13,12 @@ const userMenus: IMenuLayout = {
 				},
 				{
 					permission: 'information_load',
+					name: 'menus:operational_data',
+					path: 'routes:base.operational_data',
+					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'information_load',
 					name: 'menus:calibration',
 					path: 'routes:base.calibration',
 					icon: 'fas fa-file-invoice',
