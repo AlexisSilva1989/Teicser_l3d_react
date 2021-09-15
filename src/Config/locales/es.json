@@ -1788,17 +1788,27 @@
 	"columns:telefono": "teléfono",
 	"columns:email": "correo",	
 
-	"menus:scam_3d": "scan 3d",
+	"menus:scam_3d": "Medición 3D",
+	"menus:reports_pdf": "reporte PDF",
+	"menus:downloadable_report": "informes de desgastes",
+
+	
 	"menus:information": "informes",
 	"menus:calibration": "calibración",
 	"menus:operational_data": "datos operacionales",
 
-	"menus:records": "archivos",
-	"menus:projection": "proyección",
-	"menus:measurement": "medición",
-	"menus:dashboard": "dashboard",
-	"menus:simulation_days": "simulación 30 días",
 	
+
+	"menus:records": "archivos",
+	"menus:projection": "variables operativas",
+	"menus:measurement": "condición laser",
+	"menus:dashboard": "dashboard",
+	"menus:simulation_days": "proyección 30 días",
+	"menus:image_condicion": "imagen de condición",
+	"menus:gemelo_digital": "gemelo digital",
+
+	
+
 	"menus:information_load": "Cargar información",
 
 
@@ -1905,6 +1915,7 @@
 	"menus:working_times": "Utilización de HH",
 	"menus:specialties_payments": "Especialidad",
 	"menus:company":"Perfil de empresa",
+	
 	"titles:measurement": "Medición",
 	"titles:projection_variable": "Proyección de variables operacionales",
 	"titles:variable_simulation": "variable de simulación",
@@ -2015,7 +2026,13 @@
 	"titles:modify_machine_alt.reparacion_de_maquinaria": "modificar equipo",
 	"titles:modify_machine_alt.generica": "modificar servicio / equipo",
 	"titles:operational_data": "Carga de variables operacionales",
+	"titles:import_pdf": "Carga de PDF",
+	"titles:reports_pdf": "Reporte PDF",
+
+
 	"titles:systems": "sistemas",
+	"titles:scam_3d": "Medición 3D",
+
 	"titles:add_system": "agregar sistema",
 	"titles:add_seccion": "agregar sección",
 	"titles:modify_system": "modificar sistema",
@@ -2293,17 +2310,28 @@
 	"routes:elements.catalogo": "catálogo",
 	"routes:base.root": "/",
 
-	"routes:base.scam_3d": "scan_3d",
+	"routes:base.scam_3d": "medicion_3d",
+	"routes:base.image_condicion": "imagen_condicion",
+
+
+	
+
+	"routes:base.reports_pdf": "reporte_pdf",
+	"routes:base.downloadable_report": "informes_de_desgaste",
+
+	
+	
+
 	"routes:base.information": "informes",
 	"routes:base.calibration": "calibración",
 	"routes:base.operational_data": "datos_operacionales",
 
 
 	"routes:base.records": "archivos",
-	"routes:base.projection": "proyeccion",
+	"routes:base.projection": "variables_operativas",
 	"routes:base.projectionDays": "proyeccion_dias",
 	"routes:base.projectionCampaign": "proyeccion_campania",
-	"routes:base.measurement": "medicion",
+	"routes:base.measurement": "condición laser",
 	"routes:base.dashboard": "dashboard",
 	"routes:base.simulation_days": "simulacion",
 

@@ -48,6 +48,18 @@ const userMenus: IMenuLayout = {
 				},
 				{
 					permission: 'reports',
+					name: 'menus:reports_pdf',
+					path: 'routes:base.reports_pdf',
+					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'reports',
+					name: 'menus:downloadable_report',
+					path: 'routes:base.downloadable_report',
+					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'reports',
 					name: 'menus:measurement',
 					path: 'routes:base.measurement',
 					icon: 'fas fa-file-invoice',
@@ -59,7 +71,26 @@ const userMenus: IMenuLayout = {
 					icon: 'fas fa-file-invoice',
 				}
 			]
+		},
+		{
+			name: 'menus:gemelo_digital',
+			modules: [
+				{
+					permission: 'gemelo_digital',
+					name: 'menus:condicion_laser',
+					path: 'routes:base.condicion_laser',
+					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'gemelo_digital',
+					name: 'menus:variables_operativas',
+					path: 'routes:base.variables_operativas',
+					icon: 'fas fa-file-invoice',
+				}
+			]
 		}
+
+
 	],
 	top: [
 		{

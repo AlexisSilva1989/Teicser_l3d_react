@@ -19,6 +19,9 @@ import { ModificarEmpresa } from "../Views/Configuracion/Empresa/ModificarEmpres
 import { CambiarContrasena } from "../Views/Auth/CambiarContrasena";
 import { SimulacionDias } from "../Views/Reports/Projection/SimulacionDias";
 
+import { IndexReportsPdf } from "../Views/Reports/Reports_pdf/IndexReportsPdf";
+import { IndexDownloadableReport } from "../Views/Reports/DownloadableReport/IndexDownloadableReport";
+
 import { IndexOperationalData } from "../Views/InformationLoad/OperationalData/IndexOperationalData";
 
 
@@ -74,9 +77,21 @@ const routes: RouteGroup[] = [
     ],
   },
   {
-    prefix: "routes:base.dashboard",
+    prefix: "routes:base.reports_pdf",
     routes: [
-      { path: "routes:meta.base", component: <IndexDashboard /> },
+      { path: "routes:meta.base", component: <IndexReportsPdf /> },
+    ],
+  },
+  {
+    prefix: "routes:base.downloadable_report",
+    routes: [
+      { path: "routes:meta.base", component: <IndexDownloadableReport /> },
+    ],
+  },
+  {
+    prefix: "routes:base.measurement",
+    routes: [
+      { path: "routes:meta.base", component: <IndexMeasurement /> },
     ],
   },
   {

@@ -21,7 +21,9 @@ import { ColumnsPipe } from '../../../Common/Utils/LocalizedColumnsCallback';
 import { useLocalizedColumns } from '../../../Common/Hooks/useColumns';
 import { LocalizedColumnsCallback } from '../../../Common/Utils/LocalizedColumnsCallback';
 import { useShortModal } from '../../../Common/Hooks/useModal';
-
+import { useApi } from "../../../Common/Hooks/useApi";
+import { useDashboard } from '../../../Common/Hooks/useDashboard';
+import { useToasts } from 'react-toast-notifications';
 
 export interface OperationalDataImport {
     TIMESTAMP: number;
@@ -67,6 +69,7 @@ export interface Variables {
 	Xample_data_end: string
 	Scaling_Date_start: string
 	Scaling_data_end: string
+	Ejecutar_simulacion: string
 }
 
 
@@ -115,10 +118,11 @@ const inicialVariable = {
 	Fill_Dates_end: "",
 	Sampling_dates_start: "",
 	Sampling_Data_end: "",
-	Xample_data_start: "",
-	Xample_data_end: "",
-	Scaling_Date_start: "",
-	Scaling_data_end: "",
+	Xample_data_start: "18-12-2020",
+	Xample_data_end: "02-01-2021",
+	Scaling_Date_start: "05-10-2018",
+	Scaling_data_end: "01-03-2021",
+	Ejecutar_simulacion: "1"
 }
 
 export const IndexOperationalData = () => {
@@ -136,6 +140,11 @@ export const IndexOperationalData = () => {
 	const [search, doSearch] = useSearch();
 	const [reloadTable, doReloadTable] = useReload();
 	const modalVariable = useShortModal();
+
+	const { setLoading } = useDashboard();
+	const api = useApi();
+	const { addToast } = useToasts();
+
 
 	// const OperationalColumnsTable = useLocalizedColumns(OperationalColumns);
 
@@ -302,13 +311,34 @@ export const IndexOperationalData = () => {
 	const options = [
 		{
 			label: "si",
-			value: "true"
+			value: "1"
 		},
 		{
 			label: "no",
-			value: "false"
+			value: "0"
 		}
 	]
+
+	const descargarEjemplo = () => {
+		setLoading(true);
+		api.get< string | Blob | File>($j('ejemplo_variables'), { responseType: 'blob' }).success(e => {
+		  $d(e, 'ejemplo_carga_variables.xlsx');
+		  setLoading(false);
+		  addToast(caps('success:base.success'), {
+					appearance: 'success',
+					autoDismiss: true,
+		});
+		}).fail('base.post');
+	}
+
+
+	
+	const onSubmitVariables = () => {
+
+	}
+
+	console.log(variable , "variable")
+
 
 	return (
 		<>
@@ -327,10 +357,15 @@ export const IndexOperationalData = () => {
 					accept={["xls", "xlsx"]}
 				/>
 			</Col>
+			<Col sm={2}>
+				<Button variant="outline-primary" className='d-flex justify-content-start mr-3 btn-outline-primary' onClick={descargarEjemplo} >
+					Descargar ejemplo
+				</Button>
+			</Col>
 
-			<Col sm={3} className="offset-6">
-			<SearchBar onChange={doSearch} />
-		</Col>
+			<Col sm={3} className="offset-4">
+				<SearchBar onChange={doSearch} />
+			</Col>
 		<Col sm={12}>
 		{loadingg ? (
 				<BounceLoader css={{ margin: '2.25rem auto' } as any} color='var(--primary)' />
@@ -370,6 +405,8 @@ export const IndexOperationalData = () => {
 								style={{ display: "inline" }}
 								name='pay_total_quoted'
 								options={options}
+								value={variable.Ejecutar_simulacion}
+								onChange={e => setVariables(s => $u(s, { Ejecutar_simulacion: { $set: e } }))}
 							/>                    
 						</Col>
 					</Row>
@@ -377,15 +414,23 @@ export const IndexOperationalData = () => {
 							<Col sm={6}>
 								<Datepicker 
 									label='Fill Dates Start' 
-									readonly={true}
 									value={variable.Fill_Dates_Start}
+									onChange={ value => {
+										setVariables( state => $u( state, { 
+											Fill_Dates_Start: { $set: value }
+										}))
+									} }
 								/>					
 							</Col>
 							<Col sm={6}>
 								<Datepicker 
 									label='Fill Dates end' 
-									readonly={true}
 									value={variable.Fill_Dates_end}
+									onChange={ value => {
+										setVariables( state => $u( state, { 
+											Fill_Dates_end: { $set: value }
+										}))
+									} }
 								/>					
 							</Col>
 						</Row>
@@ -397,15 +442,23 @@ export const IndexOperationalData = () => {
 							<Col sm={6}>
 								<Datepicker 
 									label='Sampling dates start' 
-									readonly={true}
 									value={variable.Sampling_dates_start}
+									onChange={ value => {
+										setVariables( state => $u( state, { 
+											Sampling_dates_start: { $set: value }
+										}))
+									} }
 								/>					
 							</Col>
 							<Col sm={6}>
 								<Datepicker 
 									label='Sampling Data end' 
-									readonly={true}
 									value={variable.Sampling_Data_end}
+									onChange={ value => {
+										setVariables( state => $u( state, { 
+											Sampling_Data_end: { $set: value }
+										}))
+									} }
 								/>					
 							</Col>
 						</Row>
@@ -418,13 +471,23 @@ export const IndexOperationalData = () => {
 							<Col sm={6}>
 								<Datepicker 
 									label='Xample data start' 
-									readonly={true}
+									value={variable.Xample_data_start}
+									onChange={ value => {
+										setVariables( state => $u( state, { 
+											Xample_data_start: { $set: value }
+										}))
+									} }
 								/>					
 							</Col>
 							<Col sm={6}>
 								<Datepicker 
 									label='Xample data end' 
-									readonly={true}
+									value={variable.Xample_data_end}
+									onChange={ value => {
+										setVariables( state => $u( state, { 
+											Xample_data_end: { $set: value }
+										}))
+									} }
 								/>					
 							</Col>
 						</Row>
@@ -436,18 +499,34 @@ export const IndexOperationalData = () => {
 							<Col sm={6}>
 								<Datepicker 
 									label='Scaling Date start' 
-									readonly={true}
+									value={variable.Scaling_Date_start}
+									onChange={ value => {
+										setVariables( state => $u( state, { 
+											Scaling_Date_start: { $set: value }
+										}))
+									} }
 								/>					
 							</Col>
 							<Col sm={6}>
 								<Datepicker 
 									label='Scaling data end' 
-									readonly={true}
+									value={variable.Scaling_data_end}
+									onChange={ value => {
+										setVariables( state => $u( state, { 
+											Scaling_data_end: { $set: value }
+										}))
+									} }
 								/>					
 							</Col>
 						</Row>
 						
-					{/* ---------------------------- */}
+						{/* ---------------------------- */}
+
+						<Col sm={2} className="offset-8">
+							<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={onSubmitVariables}>
+								Guardar
+							</Button>
+						</Col>
 
 					</Modal.Body>
 				</Modal>

@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Col, Button, Row, Modal } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Col, Tooltip, Row, OverlayTrigger } from 'react-bootstrap';
 import { BaseContentView } from '../../Common/BaseContentView';
 import { CustomSelect } from '../../../Components/Forms/CustomSelect';
 import { Datepicker } from '../../../Components/Forms/Datepicker';
@@ -27,87 +27,77 @@ import { useApi } from "../../../Common/Hooks/useApi";
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
 import { useToasts } from 'react-toast-notifications';
 
-export interface OperationalDataImport {
-    X_Y: string;
+export interface reportePdf {
+    fecha: string;
+    pdf_name: string;
 }
 
-// const OperationalColumns : LocalizedColumnsCallback<OperationalDataImport> = () => [
-// 	{ name: 'X , Y', selector: operation => operation.X_Y}
-// ];
+const inicialreportePdf = {
+	fecha: "",
+	pdf_name: "",
+}
 
-export const IndexScam3d = () => {
+const PdfColumns : LocalizedColumnsCallback<reportePdf> = () => [
+	{ name: 'Fecha', selector: pdf => pdf.fecha},
+	{ name: 'Nombre', selector: pdf => pdf.pdf_name}
+];
 
-	const [file, setFile] = useState<any>();
-	const [display, setDisplay] = useState<string>();
+export const IndexDownloadableReport = () => {
+	const [reportePdf, setPeportePdf] = useState<reportePdf>(inicialreportePdf);
+	const { capitalize: caps, intl } = useFullIntl();
 	const { setLoading } = useDashboard();
 	const api = useApi();
 	const { addToast } = useToasts();
-	const { capitalize: caps, intl } = useFullIntl();
 
-	const handleChangeFile = async (fileData: any) => {
-		setFile(fileData)
-	}
 
-    const handleChangeDisplay = (display: string | undefined) => {
-		setDisplay(state => $u(state, { $set: display } ));
-	}
-
-	const onClickEnviar  = async () => {
-		const formData = new FormData();
-		const headers =  { headers: { "Content-Type": "multipart/form-data" } };
-
-		formData.append("file", file);
-
-		await ax.patch('excel_xy', formData, headers)
-			.then((response) => {
-
-			})
-			.catch((e: AxiosError) => {
-				if (e.response) {
-
-				}
-			}
-		);
-	}
-
-	const descargarEjemplo = () => {
+	const pdfDescargar = (pdf : any) => {
 		setLoading(true);
-		api.get< string | Blob | File>($j('scam_descargar'), { responseType: 'blob' }).success(e => {
-		  $d(e, 'scan_3d_ejemplo.csv');
+		api.get< string | Blob | File>($j('descargar_pdf', pdf.ruta.toString()), { responseType: 'blob' }).success(e => {
+		  $d(e, pdf.pdf_name);
 		  setLoading(false);
 		  addToast(caps('success:base.success'), {
 					appearance: 'success',
 					autoDismiss: true,
-		});
-		}).fail('base.post');
+				});
+			}).fail('base.post');
 	}
+
+	const colums = PdfColumns(intl)
+
+	colums.push({  
+		name: 'Opción', 
+		center: true,
+		width: '90px',
+		cell: pdf => (
+			<>
+			<Col sm={6}>
+				<OverlayTrigger
+						placement="top"
+						overlay={
+							<Tooltip id={`tooltip-1`}>
+								descargar
+							</Tooltip>
+						}
+						>
+						<i className='fas fas fa-file-pdf' style={{ cursor: 'pointer', color: '#09922C' }} onClick={() => pdfDescargar(pdf)}/> 
+				</OverlayTrigger>
+			</Col>
+			</>
+		)
+	});
+
 
 	return (
 		<>
+		<BaseContentView title='titles:reports_pdf'>
 
-	<BaseContentView title='titles:scam_3d'>
-			<Col sm={3}>
-                <FileInputWithDescription 
-					id={"inputFile"}
-					onChange={ handleChangeFile }
-					onChangeDisplay={ handleChangeDisplay }
-					display={display}
-					accept={["xls", "xlsx"]}
+			<Col sm={12}>
+				<ApiTable<reportePdf>
+					columns={colums}
+					source={"index_pdf"} 
 				/>
 			</Col>
-			<Col sm={2}>
-				<Button className='d-flex justify-content-start btn-primary mr-3' onClick={onClickEnviar}>
-					guardar
-				</Button>
-			</Col>
-
-			<Col sm={2} className="offset-5">
-				<Button variant="outline-primary" className='d-flex justify-content-start mr-3 btn-outline-primary' onClick={descargarEjemplo} >
-					Descargar ejemplo
-				</Button>
-			</Col>
-		</BaseContentView>		
-
+		</BaseContentView>
 		</>
 	);
 };

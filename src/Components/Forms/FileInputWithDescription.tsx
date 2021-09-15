@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef } from 'react';
 import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { Utils } from '../../Common/Utils/Utils';
 
-export type acceptedFormat = "jpg" | "png" | "gif" | "jpeg" | "xls" | "xlsx";
+export type acceptedFormat = "jpg" | "png" | "gif" | "jpeg" | "xls" | "xlsx" | "pdf";
 interface Props {
 	accept?: acceptedFormat[]
 	label?: string
