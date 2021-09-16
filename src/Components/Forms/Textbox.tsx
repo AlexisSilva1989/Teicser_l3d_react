@@ -6,6 +6,7 @@ import { ONLY_NUMBER } from '../../Enums';
 
 interface Props {
 	label?: string
+	id?: string
 	name?: string
 	value?: string
 	errors?: string[]
@@ -51,7 +52,8 @@ export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInput
 		
 			<input type={props.hidden ? 'hidden' : 'text' } 
 				ref={ref}
-				defaultValue={props.value } 
+				defaultValue={props.value }
+				id={props.id} 
 				name={props.name} 
 				value={props.value} 
 				className={'form-control border rounded ' + props.className ?? ''}
