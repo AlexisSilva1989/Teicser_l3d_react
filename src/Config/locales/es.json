@@ -705,7 +705,7 @@
 	"forms:inputs.probability": "probabilidad",
 	"forms:inputs.probability_of_close": "probabilidad de cierre",
 	"forms:inputs.persons_count": "# Personas",
-	"forms:inputs.days_project": "dias de proyección",
+	"forms:inputs.days_project": "días de proyección",
 
 	"forms:inputs.name": "nombre",
 	"forms:inputs.rut": "rut",
@@ -1792,6 +1792,8 @@
 	"menus:information": "informes",
 	"menus:calibration": "calibración",
 
+	"labels:projectionTo30Days": "30 últimos días",
+	"labels:ProjectionComplete": "campaña completa",
 	"menus:records": "archivos",
 	"menus:projection": "proyección",
 	"menus:measurement": "medición",
