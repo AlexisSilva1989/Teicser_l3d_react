@@ -24,7 +24,7 @@ export const SimulacionDias = () => {
 	/*Effects */
 	useEffect(() => {
         async function feat() {
-            await ax.get<{simulacion:string[]}>('data_proyeccion_dias').then(response => {
+            await ax.get<{simulacion:string[]}>('service_render/data_proyeccion_dias').then(response => {
 				if (response.data.simulacion.length > 0){
 					setDataSimulacionSize(Object.keys(response.data.simulacion[0]).length)
 					setDataSimulacion(response.data.simulacion[0]);

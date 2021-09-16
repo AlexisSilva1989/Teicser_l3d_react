@@ -77,7 +77,9 @@ const FormProjection = ({onSubmit, isSaving, textButtonSubmit,lastDateProjection
 	}, [dateFillEnd]);
     
     /*VALUES */
-    setValue('date_project',dateFillEnd);
+    useEffect(() => {
+        setValue('date_project',dateFillEnd);
+    },[]);
 
     return (<form onSubmit={handleSubmit(onSubmit)}>
         
