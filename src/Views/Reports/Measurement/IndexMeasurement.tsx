@@ -37,7 +37,7 @@ export const IndexMeasurement = () => {
 				<div style={{width: "48%", margin: "auto"}}>
 					<Card className='bg-dark text-light'>
 						<Card.Body>
-							<img src="/grafico_prueba.jpg" alt="" style={{max-width: "100%""}} />
+							<img src="/grafico_prueba.jpg" alt="" style={{max-width: "100%"}} />
 						</Card.Body>
 					</Card>
 				</div>
