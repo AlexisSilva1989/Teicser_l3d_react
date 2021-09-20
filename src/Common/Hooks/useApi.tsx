@@ -44,7 +44,7 @@ export const useApi = (api: AxiosInstance = ax) => {
 		return {
 			success: (dataCallback?: (e: T) => void) => {
 				return {
-					fail: async (error: string, params?: any) => {
+					fail: async (error: string, params?: any,  action?: () => void) => {
 						await api.post(url, data, config).then(e => {
 							if (dataCallback) { 
 								dataCallback(e.data); 
@@ -56,11 +56,11 @@ export const useApi = (api: AxiosInstance = ax) => {
 							}
 						}).catch((e: AxiosError<T>) => {
 
-							addToast('error', {
+							addToast(error, {
 								appearance: 'error',
 								autoDismiss: true,
 							});
-
+							if(action) action();
 							////push.error('errors:' + error, params ?? { code: e.response?.status });
 						});
 					}
