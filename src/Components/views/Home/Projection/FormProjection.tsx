@@ -1,13 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import { Controller, useForm } from 'react-hook-form';
-import { CustomSelect } from '../../../Forms/CustomSelect';
 import { Datepicker } from '../../../Forms/Datepicker';
 import { RadioSelect } from '.././../../../Components/Forms/RadioSelect';
-import { TextArea } from '../../../../Components/Forms/TextArea';
 import { useLocalization } from '../../../../Common/Hooks/useLocalization';
 import Select from 'react-select';
-import { $m, IMoment } from '../../../../Common/Utils/Reimports';
+import { $m } from '../../../../Common/Utils/Reimports';
 import { DateUtils } from '../../../../Common/Utils/DateUtils';
 import { Textbox } from '../../../Forms/Textbox';
 
@@ -16,7 +14,6 @@ interface IProps {
     isSaving?: boolean
     textButtonSubmit?: string
     lastDateProjection: string
-    maxDateProjection:string | undefined
 }
 
 export interface IdataFormProjection {
@@ -63,6 +60,7 @@ const FormProjection = ({onSubmit, isSaving, textButtonSubmit,lastDateProjection
     });
 
     /**STATES */
+
     const [daysProjection, setDaysProjection] = useState<string>(countDaysToProjection.toString())
     const [dateFillEnd, setDateFillEnd] = useState<string>(
         ($m(lastDateProjection,'DD-MM-YYYY').add(countDaysToProjection, 'days')).format('DD-MM-YYYY')
@@ -76,10 +74,10 @@ const FormProjection = ({onSubmit, isSaving, textButtonSubmit,lastDateProjection
         setDaysProjection((DateUtils.differenceBetweenDates(lastDateProjection,dateFillEnd)).toString())
 	}, [dateFillEnd]);
     
-    /*VALUES */
+    /*SETEAR VALOR DE FECHA A PROYECTAR */
     useEffect(() => {
         setValue('date_project',dateFillEnd);
-    },[]);
+    },[dateFillEnd]);
 
     return (<form onSubmit={handleSubmit(onSubmit)}>
         
@@ -106,7 +104,10 @@ const FormProjection = ({onSubmit, isSaving, textButtonSubmit,lastDateProjection
                     name="date_project" 
                     minDate={($m(lastDateProjection,'DD-MM-YYYY').add(1, 'days')).format('DD-MM-YYYY')}
                     maxDate={($m(lastDateProjection,'DD-MM-YYYY').add(maxDaysToProjection, 'days')).format('DD-MM-YYYY')}
-                    onChange={(e)=>{setDateFillEnd(e[0])}} 
+                    onChange={(e)=>{
+                        console.log('e: ', e);
+                        setDateFillEnd(e[0])
+                    }} 
                     as={Datepicker} />
             </Col>
 
