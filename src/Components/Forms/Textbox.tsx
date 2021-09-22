@@ -73,20 +73,10 @@ export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInput
 				}} 
 				
 				onChange={(e) => {
-
-                   if (props.onChange != null) {
-					   let {value} = e.currentTarget;
-					    //if filter is required
-					   if(props.onlyNumber){
-					      //replace value
-		                  value = value.replace(ONLY_NUMBER, ''); 
-		                   //call funtion props
-						  props.onChange(value.toString());   
-					    }
-
-					    //call funtion 
-					    props.onChange(value);   
-                   }
+					let {value} = e.currentTarget;
+					value = props.onlyNumber === true ? value.replace(ONLY_NUMBER, '').toString() : value ;
+					props.onChange != null ? props.onChange(value) : e.currentTarget.value = value;
+                   	
 				}}
 			/>
 
