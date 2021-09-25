@@ -38,6 +38,7 @@ export interface IdataFormProjection {
     dwi: string
     bolas_ton: string
     tonsForChange: string
+    last_date_measurement?: string
     dates_last_projection? : IDatesLastProjection
 }
 

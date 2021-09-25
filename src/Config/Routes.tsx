@@ -23,6 +23,7 @@ import { IndexReportsPdf } from "../Views/Reports/Reports_pdf/IndexReportsPdf";
 import { IndexDownloadableReport } from "../Views/Reports/DownloadableReport/IndexDownloadableReport";
 
 import { IndexOperationalData } from "../Views/InformationLoad/OperationalData/IndexOperationalData";
+import { IndexImagenCondicion } from "../Views/InformationLoad/ImagenCondicion/IndexImagenCondicion";
 
 
 interface Route {
@@ -62,6 +63,12 @@ const routes: RouteGroup[] = [
     prefix: "routes:base.operational_data",
     routes: [
       { path: "routes:meta.base", component: <IndexOperationalData /> },
+    ],
+  },
+  {
+    prefix: "routes:base.image_condicion",
+    routes: [
+      { path: "routes:meta.base", component: <IndexImagenCondicion /> },
     ],
   },
   {
