@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, Button, Card, Tooltip } from 'react-bootstrap';
 import { BaseContentView } from '../../Common/BaseContentView';
 import { CustomSelect } from '../../../Components/Forms/CustomSelect';
@@ -11,25 +11,16 @@ import { useApi } from "../../../Common/Hooks/useApi";
 
 export const IndexMeasurement = () => {
 	const { input, title } = useLocalization();
-	// const api = useApi();
-	// const [img, setImg] = useState<string>();
+	const api = useApi();
+	const [img, setImg] = useState<string>();
 
 	// 	/*EFFECTS */
 	// /*OBTENER ESTATUS DEL SERVICIO */
-	// useEffect(() => {
-	// 	const getLastDataSimulated = async () => {
-	// 		await api.get<any>("service_render/get_last_data_simulated/1")
-	// 			.success((response: any) => {
-	// 				console.log(response)
-	// 			})
-	// 			.fail(
-	// 				"Error al consultar los datos de simulación", 
-	// 				() => {}
-	// 			);
-	// 	};
-
-	// 	getLastDataSimulated()
-    // }, []);
+	useEffect(() => {
+		api.get<any>('condicion_img').success(e => {
+			setImg(e)
+		}).fail('base.post');
+    }, []);
 
 	return (
 		<>
@@ -56,7 +47,7 @@ export const IndexMeasurement = () => {
 				<div style={{width: "48%", margin: "auto"}}>
 					<Card className='bg-dark text-light'>
 						<Card.Body>
-							<img src="/grafico_prueba.jpg" alt="" style={{width: "100%"}} />
+							<img src={img} alt="" style={{width: "100%"}} />
 						</Card.Body>
 					</Card>
 				</div>
