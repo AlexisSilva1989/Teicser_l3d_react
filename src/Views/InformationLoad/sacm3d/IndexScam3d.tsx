@@ -1,113 +1,118 @@
-import React, { useState, useRef } from 'react';
-import { Col, Button, Row, Modal } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from 'react';
+import { Col, Button } from 'react-bootstrap';
 import { BaseContentView } from '../../Common/BaseContentView';
-import { CustomSelect } from '../../../Components/Forms/CustomSelect';
 import { Datepicker } from '../../../Components/Forms/Datepicker';
-import { useLocalization } from '../../../Common/Hooks/useLocalization';
-import { Textbox } from '../../../Components/Input/Textbox';
-import { RadioSelect } from '.././../../Components/Forms/RadioSelect';
-import { TextArea } from '../../../Components/Forms/TextArea';
 import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
 import { FileInputWithDescription } from './../../../Components/Forms/FileInputWithDescription';
-import { FileUtils } from './../../../Common/Utils/FileUtils';
-import { $u, $j, $d } from '../../../Common/Utils/Reimports';
-import moment from 'moment';
-import { ApiTable } from '../../../Components/Api/ApiTable';
-import { SearchBar } from '../../../Components/Forms/SearchBar';
-import { BounceLoader } from 'react-spinners';
-import { useSearch } from '../../../Common/Hooks/useSearch';
-import { useReload } from '../../../Common/Hooks/useReload';
-import { ColumnsPipe } from '../../../Common/Utils/LocalizedColumnsCallback';
-import { useLocalizedColumns } from '../../../Common/Hooks/useColumns';
-import { LocalizedColumnsCallback } from '../../../Common/Utils/LocalizedColumnsCallback';
-import { useShortModal } from '../../../Common/Hooks/useModal';
+import { $u, $j, $d, $m } from '../../../Common/Utils/Reimports';
 import { ax } from '../../../Common/Utils/AxiosCustom';
 import { AxiosError } from 'axios';
 import { useApi } from "../../../Common/Hooks/useApi";
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
 import { useToasts } from 'react-toast-notifications';
+import { Controller, useForm, ErrorMessage  } from 'react-hook-form';
 
-export interface OperationalDataImport {
-    X_Y: string;
-}
-
-// const OperationalColumns : LocalizedColumnsCallback<OperationalDataImport> = () => [
-// 	{ name: 'X , Y', selector: operation => operation.X_Y}
-// ];
+interface IDataForm { measurementFile: any, measurementDate: string }
 
 export const IndexScam3d = () => {
+	const api = useApi();
 
-	const [file, setFile] = useState<any>();
 	const [display, setDisplay] = useState<string>();
 	const { setLoading } = useDashboard();
-	const api = useApi();
 	const { addToast } = useToasts();
-	const { capitalize: caps, intl } = useFullIntl();
+	const { capitalize: caps } = useFullIntl();
 
-	const handleChangeFile = async (fileData: any) => {
-		setFile(fileData)
-	}
 
-    const handleChangeDisplay = (display: string | undefined) => {
-		setDisplay(state => $u(state, { $set: display } ));
-	}
-
-	const onClickEnviar  = async () => {
+	const onSubmit = async (data: IDataForm) => {
+		console.log(data)
 		const formData = new FormData();
-		const headers =  { headers: { "Content-Type": "multipart/form-data" } };
+		const headers = { headers: { "Content-Type": "multipart/form-data" } };
 
-		formData.append("file", file);
+		formData.append("measurementFile", data.measurementFile);
+		formData.append("measurementDate", data.measurementDate);
 
-		await ax.patch('excel_xy', formData, headers)
+		setLoading(true);
+		await ax.patch('service_render/upload_file_medicion_var', formData, headers)
 			.then((response) => {
-
+				addToast(caps('success:base.success'), {
+					appearance: 'success',
+					autoDismiss: true,
+				});
 			})
 			.catch((e: AxiosError) => {
 				if (e.response) {
-
+					addToast(caps('Ha ocurrido un error'), {
+						appearance: 'error',
+						autoDismiss: true,
+					});
 				}
-			}
-		);
+			})
+			.finally(() => { setLoading(false) })
+			;
 	}
 
-	const descargarEjemplo = () => {
+	const { handleSubmit, register, errors, control, setValue } = useForm<IDataForm>({
+		mode: "onSubmit",
+		defaultValues:{
+			measurementDate : $m().format('DD-MM-YYYY')
+		}
+	});
+
+	const descargarEjemplo = async () => {
 		setLoading(true);
-		api.get< string | Blob | File>($j('scam_descargar'), { responseType: 'blob' }).success(e => {
-		  $d(e, 'scan_3d_ejemplo.csv');
-		  setLoading(false);
-		  addToast(caps('success:base.success'), {
-					appearance: 'success',
-					autoDismiss: true,
-		});
+		await api.get<string | Blob | File>($j('scam_descargar'), { responseType: 'blob' }).success(e => {
+			$d(e, 'scan_3d_ejemplo.csv');
+			setLoading(false);
+			addToast(caps('success:base.success'), {
+				appearance: 'success',
+				autoDismiss: true,
+			});
 		}).fail('base.post');
 	}
 
-	return (
-		<>
+	return (<BaseContentView title='titles:scam_3d'>
+		<Col sm={9}>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<Col sm={3}>
+					<Controller control={control}
+						id={"measurementFile"}
+						name={"measurementFile"}
+						onChangeDisplay={(display: string | undefined) => {
+							setDisplay(state => $u(state, { $set: display }));
+						}}
+						display={display}
+						accept={["csv"]}
+						rules={{ required: { value: true, message: 'Complete este campo' } }}
+						as={FileInputWithDescription}
+					/>
 
-	<BaseContentView title='titles:scam_3d'>
-			<Col sm={3}>
-                <FileInputWithDescription 
-					id={"inputFile"}
-					onChange={ handleChangeFile }
-					onChangeDisplay={ handleChangeDisplay }
-					display={display}
-					accept={["xls", "xlsx"]}
-				/>
-			</Col>
-			<Col sm={2}>
-				<Button className='d-flex justify-content-start btn-primary mr-3' onClick={onClickEnviar}>
-					guardar
-				</Button>
-			</Col>
+					<ErrorMessage errors={errors} name="measurementFile">
+						{({ message }) => <small className='text-danger'>{message}</small>}
+					</ErrorMessage>
+				</Col>
+				<Col sm={3}>
+					<Controller control={control}
+						name="measurementDate"
+						// onChange={handleChangeDate}
+						rules={{ required: { value: true, message: 'Complete este campo' } }}
+						as={Datepicker}
+					/>
+					<ErrorMessage errors={errors} name="measurementDate">
+						{({ message }) => <small className='text-danger'>{message}</small>}
+					</ErrorMessage>
+				</Col>
 
-			<Col sm={2} className="offset-5">
-				<Button variant="outline-primary" className='d-flex justify-content-start mr-3 btn-outline-primary' onClick={descargarEjemplo} >
-					Descargar ejemplo
-				</Button>
-			</Col>
-		</BaseContentView>		
-
-		</>
-	);
+				<Col sm={3} >
+					<Button type={"submit"} className='btn-primary mr-3'>
+						Guardar
+					</Button>
+				</Col>
+			</form>
+		</Col>
+		<Col sm={3} className='text-right' >
+			<Button variant="outline-primary" className='btn-outline-primary' onClick={descargarEjemplo} >
+				Descargar ejemplo
+			</Button>
+		</Col>
+	</BaseContentView>);
 };
