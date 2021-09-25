@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Col, Button, Card, Tooltip } from 'react-bootstrap';
 import { BaseContentView } from '../../Common/BaseContentView';
 import { CustomSelect } from '../../../Components/Forms/CustomSelect';
@@ -7,10 +7,29 @@ import { useLocalization } from '../../../Common/Hooks/useLocalization';
 import { Textbox } from '../../../Components/Input/Textbox';
 import { RadioSelect } from '.././../../Components/Forms/RadioSelect';
 import { TextArea } from '../../../Components/Forms/TextArea';
+import { useApi } from "../../../Common/Hooks/useApi";
 
 export const IndexMeasurement = () => {
 	const { input, title } = useLocalization();
+	// const api = useApi();
+	// const [img, setImg] = useState<string>();
 
+	// 	/*EFFECTS */
+	// /*OBTENER ESTATUS DEL SERVICIO */
+	// useEffect(() => {
+	// 	const getLastDataSimulated = async () => {
+	// 		await api.get<any>("service_render/get_last_data_simulated/1")
+	// 			.success((response: any) => {
+	// 				console.log(response)
+	// 			})
+	// 			.fail(
+	// 				"Error al consultar los datos de simulación", 
+	// 				() => {}
+	// 			);
+	// 	};
+
+	// 	getLastDataSimulated()
+    // }, []);
 
 	return (
 		<>

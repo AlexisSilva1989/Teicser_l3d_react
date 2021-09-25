@@ -41,7 +41,6 @@ export const IndexImagenCondicion = () => {
 	const api = useApi();
 	const [reloadTable, doReloadTable] = useReload();
 
-
 	const pdfDescargar = (pdf : any) => {
 		setLoading(true);
 		api.get< string | Blob | File>($j('img_descargar', pdf.ruta.toString()), { responseType: 'blob' }).success(e => {
@@ -165,7 +164,7 @@ export const IndexImagenCondicion = () => {
 				</Button>
 			</Col>
 			<hr/>
-			<Col sm={12} className="mt-5">
+			<Col sm={10} className="mt-5">
 				<ApiTable<reportePdf>
 					columns={colums}
 					reload={reloadTable}
