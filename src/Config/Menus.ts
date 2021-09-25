@@ -19,6 +19,12 @@ const userMenus: IMenuLayout = {
 				},
 				{
 					permission: 'information_load',
+					name: 'menus:image_condicion',
+					path: 'routes:base.image_condicion',
+					icon: 'fas fa-file-invoice',
+				},
+				{
+					permission: 'information_load',
 					name: 'menus:calibration',
 					path: 'routes:base.calibration',
 					icon: 'fas fa-file-invoice',
