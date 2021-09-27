@@ -27,6 +27,7 @@ export const FileInputWithDescription = (props: Props) => {
 				return (
                     format === "xls" 
                     || format === "xlsx" 
+                    || format === "csv" 
                 )
                     ? `${acc},.${format}` 
                     : `${acc},image/${format}`
@@ -34,7 +35,7 @@ export const FileInputWithDescription = (props: Props) => {
 			return accept.substr(1, accept.length);
 		}
 
-		return "image/jpg,image/png,image/jpeg,image/git,.xls,.xlsx"; 
+		return "image/jpg,image/png,image/jpeg,image/git,.xls,.xlsx,.csv"; 
 	}, [props.accept, props.accept?.length]);
 
     const openFileSelect = () => {
