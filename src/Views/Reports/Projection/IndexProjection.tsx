@@ -44,7 +44,7 @@ export const IndexProjection = () => {
 		data.dates_last_projection = datesLastProjection;
 		data.last_date_measurement = lastDateProjection;
 		await api.post("service_render/projection_operational_var", data)
-			.success((response) => { setStatusService('PENDIENTE') })
+			.success((response) => { setStatusService('EN PROCESO') })
 			.fail("No se pudo consumir el servicio", null, () => { setLoading(false); });
 	};
 
@@ -91,7 +91,7 @@ export const IndexProjection = () => {
 				.success((response) => {
 					const statusServiceResponse = response.status;
 					setStatusService(statusServiceResponse)
-					if (statusServiceResponse === 'PENDIENTE' && statusService === 'PENDIENTE') {
+					if (statusServiceResponse === 'EN PROCESO' || statusServiceResponse === 'PENDIENTE') {
 						const timer = setTimeout(() => checkStatusService(), 20000);
 						return () => clearTimeout(timer);
 					} else {
@@ -111,7 +111,7 @@ export const IndexProjection = () => {
 				);
 		};
 
-		statusService === 'PENDIENTE' && checkStatusService()
+		(statusService === 'PENDIENTE' ||  statusService === 'EN PROCESO') && checkStatusService()
 	}, [statusService]);
 
 	/*TITULO DE MODULO */
@@ -132,7 +132,6 @@ export const IndexProjection = () => {
 
 	/*ACTUALIZAR FECHA A PROYECTAR */
 	useEffect(() => {
-		console.log('errorMessageModule: ', errorMessageModule);
 		(lastDateProjection !== null && lastDateProjection !== undefined) && 
 			setDateFillEnd(($m(lastDateProjection, 'DD-MM-YYYY').add(countDaysToProjection, 'days')).format('DD-MM-YYYY'))
 	}, [lastDateProjection])
