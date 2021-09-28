@@ -348,7 +348,7 @@ export const IndexOperationalData = () => {
 		<Row className="mb-3">
 			<Col sm={6}>
 				<Datepicker
-					label='Fill Dates Start'
+					label='Fill date start'
 					value={variable.fillDatesStart}
 					onChange={value => {
 						setVariables(state => $u(state, {
@@ -359,7 +359,7 @@ export const IndexOperationalData = () => {
 			</Col>
 			<Col sm={6}>
 				<Datepicker
-					label='Fill Dates end'
+					label='Fill date end'
 					value={variable.fillDatesEnd}
 					onChange={value => {
 						setVariables(state => $u(state, {
@@ -376,7 +376,7 @@ export const IndexOperationalData = () => {
 		<Row className="mb-3">
 			<Col sm={6}>
 				<Datepicker
-					label='Sampling dates start'
+					label='Sampling date start'
 					value={variable.samplingDatesStart}
 					onChange={value => {
 						setVariables(state => $u(state, {
@@ -387,7 +387,7 @@ export const IndexOperationalData = () => {
 			</Col>
 			<Col sm={6}>
 				<Datepicker
-					label='Sampling Data end'
+					label='Sampling Date end'
 					value={variable.samplingDatesEnd}
 					onChange={value => {
 						setVariables(state => $u(state, {
@@ -463,7 +463,7 @@ export const IndexOperationalData = () => {
 						<Modal.Body>
 							<Row className="mb-3">
 								<Col sm={4}>
-									<label><b>Ejecutar fill dates:</b></label><br></br>
+									<label><b>Fill dates:</b></label><br></br>
 									<RadioSelect
 										style={{ display: "inline" }}
 										name='pay_total_quoted'
@@ -479,7 +479,7 @@ export const IndexOperationalData = () => {
 							<Row className="mb-3">
 								<Col sm={6}>
 									<Datepicker
-										label='Data start'
+										label='Date start'
 										value={variable.xampleDateStart}
 										onChange={value => {
 											setVariables(state => $u(state, {
@@ -490,7 +490,7 @@ export const IndexOperationalData = () => {
 								</Col>
 								<Col sm={6}>
 									<Datepicker
-										label='Data end'
+										label='Date end'
 										value={variable.xampleDateEnd}
 										onChange={value => {
 											setVariables(state => $u(state, {
@@ -507,8 +507,8 @@ export const IndexOperationalData = () => {
 							<Row className="mb-3">
 								<Col sm={6}>
 									<Datepicker
-										label='Scaling Date start'
-										value={variable.samplingDatesStart}
+										label='Scale start'
+										value={variable.scalingDateStart}
 										onChange={value => {
 											setVariables(state => $u(state, {
 												samplingDatesStart: { $set: value }
@@ -518,8 +518,8 @@ export const IndexOperationalData = () => {
 								</Col>
 								<Col sm={6}>
 									<Datepicker
-										label='Scaling data end'
-										value={variable.samplingDatesEnd}
+										label='Scale end'
+										value={variable.scalingDateEnd}
 										onChange={value => {
 											setVariables(state => $u(state, {
 												samplingDatesEnd: { $set: value }
