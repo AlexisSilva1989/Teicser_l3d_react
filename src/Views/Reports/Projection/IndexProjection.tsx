@@ -8,11 +8,12 @@ import FormProjection, { IdataFormProjection, IDatesLastProjection } from '../..
 import { ShowMessageInModule } from '../../../Components/Common/ShowMessageInModule';
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
 import SimulacionGrafica from '../../../Components/views/Home/simulation/SimulacionGrafica';
-import { $m } from '../../../Common/Utils/Reimports';
+import { $m, $j } from '../../../Common/Utils/Reimports';
 import { DateUtils } from '../../../Common/Utils/DateUtils';
 import { LoadingSpinner } from '../../../Components/Common/LoadingSpinner';
 
 export const IndexProjection = () => {
+	const EQUIPO_ID = "1";
 
 	/*CONST */
 	const maxDaysToProjection = 35;
@@ -63,7 +64,7 @@ export const IndexProjection = () => {
 
 			const errors : string[] = [];
 
-			await api.get<responseInfoRender>("service_render/get_last_data_simulated/1")
+			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated/1",EQUIPO_ID))
 				.success((response) => {
 		
 					response.info_medicion === null
@@ -87,12 +88,12 @@ export const IndexProjection = () => {
 	/*OBTENER ESTATUS DEL SERVICIO */
 	useEffect(() => {
 		const checkStatusService = async () => {
-			await api.get<{ status: string, message: string }>("service_render/get_status_last_projection_operational")
+			await api.get<{ status: string, message: string }>($j("service_render/get_status_last_projection_operational",EQUIPO_ID))
 				.success((response) => {
 					const statusServiceResponse = response.status;
 					setStatusService(statusServiceResponse)
 					if (statusServiceResponse === 'EN PROCESO' || statusServiceResponse === 'PENDIENTE') {
-						const timer = setTimeout(() => checkStatusService(), 20000);
+						const timer = setTimeout(() => checkStatusService(), 30000);
 						return () => clearTimeout(timer);
 					} else {
 						setLoading(false);
