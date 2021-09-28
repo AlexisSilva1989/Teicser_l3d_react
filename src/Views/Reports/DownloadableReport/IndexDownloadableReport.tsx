@@ -8,6 +8,7 @@ import { LocalizedColumnsCallback } from '../../../Common/Utils/LocalizedColumns
 import { useApi } from "../../../Common/Hooks/useApi";
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
 import { useToasts } from 'react-toast-notifications';
+import { useReload } from '../../../Common/Hooks/useReload';
 
 export interface reportePdf {
     fecha: string;
@@ -30,6 +31,7 @@ export const IndexDownloadableReport = () => {
 	const { setLoading } = useDashboard();
 	const api = useApi();
 	const { addToast } = useToasts();
+	const [reloadTable, doReloadTable] = useReload();
 
 
 	const pdfDescargar = (pdf : any) => {
@@ -42,6 +44,17 @@ export const IndexDownloadableReport = () => {
 					autoDismiss: true,
 				});
 			}).fail('base.post');
+	}
+
+	const pdfEliminar  = async (img: any) => {
+		api.get<any>($j('delete_pdf', img.id.toString())).success(e => {
+			setLoading(false);
+			doReloadTable()
+			addToast(caps('success:base.success'), {
+					  appearance: 'success',
+					  autoDismiss: true,
+			});
+		}).fail('base.post');
 	}
 
 	const colums = PdfColumns(intl)
@@ -64,6 +77,20 @@ export const IndexDownloadableReport = () => {
 						<i className='fas fas fa-file-pdf' style={{ cursor: 'pointer', color: '#09922C' }} onClick={() => pdfDescargar(pdf)}/> 
 				</OverlayTrigger>
 			</Col>
+
+			<Col sm={6}>
+				<OverlayTrigger
+						placement="top"
+						overlay={
+							<Tooltip id={`tooltip-1`}>
+								Eliminar
+							</Tooltip>
+						}
+						>
+						<i className='fas fas fa-trash-alt' style={{ cursor: 'pointer', color: '#09922C' }} onClick={() => pdfEliminar(pdf)}/> 
+				</OverlayTrigger>
+			</Col>
+
 			</>
 		)
 	});
@@ -76,6 +103,7 @@ export const IndexDownloadableReport = () => {
 				<ApiTable<reportePdf>
 					columns={colums}
 					source={"index_pdf"} 
+					reload={reloadTable}
 				/>
 			</Col>
 		</BaseContentView>

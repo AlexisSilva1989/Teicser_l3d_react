@@ -491,6 +491,13 @@
 	"labels:titles.facturation": "Facturación de cotización",
 	"labels:validations.greater_than_field": "La fecha de fin debe ser mayor a la fecha de inicio",
 	"labels:titles.modalConfirmAction": "Confirmar acción",
+	"labels:titles.INFORMATION_LOAD": "Cargar información",
+
+	"labels:titles.REPORTS": "Reportes",
+	"labels:titles.CONFIGURATION": "Configuración",
+	"labels:titles.GEMELO_DIGITAL": "Gemelo digital",
+
+
 	"labels:titles.splitInvoice": "Dividir factura",
 	"labels:titles.add_payment": "Agregar pago o cobranza",
 	"labels:titles.alert": "Alerta",
@@ -2031,6 +2038,7 @@
 	"titles:import_pdf": "Carga de PDF",
 	"titles:reports_pdf": "Reporte PDF",
 	"titles:img_condition": "imagen de condición",
+
 
 	"titles:systems": "sistemas",
 	"titles:scam_3d": "Medición 3D",
