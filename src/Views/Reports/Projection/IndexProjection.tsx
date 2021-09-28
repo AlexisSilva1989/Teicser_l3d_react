@@ -64,7 +64,7 @@ export const IndexProjection = () => {
 
 			const errors : string[] = [];
 
-			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated/1",EQUIPO_ID))
+			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated",EQUIPO_ID))
 				.success((response) => {
 		
 					response.info_medicion === null
