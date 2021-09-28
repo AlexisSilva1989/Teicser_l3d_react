@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Col, Button, Row, Modal } from 'react-bootstrap';
 import { BaseContentView } from '../../Common/BaseContentView';
 import { Datepicker } from '../../../Components/Forms/Datepicker';
@@ -18,6 +18,8 @@ import { useShortModal } from '../../../Common/Hooks/useModal';
 import { useApi } from "../../../Common/Hooks/useApi";
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
 import { useToasts } from 'react-toast-notifications';
+import { LoadingSpinner } from '../../../Components/Common/LoadingSpinner';
+import { ShowMessageInModule } from '../../../Components/Common/ShowMessageInModule';
 
 export interface OperationalDataImport {
 	TIMESTAMP: number;
@@ -111,8 +113,8 @@ const inicialVariable: IVariables = {
 	fillDatesEnd: "",
 	samplingDatesStart: "",
 	samplingDatesEnd: "",
-	xampleDateStart: "18-12-2020",
-	xampleDateEnd: "02-01-2021",
+	xampleDateStart: "",
+	xampleDateEnd: "",
 	scalingDateStart: "05-10-2018",
 	scalingDateEnd: "01-03-2021",
 	isRandomSampling: "false",
@@ -120,28 +122,41 @@ const inicialVariable: IVariables = {
 }
 
 export const IndexOperationalData = () => {
+	const EQUIPO_ID = "1";
+	const options = [
+		{
+			label: "si",
+			value: "true"
+		},
+		{
+			label: "no",
+			value: "false"
+		}
+	]
+
+	const inputFile = useRef<HTMLInputElement>(null);
+
+	/*HOOOKS */
+	const api = useApi();
+	const modalVariable = useShortModal();
 	const { input, title } = useLocalization();
 	const { capitalize: caps, intl } = useFullIntl();
-	const inputFile = useRef<HTMLInputElement>(null);
+	const { setLoading } = useDashboard();
+	const { addToast } = useToasts();
+
+	/*STATES */
 	const [display, setDisplay] = useState<string>();
 	const [operationalData, setOperationalData] = useState<OperationalDataImport[]>([]);
 	const [variable, setVariables] = useState<IVariables>(inicialVariable);
-
 	const [loadingg, setLoadingg] = useState(false);
-
 	const [isVariable, setIsVariable] = useState(true);
-
 	const [search, doSearch] = useSearch();
 	const [reloadTable, doReloadTable] = useReload();
-	const modalVariable = useShortModal();
+	const [loadingData, setLoadingData] = useState(true);
+	const [errorMessageModule, setErrorMessageModule] = useState<string[]>([]);
+	const [statusService, setStatusService] = useState<string>();
 
-	const { setLoading } = useDashboard();
-	const api = useApi();
-	const { addToast } = useToasts();
-
-
-	// const OperationalColumnsTable = useLocalizedColumns(OperationalColumns);
-
+	/*HANDLES */
 	const handleChangeFile = async (file: File | null) => {
 		setLoadingg(() => true);
 		let dataDocument: OperationalDataImport[] = [];
@@ -298,32 +313,20 @@ export const IndexOperationalData = () => {
 	const onSimulateProjection = async () => {
 		const formData = new FormData();
 		const headers = { headers: { "Content-Type": "multipart/form-data" } };
-		
+
 		for (const property in variable) {
-			let index :  keyof IVariables = property as keyof IVariables;
-			formData.append(property, variable[index] );
+			let index: keyof IVariables = property as keyof IVariables;
+			formData.append(property, variable[index]);
 		}
 
 		setLoading(true);
-		await api.post("service_render/render_data", formData , headers)
+		await api.post("service_render/render_data", formData, headers)
 			.success((response) => {
-
+				setStatusService('EN PROCESO')
 			})
-			.fail("No se pudo consumir el servicio")
-			.finally(() => { setLoading(false); });
+			.fail("No se pudo consumir el servicio");
 		console.log(variable)
 	}
-
-	const options = [
-		{
-			label: "si",
-			value: "true"
-		},
-		{
-			label: "no",
-			value: "false"
-		}
-	]
 
 	const descargarEjemplo = () => {
 		setLoading(true);
@@ -337,11 +340,70 @@ export const IndexOperationalData = () => {
 		}).fail('base.post');
 	}
 
-
-
 	const onSubmitVariables = () => {
 		modalVariable.hide()
 	}
+
+	/*EFFECTS */
+	/*OBTENER DATOS ASOCIADOS A LA PROYECCION */
+	useEffect(() => {
+		const getLastDataSimulated = async () => {
+			interface responseInfoRender {
+				info_medicion: { fecha_medicion: string }
+			}
+
+			const errors: string[] = [];
+
+			await api.get<responseInfoRender>($j("service_render/data_last_file_medicion_var",EQUIPO_ID))
+				.success((response) => {
+
+					response.info_medicion === null
+						? errors.push('No se ha encontrado información de la medición 3D')
+						: 	setVariables(state => $u(state, {
+								xampleDateStart: { $set: $m(response.info_medicion.fecha_medicion, 'YYYY-MM-DD').format('DD-MM-YYYY') },
+								xampleDateEnd: { $set: $m(response.info_medicion.fecha_medicion, 'YYYY-MM-DD')
+									.add(30, "days").format('DD-MM-YYYY') }
+							}))
+				})
+				.fail("Error al consultar los datos de simulación")
+				.finally(() => {
+					setLoadingData(false)
+					setErrorMessageModule(errors);
+				});
+		};
+		setLoadingData(true);
+		getLastDataSimulated()
+	}, []);
+
+	/*OBTENER ESTATUS DEL SERVICIO */
+	useEffect(() => {
+		const checkStatusService = async () => {
+			await api.get<{ status: string, message: string }>($j("service_render/statusLastDataRender",EQUIPO_ID))
+				.success((response) => {
+					const statusServiceResponse = response.status;
+					setStatusService(statusServiceResponse)
+					if (statusServiceResponse === 'EN PROCESO' || statusServiceResponse === 'PENDIENTE') {
+						const timer = setTimeout(() => checkStatusService(), 30000);
+						return () => clearTimeout(timer);
+					} else {
+						setLoading(false);
+						statusServiceResponse === 'ERROR' && addToast('ERROR: ' + response.message, {
+							appearance: 'error',
+							autoDismiss: false,
+						});
+					}
+				})
+				.fail(
+					"Error al consultar status del servicio",
+					() => {
+						setStatusService('ERROR');
+						setLoading(false);
+					}
+				);
+		};
+
+		(statusService === 'PENDIENTE' ||  statusService === 'EN PROCESO') && checkStatusService()
+	}, [statusService]);
 
 	/*CAMPOS PARA RELLENO DE FECHAS */
 	const fieldsFillDates: JSX.Element = <>
@@ -402,147 +464,150 @@ export const IndexOperationalData = () => {
 		{/* ---------------------------- */}
 		<hr />
 	</>
-	
-	return (
-		<>
-			<BaseContentView title='titles:operational_data'>
-				<Col sm={2} className='text-left mb-2 offset-10'>
-					<label><b>{input('date_project')}:</b></label>
-					<Datepicker
-						name={'start_date'} />
-				</Col>
-				<Col sm={3}>
-					<FileInputWithDescription
-						id={"inputFile"}
-						onChange={handleChangeFile}
-						onChangeDisplay={handleChangeDisplay}
-						display={display}
-						accept={["csv"]}
-					/>
-				</Col>
-				<Col sm={2}>
-					<Button variant="outline-primary" className='d-flex justify-content-start mr-3 btn-outline-primary' onClick={descargarEjemplo} >
-						Descargar ejemplo
-					</Button>
-				</Col>
 
-				<Col sm={3} className="offset-4">
-					<SearchBar onChange={doSearch} />
-				</Col>
-				<Col sm={12}>
-					{loadingg ? (
-						<BounceLoader css={{ margin: '2.25rem auto' } as any} color='var(--primary)' />
-					) : (
-						<ApiTable<OperationalDataImport>
-							columns={OperationalColumns(intl)}
-							source={operationalData ?? []}
-							search={search}
-							// onSelect={e => goto.relative('meta.details', { cotizacion: e })}
-							reload={reloadTable}
+	const modalFormVariables: JSX.Element = <>
+		<Modal show={modalVariable.visible} onHide={modalVariable.hide}>
+			<Modal.Header closeButton>
+				<b>Variables de operación</b>
+			</Modal.Header>
+			<Modal.Body>
+				<Row className="mb-3">
+					<Col sm={4}>
+						<label><b>Fill dates:</b></label><br></br>
+						<RadioSelect
+							style={{ display: "inline" }}
+							name='pay_total_quoted'
+							options={options}
+							value={variable.isRandomSampling}
+							onChange={e => setVariables(s => $u(s, { isRandomSampling: { $set: e } }))}
 						/>
-					)}
-				</Col>
+					</Col>
+				</Row>
 
-				<Col sm={2}>
-					<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={onClickEnviar} disabled={isVariable}>
-						Ver variables de operación
-					</Button>
-				</Col>
+				{variable.isRandomSampling === 'true' && fieldsFillDates}
+
+				<Row className="mb-3">
+					<Col sm={6}>
+						<Datepicker
+							label='Date start'
+							value={variable.xampleDateStart}
+							onChange={value => {
+								setVariables(state => $u(state, {
+									xampleDateStart: { $set: value }
+								}))
+							}}
+						/>
+					</Col>
+					<Col sm={6}>
+						<Datepicker
+							label='Date end'
+							value={variable.xampleDateEnd}
+							onChange={value => {
+								setVariables(state => $u(state, {
+									xampleDateEnd: { $set: value }
+								}))
+							}}
+						/>
+					</Col>
+				</Row>
+
+				{/* ---------------------------- */}
+				<hr />
+
+				<Row className="mb-3">
+					<Col sm={6}>
+						<Datepicker
+							label='Scale start'
+							value={variable.scalingDateStart}
+							onChange={value => {
+								setVariables(state => $u(state, {
+									samplingDatesStart: { $set: value }
+								}))
+							}}
+						/>
+					</Col>
+					<Col sm={6}>
+						<Datepicker
+							label='Scale end'
+							value={variable.scalingDateEnd}
+							onChange={value => {
+								setVariables(state => $u(state, {
+									samplingDatesEnd: { $set: value }
+								}))
+							}}
+						/>
+					</Col>
+				</Row>
+
+				{/* ---------------------------- */}
+
 				<Col sm={2} className="offset-8">
-					<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={onSimulateProjection} disabled={isVariable}>
-						Simular proyección
+					<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={onSubmitVariables}>
+						Guardar
 					</Button>
 				</Col>
 
+			</Modal.Body>
+		</Modal>
+	</>
 
-				<div>
-					<Modal show={modalVariable.visible} onHide={modalVariable.hide}>
-						<Modal.Header closeButton>
-							<b>Variables de operación</b>
-						</Modal.Header>
-						<Modal.Body>
-							<Row className="mb-3">
-								<Col sm={4}>
-									<label><b>Fill dates:</b></label><br></br>
-									<RadioSelect
-										style={{ display: "inline" }}
-										name='pay_total_quoted'
-										options={options}
-										value={variable.isRandomSampling}
-										onChange={e => setVariables(s => $u(s, { isRandomSampling: { $set: e } }))}
-									/>
-								</Col>
-							</Row>
+	const componentShowInModule: JSX.Element = <>
+		<Col sm={12} className='text-right'>
+			<h5>Fecha a proyectar: { variable.xampleDateStart+" / "+variable.xampleDateEnd}</h5>
+		</Col>
+		<Col sm={3}>
+			<FileInputWithDescription
+				id={"inputFile"}
+				onChange={handleChangeFile}
+				onChangeDisplay={handleChangeDisplay}
+				display={display}
+				accept={["csv"]}
+			/>
+		</Col>
+		<Col sm={2}>
+			<Button variant="outline-primary" className='d-flex justify-content-start mr-3 btn-outline-primary' onClick={descargarEjemplo} >
+				Descargar ejemplo
+			</Button>
+		</Col>
 
-							{ variable.isRandomSampling === 'true' && fieldsFillDates}
+		<Col sm={3} className="offset-4">
+			<SearchBar onChange={doSearch} />
+		</Col>
+		<Col sm={12}>
+			{loadingg ? (
+				<BounceLoader css={{ margin: '2.25rem auto' } as any} color='var(--primary)' />
+			) : (
+				<ApiTable<OperationalDataImport>
+					columns={OperationalColumns(intl)}
+					source={operationalData ?? []}
+					search={search}
+					// onSelect={e => goto.relative('meta.details', { cotizacion: e })}
+					reload={reloadTable}
+				/>
+			)}
+		</Col>
 
-							<Row className="mb-3">
-								<Col sm={6}>
-									<Datepicker
-										label='Date start'
-										value={variable.xampleDateStart}
-										onChange={value => {
-											setVariables(state => $u(state, {
-												xampleDateStart: { $set: value }
-											}))
-										}}
-									/>
-								</Col>
-								<Col sm={6}>
-									<Datepicker
-										label='Date end'
-										value={variable.xampleDateEnd}
-										onChange={value => {
-											setVariables(state => $u(state, {
-												xampleDateEnd: { $set: value }
-											}))
-										}}
-									/>
-								</Col>
-							</Row>
+		<Col sm={2}>
+			<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={onClickEnviar} disabled={isVariable}>
+				Ver variables de operación
+			</Button>
+		</Col>
+		<Col sm={2} className="offset-8">
+			<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={onSimulateProjection} disabled={isVariable}>
+				Simular proyección
+			</Button>
+		</Col>
 
-							{/* ---------------------------- */}
-							<hr />
+		<div>
+			{modalFormVariables}
+		</div>
+	</>
 
-							<Row className="mb-3">
-								<Col sm={6}>
-									<Datepicker
-										label='Scale start'
-										value={variable.scalingDateStart}
-										onChange={value => {
-											setVariables(state => $u(state, {
-												samplingDatesStart: { $set: value }
-											}))
-										}}
-									/>
-								</Col>
-								<Col sm={6}>
-									<Datepicker
-										label='Scale end'
-										value={variable.scalingDateEnd}
-										onChange={value => {
-											setVariables(state => $u(state, {
-												samplingDatesEnd: { $set: value }
-											}))
-										}}
-									/>
-								</Col>
-							</Row>
-
-							{/* ---------------------------- */}
-
-							<Col sm={2} className="offset-8">
-								<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={onSubmitVariables}>
-									Guardar
-								</Button>
-							</Col>
-
-						</Modal.Body>
-					</Modal>
-				</div>
-
-
-			</BaseContentView>
-		</>
+	return (
+		<BaseContentView title='titles:operational_data'>
+			{loadingData ? <LoadingSpinner /> : 
+				errorMessageModule.length > 0 ? <ShowMessageInModule message = {errorMessageModule}/> : componentShowInModule
+			}
+		</BaseContentView>
 	);
 };
