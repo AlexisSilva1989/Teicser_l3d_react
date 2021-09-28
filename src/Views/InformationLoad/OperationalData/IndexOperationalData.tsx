@@ -117,7 +117,7 @@ const inicialVariable: IVariables = {
 	xampleDateEnd: "",
 	scalingDateStart: "05-10-2018",
 	scalingDateEnd: "01-03-2021",
-	isRandomSampling: "false",
+	isRandomSampling: "true",
 	csv_import: undefined
 }
 
@@ -302,8 +302,8 @@ export const IndexOperationalData = () => {
 		setVariables(state => $u(state, {
 			fillDatesStart: { $set: $m(fechaMaxima).add(1, "day").format('DD-MM-YYYY') },
 			fillDatesEnd: { $set: $m(fechaMaxima).add(30, "days").format('DD-MM-YYYY') },
-			samplingDatesStart: { $set: $m(fechaMaxima).format('DD-MM-YYYY') },
-			samplingDatesEnd: { $set: $m(fechaMaxima).subtract(30, "days").format('DD-MM-YYYY') },
+			samplingDatesStart: { $set: $m(fechaMaxima).subtract(30, "days").format('DD-MM-YYYY')},
+			samplingDatesEnd: { $set: $m(fechaMaxima).format('DD-MM-YYYY')},
 		}))
 
 		modalVariable.show();
