@@ -12,6 +12,7 @@ import { ax } from '../../Common/Utils/AxiosCustom';
 import { Rol } from '../../Data/Models/Configuracion/Rol';
 import { Entidad } from '../../Data/Models/Configuracion/Entidad';
 import { Col, Row, Container, Table } from 'react-bootstrap';
+import { useLocalization } from '../../Common/Hooks/useLocalization';
 
 interface State {
 	data: {
@@ -53,6 +54,7 @@ export interface roleChange{
 export const AdministrarRoles = () => {
 	const { pushError } = usePushError();
 	const { capitalize: caps } = useFullIntl();
+    const { label, title, input , validation} = useLocalization();
 
 	const [entidadesPermiso, setEntidadesPermiso] = useState(initial.entidadesPermiso);
 	const [data, setData] = useState(initial.data);
@@ -143,6 +145,8 @@ export const AdministrarRoles = () => {
 		$(modalChangePermisson.current!).modal('hide');
 	}
 
+	console.log(entidadesPermiso , "entidadesPermiso")
+
 	return (
 		<BaseContentView title='titles:roles_management'>
 			<Container>
@@ -170,7 +174,10 @@ export const AdministrarRoles = () => {
 									entidadesPermiso && entidadesPermiso.map( (entity , i) =>{
 										return (
 											<tr key={i}>
-												<td> {entity.nombre.replace("_" , " ")} </td>
+												{/* <td> {entity.nombre.replace("_" , " ")} </td> */}
+
+												<td> { title(entity.nombre)} </td>
+
 												{
 													data.roles?.map( (role , i) => {
 														const permission = role.permisos.filter( permission => permission.id_entidad === entity.id )[0].nivel_permiso
