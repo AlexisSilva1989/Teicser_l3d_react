@@ -58,6 +58,7 @@ export const IndexReportsPdf = () => {
 	}
 
 	const pdfEliminar  = async (img: any) => {
+		setLoading(true);
 		api.get<any>($j('delete_pdf', img.id.toString())).success(e => {
 			setLoading(false);
 			doReloadTable()
@@ -113,10 +114,11 @@ export const IndexReportsPdf = () => {
 		formData.append("file", reportePdf.pdf);
 		formData.append("fecha", reportePdf.fecha);
 
-
+		setLoading(true);
 		await ax.patch('pdf_save', formData, headers)
 			.then((response) => {
 				doReloadTable()
+				setLoading(false);
 				addToast(caps('success:base.success'), {
 					appearance: 'success',
 					autoDismiss: true,

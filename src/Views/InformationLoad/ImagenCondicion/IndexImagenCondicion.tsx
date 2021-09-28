@@ -107,7 +107,7 @@ export const IndexImagenCondicion = () => {
 
 		formData.append("file", reportePdf.pdf);
 		formData.append("fecha", reportePdf.fecha);
-
+		setLoading(true);
 		await ax.post('img_save', formData, headers)
 			.then((response) => {
 				addToast(caps('success:base.success'), {
@@ -115,6 +115,7 @@ export const IndexImagenCondicion = () => {
 					autoDismiss: true,
 				});	
 				doReloadTable()
+				setLoading(false);
 			})
 			.catch((e: AxiosError) => {
 				if (e.response) {
