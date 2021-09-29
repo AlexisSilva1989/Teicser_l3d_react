@@ -8,7 +8,7 @@ import { useFullIntl } from '../../../../Common/Hooks/useFullIntl';
 import { ax } from '../../../../Common/Utils/AxiosCustom';
 import { LoadingSpinner } from '../../../../Components/Common/LoadingSpinner';
 import { ShowMessageInModule } from '../../../../Components/Common/ShowMessageInModule';
-import { IdataFormProjection,IDatesLastProjection } from '../Projection/FormProjection';
+import { IdataFormProjection} from '../Projection/FormProjection';
 
 interface IProps {
     resourceData: string

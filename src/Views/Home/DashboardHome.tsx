@@ -1,11 +1,4 @@
-import { AxiosError } from 'axios';
-import React, { useEffect, useState } from 'react';
-import { BounceLoader } from 'react-spinners';
-import { useToasts } from 'react-toast-notifications';
-import { useFullIntl } from '../../Common/Hooks/useFullIntl';
-import { ax } from '../../Common/Utils/AxiosCustom';
-import { DasboardHomeGraphs } from '../../Components/views/Home/DasboardHomeGraphs';
-import { DasboardHomeTargets } from '../../Components/views/Home/DasboardHomeTargets';
+import React from 'react';
 import { BaseContentView } from '../Common/BaseContentView';
 
 

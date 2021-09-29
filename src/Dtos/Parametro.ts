@@ -1,4 +1,3 @@
-import { useFullIntl } from '../Common/Hooks/useFullIntl';
 import { ColumnsPipe } from '../Common/Utils/LocalizedColumnsCallback';
 
 export interface Parametro {

@@ -1,15 +1,14 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React from 'react';
 import './../../Assets/scss/style.scss';
 import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { ValidatedForm, TEXTBOX, PASSWORD } from '../../Components/Forms/ValidatedForm';
 import { BaseLoginComponent } from './BaseLoginComponent';
-import { Links } from '../../Config/Links';
 import { ax } from '../../Common/Utils/AxiosCustom';
 import { AxiosError } from 'axios';
 import { AppearanceTypes, useToasts } from 'react-toast-notifications';
 import { useDashboard } from '../../Common/Hooks/useDashboard';
 import { $j } from '../../Common/Utils/Reimports';
-import  { Link, Redirect } from 'react-router-dom'
+import  { Link } from 'react-router-dom'
 
 export const RestablecerContrasena = () => {
 	const { capitalize: caps } = useFullIntl();

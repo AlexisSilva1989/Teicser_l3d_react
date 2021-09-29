@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Col, Tooltip, Row, OverlayTrigger } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { BaseContentView } from '../../Common/BaseContentView';
 import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
-import { $u, $j, $d } from '../../../Common/Utils/Reimports';
+import { $j, $d } from '../../../Common/Utils/Reimports';
 import { ApiTable } from '../../../Components/Api/ApiTable';
 import { LocalizedColumnsCallback } from '../../../Common/Utils/LocalizedColumnsCallback';
 import { useApi } from "../../../Common/Hooks/useApi";

@@ -8,7 +8,6 @@ import { logout } from '../../../Store/Dashboard/DashboardActionCreators';
 import { SearchBar } from '../../../Components/Forms/SearchBar';
 import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
 import { $u } from '../../../Common/Utils/Reimports';
-import { Links } from '../../../Config/Links';
 
 
 interface State {

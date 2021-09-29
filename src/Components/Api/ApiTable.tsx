@@ -168,9 +168,7 @@ export const ApiTable = <T extends unknown = any>(props: Props<T>) => {
 						if (e.response) { pushError('errors:base.load_any', { code: e.response.status }); }
 					});
 				} else {
-					console.log('props.isLoading: ', props.isLoading);
 					const loader = props.isLoading ? props.isLoading : false;
-					console.log('loader: ', loader);
 					setState((s) =>
 						$u(s, { $merge: { data: props.source as any, loading: loader } }));
 					if (onDataChange != null) { onDataChange(props.source as any); }

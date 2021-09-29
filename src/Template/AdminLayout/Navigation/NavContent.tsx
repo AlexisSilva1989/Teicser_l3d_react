@@ -12,19 +12,16 @@ import { IMenu, INotificationModule, IBadges } from '../../../Store/Dashboard/ID
 import { IAppState } from '../../../Store/AppStore';
 import { Dispatch, bindActionCreators } from 'redux';
 import { navContentLeave } from '../../../Store/Template/TemplateActionCreators';
-import { useNotifications } from '../../../Common/Hooks/useNotifications';
-import { ax } from '../../../Common/Utils/AxiosCustom';
-import { AxiosError } from 'axios';
 
-import { PUSHER_APP_KEY, PUSHER_APP_CLUSTER , PUSHER_APP_PORT} from '../../../Config';
+import { PUSHER_APP_KEY, PUSHER_APP_CLUSTER} from '../../../Config';
 
 //NUEVA IMPLEMENTACION PUSHER
-const client = new Pusher(PUSHER_APP_KEY, {
-	cluster: PUSHER_APP_CLUSTER
-});
+// const client = new Pusher(PUSHER_APP_KEY, {
+// 	cluster: PUSHER_APP_CLUSTER
+// });
 
 //SUBSCRIBE AL EVENTO DEL SERVIDOR
-const channel = client.subscribe('CH_NOTIFICATION');
+// const channel = client.subscribe('CH_NOTIFICATION');
 
 interface Props {
 	intl: IntlShape
@@ -48,7 +45,6 @@ type BadgeData = { [key: string]: number };
 
 const NavContent = (props: Props) => {
 
-	const { push } = useNotifications();
 	// const [badges, setBadgesState] = useState<BadgeData>({});
 	const badges = useSelector<IAppState, IBadges>( state => state.dashboard.badges  );
 
@@ -65,11 +61,11 @@ const NavContent = (props: Props) => {
 	// }, []);
 
     //ON EVENT FOR WEBSOCKET LARAVEL CON PUSHER
-	useEffect(() => {
-        channel.bind('NOTIFICATION', function (data:any) {
-            dispatch(setBadges(data.notification));
-        });
-	},[]);
+	// useEffect(() => {
+    //     channel.bind('NOTIFICATION', function (data:any) {
+    //         dispatch(setBadges(data.notification));
+    //     });
+	// },[]);
 
 	useEffect( () => {
 		if(props.notificationModule.module !== undefined){

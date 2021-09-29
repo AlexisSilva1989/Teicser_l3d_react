@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import './../../Assets/scss/style.scss';
 import { useDispatch } from 'react-redux';
 import { login } from '../../Store/Dashboard/DashboardActionCreators';
@@ -6,8 +6,7 @@ import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { ValidatedForm, TEXTBOX, PASSWORD } from '../../Components/Forms/ValidatedForm';
 import md5 from 'md5';
 import { BaseLoginComponent } from './BaseLoginComponent';
-import { Links } from '../../Config/Links';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export const Login = () => {
 	const { capitalize: caps } = useFullIntl();

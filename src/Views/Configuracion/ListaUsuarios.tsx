@@ -1,11 +1,9 @@
-import { ListaBase } from '../Common/ListaBase';
 import React, { useState, useCallback } from 'react';
 import { $j, $u } from '../../Common/Utils/Reimports';
 import { Usuario, UsuarioColumns } from '../../Data/Models/Configuracion/Usuario';
 import { CustomSelect } from '../../Components/Forms/CustomSelect';
-import { Col, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Col, Button } from 'react-bootstrap';
 import { BaseContentView } from '../Common/BaseContentView';
-import { BounceLoader } from 'react-spinners';
 import { ApiTable } from '../../Components/Api/ApiTable';
 import { useLocalization } from '../../Common/Hooks/useLocalization';
 import { useFullIntl } from '../../Common/Hooks/useFullIntl';
@@ -16,10 +14,10 @@ import { useCommonRoutes } from "../../Common/Hooks/useCommonRoutes";
 
 export const ListaUsuarios = () => {
 	const [search, doSearch] = useSearch();
-	const { meta , column, label} = useLocalization();
-	const { intl, capitalize: caps, localize } = useFullIntl();
+	const { meta } = useLocalization();
+	const { intl } = useFullIntl();
 	const { goto } = useNavigation();
-	const { gotoModify, gotoDetails } = useCommonRoutes();
+	const { gotoModify } = useCommonRoutes();
 
 	const [filter, setFilter] = useState<{ tipo: string; usuario?: Usuario }>({
 		tipo: '1'
