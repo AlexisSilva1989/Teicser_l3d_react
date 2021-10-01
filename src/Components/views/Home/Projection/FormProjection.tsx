@@ -7,6 +7,7 @@ import { useLocalization } from '../../../../Common/Hooks/useLocalization';
 import Select from 'react-select';
 import { $m } from '../../../../Common/Utils/Reimports';
 import { Textbox } from '../../../Forms/Textbox';
+import { Format } from '../../../../Dtos/Utils';
 
 interface IProps {
     onSubmit: (data: IdataFormProjection) => void
@@ -14,9 +15,12 @@ interface IProps {
     isSaving?: boolean
     textButtonSubmit?: string
     dateFillEnd:string | undefined
+    typeProjection: string
     onChangeDate?: (dateFill : string) => void
+    onChangeTypeProjection?: (typeProjection : string) => void
     daysProjection:string
     dataInitialForm?: IdataFormProjection
+    dataPromedio? : IDataPromedio
 }
 
 export interface IDatesLastProjection {
@@ -40,6 +44,13 @@ export interface IdataFormProjection {
     tonsForChange: string
     last_date_measurement?: string
     dates_last_projection? : IDatesLastProjection
+}
+
+export interface IDataPromedio {
+	BOLAS_TON: string
+	DWI: string
+	TRAT_SAG_1011: string
+	VEL_RPM: string
 }
 
 const optionsTypeProjection = [
@@ -76,9 +87,12 @@ const FormProjection = ({
     textButtonSubmit,
     lastDateProjection, 
     dateFillEnd ,
+    typeProjection,
     onChangeDate,
+    onChangeTypeProjection,
     daysProjection,
-    dataInitialForm }:IProps) => {
+    dataInitialForm,
+    dataPromedio }:IProps) => {
         
     /*HOOKS */
     const { input, title } = useLocalization();
@@ -94,7 +108,7 @@ const FormProjection = ({
             isDataPercent: dataInitialForm ? dataInitialForm.isDataPercent : "false",
             type_projection : dataInitialForm 
                 ? optionsTypeProjection[findOptionsTypeProjection(dataInitialForm.type_projection as string)] 
-                : optionsTypeProjection[0]
+                : optionsTypeProjection[findOptionsTypeProjection(typeProjection)]
         }
     });
 
@@ -103,6 +117,10 @@ const FormProjection = ({
         dateFillEnd !== undefined && setValue('date_project',dateFillEnd);
     },[dateFillEnd]);
 
+    const cy = (data: string) =>{
+        console.log('data: ', data);
+        setValue('type_projection',data)
+    }
     return (<form onSubmit={handleSubmit(onSubmit)}>
         <Row className='text-left mt-2'>
             <Col sm={2} className='text-left mb-2'>
@@ -111,9 +129,12 @@ const FormProjection = ({
                     id="type_projection"
                     name="type_projection"
                     control={control}
-                    // defaultValue={optionsTypeProjection[0]}
-                    rules={{ required: {value:true, message:'Complete este campo'} }}
                     as =  {Select}
+                    onChange={(data)=>{
+                        onChangeTypeProjection !== undefined && onChangeTypeProjection(data[0].value)
+                        return data[0];
+                    }}
+                    rules={{ required: {value:true, message:'Complete este campo'} }}
                     options={optionsTypeProjection}
                 />
                 {errors.type_projection && <small className='text-danger'>
@@ -162,22 +183,22 @@ const FormProjection = ({
                         <hr/>
                         <Col sm={4}>Tonelaje a procesado</Col>
                         <Col sm={4}><Textbox id="trat_sag" name="trat_sag" onlyNumber={true} ref={register()} /></Col>
-                        <Col sm={4}> <strong>Ton/día</strong>	</Col>
+                        <Col sm={4}> <strong>{dataPromedio?.TRAT_SAG_1011} Ton/día</strong>	</Col>
                         
                         <hr/>
                         <Col sm={4}>Velocidad</Col>
                         <Col sm={4}><Textbox id="vel_rpm" name="vel_rpm" onlyNumber={true} ref={register()}/></Col>
-                        <Col sm={4}> <strong>RPM</strong></Col>
+                        <Col sm={4}> <strong>{dataPromedio?.VEL_RPM} RPM</strong></Col>
 
                         <hr/>
-                        <Col sm={4}> Dureza DWI</Col>
+                        <Col sm={4}>Dureza DWI</Col>
                         <Col sm={4}><Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()}/></Col>
-                        <Col sm={4}><strong>DWI</strong></Col>
+                        <Col sm={4}><strong>{dataPromedio?.DWI} DWI</strong></Col>
 
                         <hr/>
                         <Col sm={4}>Carguío Bolas</Col>
                         <Col sm={4}><Textbox id="bolas_ton" name="bolas_ton" onlyNumber={true} ref={register()}/></Col>
-                        <Col sm={4}><strong>Ton/día</strong></Col>
+                        <Col sm={4}><strong>{dataPromedio?.BOLAS_TON} Ton/día</strong></Col>
                     </Card.Body>
                 </Card>
             </Col>
@@ -188,7 +209,9 @@ const FormProjection = ({
                         <Col sm={12}><h4>{title("changes_of_senses")}</h4></Col>
                         <hr/>
                         <Col sm={8}>Toneladas para cambio de sentido de giro</Col>
-                        <Col sm={4}><Textbox id="tonsForChange" name="tonsForChange" onlyNumber={true} ref={register()}/></Col>
+                        <Col sm={4}><Textbox id="tonsForChange" name="tonsForChange" 
+                            format="NUMBER-SEPARATOR"
+                            ref={register()}/></Col>
                     </Card.Body>
                 </Card>
             </Col> 
