@@ -10,7 +10,6 @@ import { IndexCalibration } from "../Views/InformationLoad/Calibration/IndexCali
 
 import { IndexInformation } from "../Views/Reports/Information/IndexInformation";
 import { IndexRecords } from "../Views/Reports/Records/IndexRecords";
-import { IndexDashboard } from "../Views/Reports/Dashboard/IndexDashboard";
 import { IndexMeasurement } from "../Views/Reports/Measurement/IndexMeasurement";
 import { IndexProjection } from "../Views/Reports/Projection/IndexProjection";
 

@@ -1,8 +1,9 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, ChangeEvent } from 'react';
 import React from 'react';
 import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { useRut  } from '../../Common/Hooks/useRut';
 import { ONLY_NUMBER } from '../../Enums';
+import { Format } from '../../Dtos/Utils';
 
 interface Props {
 	label?: string
@@ -16,13 +17,15 @@ interface Props {
 	isValidateRut?: boolean
 	//filterPattern?:RegExp
 	placeholder?: string
-	onChange?: (e: string) => void
+	onChangeReturnEvent?: boolean
+	onChange?: (e: string | ChangeEvent<HTMLInputElement>) => void
 	hidden?: boolean 
+	format?: "RUT" | "NUMBER-SEPARATOR"
 }
 
 export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInputElement>) => {
 	const { capitalize: caps } = useFullIntl();
-	const { onChange } = props;
+	const { onChange, onChangeReturnEvent, format} = props;
  
 	const [init, setInit] = useState(false);
 	const [value, setValue] = useState<string>();
@@ -43,6 +46,22 @@ export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInput
 			setInit(true);
 		}
 	}, [init, setInit, onChange, props.value]);
+
+	const formatValue = (value: string)=>{
+		let stringFormat : string | undefined = undefined;
+		if(props.onlyNumber == true){
+			stringFormat = "NUMBER"
+		}
+		if(props.format != null){
+			stringFormat = props.format
+		}
+		const formats : {[x: string]: string} = {
+			'NUMBER' : value.replace(ONLY_NUMBER, '').toString(), 
+			'NUMBER-SEPARATOR' : Format.number_format(value.replace(ONLY_NUMBER, '').toString(),0)
+		}
+		let valueFormated : string = stringFormat != undefined ? formats[stringFormat] : value;
+		return valueFormated;
+	}
 
 	return <Fragment>
 	
@@ -72,11 +91,13 @@ export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInput
                    }
 				}} 
 				
-				onChange={(e) => {
-					let {value} = e.currentTarget;
-					value = props.onlyNumber === true ? value.replace(ONLY_NUMBER, '').toString() : value ;
-					props.onChange != null ? props.onChange(value) : e.currentTarget.value = value;
-                   	
+				onChange={(event) => {
+					let {value} = event.currentTarget;
+					if(format != null || props.onlyNumber == true){value = formatValue(value)}
+					event.currentTarget.value = value;
+					let returnValue = onChangeReturnEvent === true ? event : value
+					if(props.onChange != null){	props.onChange(returnValue)}
+					
 				}}
 			/>
 

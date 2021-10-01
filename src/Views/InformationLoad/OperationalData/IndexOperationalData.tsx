@@ -139,7 +139,6 @@ export const IndexOperationalData = () => {
 	/*HOOOKS */
 	const api = useApi();
 	const modalVariable = useShortModal();
-	const { input, title } = useLocalization();
 	const { capitalize: caps, intl } = useFullIntl();
 	const { setLoading } = useDashboard();
 	const { addToast } = useToasts();
@@ -221,22 +220,10 @@ export const IndexOperationalData = () => {
 	}
 
 	function ExcelDateToJSDate(data: OperationalDataImport, index: number) {
-
-		var monthIndex = [
-			1, 2, 3,
-			4, 5, 6,
-			7, 8, 9,
-			10, 11, 12
-		];
-
-		var utc_days = Math.floor(data.TIMESTAMP - 25568);
-		var utc_value = utc_days * 86400;
-		var date_info = new Date(utc_value * 1000);
-
-		const date = date_info.getFullYear() + "/" + monthIndex[date_info.getMonth()] + "/" + date_info.getDate()
-
-		// setOperationalData(s => $u(s, { [index]: { TIMESTAMP_NEW: { $set: date } } }));
-
+		var dt = new Date (1900,0,0);
+		dt.setDate (dt.getDate () + data.TIMESTAMP);
+		const date = $m(dt).format('YYYY-MM-DD');
+		
 		const initial = {
 			TIMESTAMP: data.TIMESTAMP,
 			TIMESTAMP_NEW: date,
@@ -279,8 +266,7 @@ export const IndexOperationalData = () => {
 	}
 
 	/* Handlers */
-	function onClickEnviar() {
-
+	useEffect(() => {
 		const fechaMaxima = operationalData.reduce((accumulator, currentValue) => {
 
 			if (accumulator == "") {
@@ -306,9 +292,8 @@ export const IndexOperationalData = () => {
 			samplingDatesEnd: { $set: $m(fechaMaxima).format('DD-MM-YYYY')},
 		}))
 
-		modalVariable.show();
-
-	}
+		
+	}, [operationalData])
 
 	const onSimulateProjection = async () => {
 		const formData = new FormData();
@@ -325,7 +310,6 @@ export const IndexOperationalData = () => {
 				setStatusService('EN PROCESO')
 			})
 			.fail("No se pudo consumir el servicio");
-		console.log(variable)
 	}
 
 	const descargarEjemplo = () => {
@@ -338,10 +322,6 @@ export const IndexOperationalData = () => {
 				autoDismiss: true,
 			});
 		}).fail('base.post');
-	}
-
-	const onSubmitVariables = () => {
-		modalVariable.hide()
 	}
 
 	/*EFFECTS */
@@ -465,6 +445,7 @@ export const IndexOperationalData = () => {
 		<hr />
 	</>
 
+	/*MODAL PARA FORMULARIO DE VARIABLES */
 	const modalFormVariables: JSX.Element = <>
 		<Modal show={modalVariable.visible} onHide={modalVariable.hide}>
 			<Modal.Header closeButton>
@@ -541,16 +522,17 @@ export const IndexOperationalData = () => {
 
 				{/* ---------------------------- */}
 
-				<Col sm={2} className="offset-8">
-					<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={onSubmitVariables}>
+				{/* <Col sm={2} className="offset-8">
+					<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={()=>{modalVariable.hide()}}>
 						Guardar
 					</Button>
-				</Col>
+				</Col> */}
 
 			</Modal.Body>
 		</Modal>
 	</>
 
+	/*ELEMENTOS DEL MODULO */
 	const componentShowInModule: JSX.Element = <>
 		<Col sm={12} className='text-right'>
 			<h5>Fecha a proyectar: { variable.xampleDateStart+" / "+variable.xampleDateEnd}</h5>
@@ -588,7 +570,7 @@ export const IndexOperationalData = () => {
 		</Col>
 
 		<Col sm={2}>
-			<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={onClickEnviar} disabled={isVariable}>
+			<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={()=>{modalVariable.show()}} disabled={isVariable}>
 				Ver variables de operación
 			</Button>
 		</Col>

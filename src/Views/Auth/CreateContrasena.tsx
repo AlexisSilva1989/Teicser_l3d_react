@@ -1,7 +1,5 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './../../Assets/scss/style.scss';
-import { useDispatch } from 'react-redux';
-import { login } from '../../Store/Dashboard/DashboardActionCreators';
 import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { ValidatedForm, TEXTBOX, PASSWORD } from '../../Components/Forms/ValidatedForm';
 import md5 from 'md5';

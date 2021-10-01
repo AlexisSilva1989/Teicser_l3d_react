@@ -17,8 +17,6 @@ import { ISetContentOnly } from '../Template/TemplateActionType';
 import { IUserPermission } from '../../Common/Utils/IUserPermission';
 import { ax, axf } from '../../Common/Utils/AxiosCustom';
 import { AxiosError } from 'axios';
-import { trimLeft } from 'voca';
-
 
 function pushErrors(errors: IErrorSummary[]): IPushErrors {
 	return {

@@ -4,7 +4,7 @@ import { Col } from 'react-bootstrap';
 
 import { BaseContentView } from '../../Common/BaseContentView';
 import { useApi } from "../../../Common/Hooks/useApi";
-import FormProjection, { IdataFormProjection, IDatesLastProjection } from '../../../Components/views/Home/Projection/FormProjection';
+import FormProjection, { IdataFormProjection, IDataPromedio, IDatesLastProjection } from '../../../Components/views/Home/Projection/FormProjection';
 import { ShowMessageInModule } from '../../../Components/Common/ShowMessageInModule';
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
 import SimulacionGrafica from '../../../Components/views/Home/simulation/SimulacionGrafica';
@@ -29,7 +29,9 @@ export const IndexProjection = () => {
 	const [dataForm, setDataForm] = useState<IdataFormProjection>();
 	const [daysProjection, setDaysProjection] = useState<string>(countDaysToProjection.toString())
 	const [dateFillEnd, setDateFillEnd] = useState<string>()
-
+	const [typeProjection, setTypeProjection] = useState<string>('projection30Days')
+	const [dataPromedio, setDataPromedio] = useState<IDataPromedio>()
+	
 	/*HOOKS */
 	const api = useApi();
 	const { setLoading } = useDashboard();
@@ -44,6 +46,7 @@ export const IndexProjection = () => {
 		data.type_projection = type_projection_value['value'];
 		data.dates_last_projection = datesLastProjection;
 		data.last_date_measurement = lastDateProjection;
+		data.tonsForChange = data.tonsForChange.replace(/,/g,"");
 		await api.post("service_render/projection_operational_var", data)
 			.success((response) => { setStatusService('EN PROCESO') })
 			.fail("No se pudo consumir el servicio", null, () => { setLoading(false); });
@@ -53,6 +56,10 @@ export const IndexProjection = () => {
 		setDateFillEnd(dateFill);
 	};
 
+	const onChangeTypeProjection = (typeProjection: string) => {
+		setTypeProjection(typeProjection);
+	};
+
 	/*EFFECTS */
 	/*OBTENER DATOS ASOCIADOS A LA PROYECCION */
 	useEffect(() => {
@@ -60,11 +67,12 @@ export const IndexProjection = () => {
 			interface responseInfoRender {
 				historial_data_render: IDatesLastProjection,
 				info_medicion: { fecha_medicion: string }
+				data_promedio: IDataPromedio
 			}
 
 			const errors : string[] = [];
 
-			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated",EQUIPO_ID))
+			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated",EQUIPO_ID,typeProjection))
 				.success((response) => {
 		
 					response.info_medicion === null
@@ -74,16 +82,23 @@ export const IndexProjection = () => {
 					response.historial_data_render === null 
 						? errors.push('No se han encontrado datos operacionales')
 						: setDatesLastProjection(response.historial_data_render)
+					
+					response.data_promedio === null 
+						? errors.push('No se ha obtenido la data promedio')
+						: setDataPromedio(response.data_promedio)
 				})
-				.fail("Error al consultar los datos de simulación", () => { setLastDateProjection(undefined) })
+				.fail("Error al consultar los datos de simulación", () => { 
+					setLastDateProjection(undefined)
+					errors.push('Se ha producido un error obteniendo los datos asociados a la proyección')
+				})
 				.finally(()=>{
 					setLoadingData(false)
 					setErrorMessageModule(errors);
 				});
 		};
-
+		setLoadingData(true);
 		getLastDataSimulated()
-	}, []);
+	}, [typeProjection]);
 
 	/*OBTENER ESTATUS DEL SERVICIO */
 	useEffect(() => {
@@ -137,7 +152,6 @@ export const IndexProjection = () => {
 			setDateFillEnd(($m(lastDateProjection, 'DD-MM-YYYY').add(countDaysToProjection, 'days')).format('DD-MM-YYYY'))
 	}, [lastDateProjection])
 
-
 	const simulacionGrafica: JSX.Element = (<>
 		<SimulacionGrafica
 			resourceData='service_render/data_projection_operational_var'
@@ -161,9 +175,12 @@ export const IndexProjection = () => {
 				textButtonSubmit={"Simular proyección"}
 				lastDateProjection={lastDateProjection}
 				dateFillEnd={dateFillEnd}
+				typeProjection={typeProjection}
 				daysProjection={daysProjection}
 				onChangeDate={onChangeDate}
+				onChangeTypeProjection={onChangeTypeProjection}
 				dataInitialForm={dataForm}
+				dataPromedio = {dataPromedio}
 			/>
 		</Col>
 	</>)

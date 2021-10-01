@@ -8,8 +8,8 @@ import { ErrorView } from './Components/Common/Notifications';
 import { useDashboard } from './Common/Hooks/useDashboard';
 import DocumentTitle from 'react-document-title';
 import { useCurrenteNameModule } from './Common/Hooks/useCurrenteNameModule';
-import { DefaultToast, ToastProps, ToastProvider, useToasts, ToastConsumer } from 'react-toast-notifications';
-import { Route, Switch , Redirect } from 'react-router-dom';
+import { DefaultToast, ToastProps, ToastProvider} from 'react-toast-notifications';
+import { Route, Switch } from 'react-router-dom';
 import { CreateContrasena } from './Views/Auth/CreateContrasena';
 import { RestablecerContrasena } from './Views/Auth/RestablecerContrasena';
 

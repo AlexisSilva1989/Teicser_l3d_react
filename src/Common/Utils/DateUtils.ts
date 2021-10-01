@@ -1,5 +1,5 @@
-import { Moment, unitOfTime } from 'moment';
-import { $m, moment, IMoment } from './Reimports';
+import { unitOfTime } from 'moment';
+import { $m, IMoment } from './Reimports';
 export class DateUtils {
 	static dmyToMoment = (date: string, prefix = '-') => $m(date, ['DD', 'MM', 'YYYY'].join(prefix));
 	static dmyToYmd = (date: string, prefix = '-') => DateUtils.dmyToMoment(date, prefix).format(['YYYY', 'MM', 'DD'].join(prefix));

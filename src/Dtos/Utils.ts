@@ -72,4 +72,15 @@ export class Format {
         return amount_parts.join('.');
 
 	};
+
+	/**CONVERTIR UN NUMERO EN FORMATO ESPECIFICO CON NUMBERFORMAT DE JS */
+	static parse_number_format = (number : number | string , decimals: number = 2, separator: string = 'point') => {
+		number = parseFloat(number.toLocaleString());
+		const formats : {[x: string]: string} = {
+			'point' : "de-DE", // → 123.456,789
+			'comma' : "en-EN" // → 123,456.789
+		}
+		
+		return new Intl.NumberFormat(formats['point'],{maximumFractionDigits: decimals}).format(number)
+	}
 }

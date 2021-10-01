@@ -1809,10 +1809,10 @@
 	"labels:projectionTo30Days": "30 últimos días",
 	"labels:ProjectionComplete": "campaña completa",
 	"menus:records": "archivos",
-	"menus:projection": "variables operativas",
-	"menus:measurement": "condición laser",
+	"menus:projection": "Proyección con cambio en variables operativas",
+	"menus:measurement": "condición láser",
 	"menus:dashboard": "dashboard",
-	"menus:simulation_days": "proyección 30 días",
+	"menus:simulation_days": "proyección a 30 días",
 	"menus:image_condicion": "imagen de condición",
 	"menus:gemelo_digital": "gemelo digital",
 
@@ -2341,7 +2341,7 @@
 	"routes:base.projection": "variables_operativas",
 	"routes:base.projectionDays": "proyeccion_dias",
 	"routes:base.projectionCampaign": "proyeccion_campania",
-	"routes:base.measurement": "condición laser",
+	"routes:base.measurement": "condición láser",
 	"routes:base.dashboard": "dashboard",
 	"routes:base.simulation_days": "simulacion",
 
