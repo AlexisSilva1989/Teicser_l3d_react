@@ -22,7 +22,7 @@ const SimulacionDias = () => {
 			}
 
 			const errors : string[] = [];
-			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated/",EQUIPO_ID))
+			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated/",EQUIPO_ID,"original"))
 				.success((response) => {
 					response.historial_data_render === null 
 						? errors.push('No se han encontrado datos operacionales')
