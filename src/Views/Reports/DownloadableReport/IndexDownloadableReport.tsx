@@ -78,7 +78,7 @@ export const IndexDownloadableReport = () => {
 				</OverlayTrigger>
 			</Col>
 
-			<Col sm={6}>
+			{/* <Col sm={6}>
 				<OverlayTrigger
 						placement="top"
 						overlay={
@@ -89,7 +89,7 @@ export const IndexDownloadableReport = () => {
 						>
 						<i className='fas fas fa-trash-alt' style={{ cursor: 'pointer', color: '#09922C' }} onClick={() => pdfEliminar(pdf)}/> 
 				</OverlayTrigger>
-			</Col>
+			</Col> */}
 
 			</>
 		)
