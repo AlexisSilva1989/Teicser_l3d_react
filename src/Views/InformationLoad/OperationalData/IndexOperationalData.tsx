@@ -315,7 +315,7 @@ export const IndexOperationalData = () => {
 	const descargarEjemplo = () => {
 		setLoading(true);
 		api.get<string | Blob | File>($j('ejemplo_variables'), { responseType: 'blob' }).success(e => {
-			$d(e, 'ejemplo_carga_variables.xlsx');
+			$d(e, 'carga_variables_ejemplo.csv');
 			setLoading(false);
 			addToast(caps('success:base.success'), {
 				appearance: 'success',
