@@ -39,7 +39,9 @@ const SimulacionDias = () => {
 	}, []);
 
 	const simulacionGrafica : JSX.Element = <>
-		<SimulacionGrafica resourceData={$j('service_render/data_proyeccion_dias',EQUIPO_ID)}
+		<SimulacionGrafica 
+			// resourceData={$j('service_render/data_proyeccion_dias',EQUIPO_ID)}
+			resourceData={$j('service_render/extend/data_proyeccion',EQUIPO_ID)}
 			showLegend={false}
 			dateStart={$m(datesLastProjection?.fecha_start_xample).format('DD-MM-YYYY')}
 			dateEnd={$m(datesLastProjection?.fecha_end_xample).format('DD-MM-YYYY')}

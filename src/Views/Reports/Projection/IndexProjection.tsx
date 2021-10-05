@@ -154,7 +154,8 @@ export const IndexProjection = () => {
 
 	const simulacionGrafica: JSX.Element = (<>
 		<SimulacionGrafica
-			resourceData='service_render/data_projection_operational_var'
+			// resourceData='service_render/data_projection_operational_var'
+			resourceData='service_render/extend/data_projection_operational_var'
 			dataForm={dataForm}
 			dateStart={lastDateProjection}
 			dateEnd={dateFillEnd}

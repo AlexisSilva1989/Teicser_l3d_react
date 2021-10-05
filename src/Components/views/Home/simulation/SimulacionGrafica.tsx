@@ -53,7 +53,7 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
 
     /*MEMOS */  
     const axes = useMemo(() => [
-            { primary: true, position: "bottom", type: "linear", show: true ,  showTicks: false},
+            { label:"x", primary: true, position: "bottom", type: "linear", show: true ,  showTicks: false},
             { position: "left", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500 ,  showTicks: false},
         ], []
     );
@@ -96,7 +96,7 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
     const graph : JSX.Element = <>
         <Col xl='6'>
             <Col sm="12" style={{ height: '250px'}}>
-                <Chart data={data} axes={axes} series={series} getSeriesStyle={getSeriesStyle} />
+                <Chart data={data} axes={axes} series={series} getSeriesStyle={getSeriesStyle} tooltip/>
             </Col>
             <Form.Group as={Row}>
                 <Form.Label column sm="3" className={'text-right'}> 
