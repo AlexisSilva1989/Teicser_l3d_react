@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import { Controller, useForm } from 'react-hook-form';
 import { Datepicker } from '../../../Forms/Datepicker';
@@ -7,7 +7,6 @@ import { useLocalization } from '../../../../Common/Hooks/useLocalization';
 import Select from 'react-select';
 import { $m } from '../../../../Common/Utils/Reimports';
 import { Textbox } from '../../../Forms/Textbox';
-import { Format } from '../../../../Dtos/Utils';
 
 interface IProps {
     onSubmit: (data: IdataFormProjection) => void
@@ -93,10 +92,13 @@ const FormProjection = ({
     daysProjection,
     dataInitialForm,
     dataPromedio }:IProps) => {
-        
+    
+    /*STATES */
+    const [showLabelPercent, setShowLabelPercent] = useState<boolean>();
+
     /*HOOKS */
     const { input, title } = useLocalization();
-    const { handleSubmit, register, errors, control, setValue } = useForm<IdataFormProjection>({
+    const { handleSubmit, register, errors, control, setValue, getValues } = useForm<IdataFormProjection>({
         mode: "onSubmit",
         submitFocusError: true,
         defaultValues:{
@@ -117,10 +119,11 @@ const FormProjection = ({
         dateFillEnd !== undefined && setValue('date_project',dateFillEnd);
     },[dateFillEnd]);
 
-    const cy = (data: string) =>{
-        console.log('data: ', data);
-        setValue('type_projection',data)
-    }
+    useEffect(() => {
+        setShowLabelPercent(getValues('isDataPercent') === "true")
+    },[]);
+
+    
     return (<form onSubmit={handleSubmit(onSubmit)}>
         <Row className='text-left mt-2'>
             <Col sm={2} className='text-left mb-2'>
@@ -162,7 +165,7 @@ const FormProjection = ({
                     readonly={true} 
                     value={daysProjection} />
             </Col>
-  
+
         </Row>
 
         <Row className='text-left mt-2'>
@@ -177,27 +180,51 @@ const FormProjection = ({
                                 control={control}
                                 as =  {RadioSelect}
                                 options={optionsTypeData}
+                                onChange={(value)=>{
+                                    setShowLabelPercent(value[0] === "true")
+                                    return value[0]
+                                }}
                             />
                         </Col>
                         
                         <hr/>
                         <Col sm={4}>Tonelaje a procesado</Col>
-                        <Col sm={4}><Textbox id="trat_sag" name="trat_sag" onlyNumber={true} ref={register()} /></Col>
+                        <Col sm={4}>
+                            <div className='d-flex align-items-center'>
+                                <Textbox id="trat_sag" name="trat_sag" onlyNumber={true} ref={register()}/>
+                                {showLabelPercent && <span className="ml-2">%</span>}
+                            </div>
+                        </Col>
                         <Col sm={4}> <strong>{dataPromedio?.TRAT_SAG_1011} Ton/día</strong>	</Col>
                         
                         <hr/>
                         <Col sm={4}>Velocidad</Col>
-                        <Col sm={4}><Textbox id="vel_rpm" name="vel_rpm" onlyNumber={true} ref={register()}/></Col>
+                        <Col sm={4}>
+                            <div className='d-flex align-items-center'>
+                                <Textbox id="vel_rpm" name="vel_rpm" onlyNumber={true} ref={register()}/>
+                                {showLabelPercent && <span className="ml-2">%</span>}
+                            </div>
+                        </Col>
                         <Col sm={4}> <strong>{dataPromedio?.VEL_RPM} RPM</strong></Col>
 
                         <hr/>
                         <Col sm={4}>Dureza DWI</Col>
-                        <Col sm={4}><Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()}/></Col>
+                        <Col sm={4}>
+                            <div className='d-flex align-items-center'>
+                                <Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()}/>
+                                {showLabelPercent && <span className="ml-2">%</span>}
+                            </div>
+                        </Col>
                         <Col sm={4}><strong>{dataPromedio?.DWI} DWI</strong></Col>
 
                         <hr/>
                         <Col sm={4}>Carguío Bolas</Col>
-                        <Col sm={4}><Textbox id="bolas_ton" name="bolas_ton" onlyNumber={true} ref={register()}/></Col>
+                        <Col sm={4}>
+                            <div className='d-flex align-items-center'>
+                                <Textbox id="bolas_ton" name="bolas_ton" onlyNumber={true} ref={register()}/>
+                                {showLabelPercent && <span className="ml-2">%</span>}
+                            </div>
+                        </Col>
                         <Col sm={4}><strong>{dataPromedio?.BOLAS_TON} Ton/día</strong></Col>
                     </Card.Body>
                 </Card>
