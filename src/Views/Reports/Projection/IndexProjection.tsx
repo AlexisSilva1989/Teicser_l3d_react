@@ -8,7 +8,7 @@ import FormProjection, { IdataFormProjection, IDataPromedio, IDatesLastProjectio
 import { ShowMessageInModule } from '../../../Components/Common/ShowMessageInModule';
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
 import SimulacionGrafica from '../../../Components/views/Home/simulation/SimulacionGrafica';
-import { $m, $j } from '../../../Common/Utils/Reimports';
+import { $m, $j, $u } from '../../../Common/Utils/Reimports';
 import { DateUtils } from '../../../Common/Utils/DateUtils';
 import { LoadingSpinner } from '../../../Components/Common/LoadingSpinner';
 
@@ -42,7 +42,19 @@ export const IndexProjection = () => {
 	const handleSubmitProjection = async (data: IdataFormProjection) => {
 		setLoading(true);
 		const type_projection_value: { [key: string]: any } = JSON.parse(JSON.stringify(data.type_projection));
+		const trag_sag : string= data.trat_sag !== "" ? data.trat_sag : dataPromedio !== undefined ? dataPromedio.TRAT_SAG_1011 : "";
+		const dwi = data.dwi !== "" ? data.dwi :  dataPromedio !== undefined ? dataPromedio?.DWI : "";
+		const vel_rpm = data.vel_rpm !== "" ? data.vel_rpm :  dataPromedio !== undefined ?  dataPromedio?.VEL_RPM : "";
+		const bolas_ton = data.bolas_ton !== "" ? data.bolas_ton :  dataPromedio !== undefined ? dataPromedio?.BOLAS_TON : "";
 		setDataForm(data);
+		setDataPromedio(state => $u(state, {
+			$set:{
+				VEL_RPM: vel_rpm,
+				BOLAS_TON: bolas_ton,
+				DWI: dwi,
+				TRAT_SAG_1011: trag_sag
+			}
+		}));
 		data.type_projection = type_projection_value['value'];
 		data.dates_last_projection = datesLastProjection;
 		data.last_date_measurement = lastDateProjection;
@@ -156,7 +168,7 @@ export const IndexProjection = () => {
 		<SimulacionGrafica
 			// resourceData='service_render/data_projection_operational_var'
 			resourceData='service_render/extend/data_projection_operational_var'
-			dataForm={dataForm}
+			dataForm={dataPromedio}
 			dateStart={lastDateProjection}
 			dateEnd={dateFillEnd}
 			returnFunction={() => { setStatusService(undefined) }}

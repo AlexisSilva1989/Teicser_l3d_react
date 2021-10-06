@@ -8,11 +8,11 @@ import { useFullIntl } from '../../../../Common/Hooks/useFullIntl';
 import { ax } from '../../../../Common/Utils/AxiosCustom';
 import { LoadingSpinner } from '../../../../Components/Common/LoadingSpinner';
 import { ShowMessageInModule } from '../../../../Components/Common/ShowMessageInModule';
-import { IdataFormProjection} from '../Projection/FormProjection';
+import { IdataFormProjection, IDataPromedio} from '../Projection/FormProjection';
 
 interface IProps {
     resourceData: string
-    dataForm?: IdataFormProjection
+    dataForm?: IDataPromedio
     returnFunction?: () => void
     showLegend?: boolean
     dateStart?: string
@@ -68,20 +68,20 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
                 <p> Simulación realizada con <b>últimos 30 días</b></p>
             </Row>
             <Row>
-                {dataForm?.trat_sag && <Col xl='6' className="mb-2" style={styleListOperationalVar }>
-                    <p> Tonelaje <b>{dataForm.trat_sag}</b></p>
+                {dataForm?.TRAT_SAG_1011 && <Col xl='6' className="mb-2" style={styleListOperationalVar }>
+                    <p> Tonelaje <b>{dataForm.TRAT_SAG_1011}</b></p>
                 </Col>}
 
-                {dataForm?.vel_rpm && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
-                    <p> Velocidad <b>{dataForm.vel_rpm}</b></p>
+                {dataForm?.VEL_RPM && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                    <p> Velocidad <b>{dataForm.VEL_RPM}</b></p>
                 </Col>}
                 
-                {dataForm?.dwi && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
-                    <p> Dureza <b>{dataForm.dwi}</b> </p>
+                {dataForm?.DWI && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                    <p> Dureza <b>{dataForm.DWI}</b> </p>
                 </Col>}
 
-                {dataForm?.bolas_ton && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
-                    <p> Cargío bolas <b>{dataForm.bolas_ton}</b></p>
+                {dataForm?.BOLAS_TON && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                    <p> Cargío bolas <b>{dataForm.BOLAS_TON}</b></p>
                 </Col>}
             </Row>
             <Row style={{ 'display': 'flex' }} className={'justify-content-center mt-3'}>
