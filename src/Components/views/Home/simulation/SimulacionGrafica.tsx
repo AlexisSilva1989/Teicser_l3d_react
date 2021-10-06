@@ -51,14 +51,24 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
         feat();
     }, []);
 
+    const tooltip = React.useMemo(
+        () => ({
+          render: ({ datum, primaryAxis, getStyle } : any) => {
+            return <CustomTooltip {...{ getStyle, primaryAxis, datum }} />
+          }
+        }),
+        []
+    )
+
+      
     /*MEMOS */  
     const axes = useMemo(() => [
-            { label:"x", primary: true, position: "bottom", type: "linear", show: true ,  showTicks: true},
+            { primary: true, position: "bottom", type: "linear", show: true ,  showTicks: true},
             { position: "left", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500 ,  showTicks: true},
             { position: "right", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500 ,  showTicks: true},
         ], []
     );
-    const series = useMemo(() => ({ type: "area" }), []);
+    const series = useMemo(() => ({ type: "area", seriesLabel: "Espesor" }), []);
     const getSeriesStyle = useCallback(series => ({ color: "#003be7" }), [])
     const data = useMemo(() => [{ data: dataSimulacionSize > 0 ? dataSimulacion[rangeSelected] : [] }],[rangeSelected, dataSimulacion])
 
@@ -97,7 +107,7 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
     const graph : JSX.Element = <>
         <Col xl='6'>
             <Col sm="12" style={{ height: '250px'}}>
-                <Chart data={data} axes={axes} series={series} getSeriesStyle={getSeriesStyle} tooltip/>
+                <Chart data={data} axes={axes} series={series} getSeriesStyle={getSeriesStyle} tooltip={tooltip}/>
             </Col>
             <Form.Group as={Row}>
                 <Form.Label column sm="3" className={'text-right'}> 
@@ -129,4 +139,25 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
     </>);
 }
 
+
+function CustomTooltip({ getStyle, primaryAxis, datum }:any) {
+    const data = React.useMemo(
+      () =>
+        datum
+          ? [
+              {
+                data: datum.group.map((d:any) => ({
+                  primary: "Espectro",
+                  secondary: d.secondary,
+                  color: getStyle(d).fill
+                }))
+              }
+            ]
+          : [],
+      [datum, getStyle]
+    )
+    return datum ? (<>
+        Espesor: {primaryAxis.format(datum.secondary)}
+    </>): null
+}
 export default SimulacionGrafica;
