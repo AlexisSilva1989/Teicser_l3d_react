@@ -53,8 +53,9 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
 
     /*MEMOS */  
     const axes = useMemo(() => [
-            { label:"x", primary: true, position: "bottom", type: "linear", show: true ,  showTicks: false},
-            { position: "left", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500 ,  showTicks: false},
+            { label:"x", primary: true, position: "bottom", type: "linear", show: true ,  showTicks: true},
+            { position: "left", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500 ,  showTicks: true},
+            { position: "right", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500 ,  showTicks: true},
         ], []
     );
     const series = useMemo(() => ({ type: "area" }), []);
