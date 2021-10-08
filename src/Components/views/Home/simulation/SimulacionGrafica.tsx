@@ -8,7 +8,7 @@ import { useFullIntl } from '../../../../Common/Hooks/useFullIntl';
 import { ax } from '../../../../Common/Utils/AxiosCustom';
 import { LoadingSpinner } from '../../../../Components/Common/LoadingSpinner';
 import { ShowMessageInModule } from '../../../../Components/Common/ShowMessageInModule';
-import { IdataFormProjection, IDataPromedio} from '../Projection/FormProjection';
+import { IdataFormProjection, IDataPromedio } from '../Projection/FormProjection';
 
 interface IProps {
     resourceData: string
@@ -19,10 +19,10 @@ interface IProps {
     dateEnd?: string
 }
 
-const styleListOperationalVar : React.CSSProperties = { 'display': 'flex', 'justifyContent':'center'}
+const styleListOperationalVar: React.CSSProperties = { 'display': 'flex', 'justifyContent': 'center' }
 
-const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend = true, dateStart, dateEnd}: IProps) => {
-    
+const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend = true, dateStart, dateEnd }: IProps) => {
+
     /*CUSTOM HOOKS */
     const { capitalize: caps } = useFullIntl();
     const { addToast } = useToasts();
@@ -31,15 +31,17 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
     const [loadingData, setLoadingData] = useState(true);
     const [rangeSelected, setRangeSelected] = useState(1);
     const [dataSimulacion, setDataSimulacion] = useState<any>();
+    const [datesSimulacion, setDatesSimulacion] = useState<any>();
     const [dataSimulacionSize, setDataSimulacionSize] = useState<number>(0);
 
     /*EFFECTS */
     useEffect(() => {
         async function feat() {
-            await ax.get<{ simulacion: string[] }>(resourceData).then(response => {
+            await ax.get<{ simulacion: string[], dates: string[] }>(resourceData).then(response => {
                 if (response.data.simulacion.length > 0) {
                     setDataSimulacionSize(Object.keys(response.data.simulacion[0]).length)
                     setDataSimulacion(response.data.simulacion[0]);
+                    setDatesSimulacion(response.data.dates[0]);
                 }
                 setLoadingData(false);
             }).catch((error: AxiosError) => {
@@ -53,40 +55,40 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
 
     const tooltip = React.useMemo(
         () => ({
-          render: ({ datum, primaryAxis, getStyle } : any) => {
-            return <CustomTooltip {...{ getStyle, primaryAxis, datum }} />
-          }
+            render: ({ datum, primaryAxis, getStyle }: any) => {
+                return <CustomTooltip {...{ getStyle, primaryAxis, datum }} />
+            }
         }),
         []
     )
 
-      
-    /*MEMOS */  
+
+    /*MEMOS */
     const axes = useMemo(() => [
-            { primary: true, position: "bottom", type: "linear", show: true ,  showTicks: true},
-            { position: "left", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500 ,  showTicks: true},
-            { position: "right", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500 ,  showTicks: true},
-        ], []
+        { primary: true, position: "bottom", type: "linear", show: true, showTicks: true },
+        { position: "left", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500, showTicks: true },
+        { position: "right", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500, showTicks: true },
+    ], []
     );
     const series = useMemo(() => ({ type: "area", seriesLabel: "Espesor" }), []);
     const getSeriesStyle = useCallback(series => ({ color: "#003be7" }), [])
-    const data = useMemo(() => [{ data: dataSimulacionSize > 0 ? dataSimulacion[rangeSelected] : [] }],[rangeSelected, dataSimulacion])
+    const data = useMemo(() => [{ data: dataSimulacionSize > 0 ? dataSimulacion[rangeSelected] : [] }], [rangeSelected, dataSimulacion])
 
     /*LEYENDA DE LA GRAFICA */
-    const legendGraph : JSX.Element = <>
+    const legendGraph: JSX.Element = <>
         <Col xl='4' className="mt-2">
             <Row className="mb-3 justify-content-center" style={{ 'display': 'flex' }}>
                 <p> Simulación realizada con <b>últimos 30 días</b></p>
             </Row>
             <Row>
-                {dataForm?.TRAT_SAG_1011 && <Col xl='6' className="mb-2" style={styleListOperationalVar }>
+                {dataForm?.TRAT_SAG_1011 && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
                     <p> Tonelaje <b>{dataForm.TRAT_SAG_1011}</b></p>
                 </Col>}
 
                 {dataForm?.VEL_RPM && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
                     <p> Velocidad <b>{dataForm.VEL_RPM}</b></p>
                 </Col>}
-                
+
                 {dataForm?.DWI && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
                     <p> Dureza <b>{dataForm.DWI}</b> </p>
                 </Col>}
@@ -104,28 +106,32 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
     </>
 
     /*COMPOSICION DE LA GRAFICA */
-    const graph : JSX.Element = <>
+    const graph: JSX.Element = <>
         <Col xl='6'>
-            <Col sm="12" style={{ height: '250px'}}>
-                <Chart data={data} axes={axes} series={series} getSeriesStyle={getSeriesStyle} tooltip={tooltip}/>
+            <Col sm="12" style={{ height: '250px' }}>
+                <Chart data={data} axes={axes} series={series} getSeriesStyle={getSeriesStyle} tooltip={tooltip} />
             </Col>
-            <Form.Group as={Row}>
-                <Form.Label column sm="3" className={'text-right'}> 
-                    {dateStart}
-                </Form.Label>
-                <Col sm="6">
-                    <Form.Control value={rangeSelected} type="range"
-                        min={1} max={dataSimulacionSize}
-                        onChange={e => setRangeSelected(Number(e.target.value))}
-                    />
-                </Col>
-                <Form.Label column sm="3"> 
-                    {dateEnd} 
-                </Form.Label>
-            </Form.Group>
+            {(datesSimulacion !== undefined && Object.keys(datesSimulacion).length > 0) && (
+                <Form.Group as={Row}>
+                    <Form.Label column sm="3" className={'text-right'}>
+                        {datesSimulacion[1]}
+                    </Form.Label>
+                    <Col sm="6">
+                        <Form.Control value={rangeSelected} type="range"
+                            min={1} max={dataSimulacionSize}
+                            onChange={e => setRangeSelected(Number(e.target.value))}
+                        />
+                        <h4 className="text-center" >{datesSimulacion[rangeSelected]}</h4>
+                    </Col>
+                    <Form.Label column sm="3">
+                        {datesSimulacion[Object.keys(datesSimulacion).length]}
+                    </Form.Label>
+                </Form.Group>
+            )}
+
         </Col>
     </>
- 
+
     return (<>
         {loadingData ? <LoadingSpinner /> :
             dataSimulacionSize > 0 ? (<>
@@ -134,30 +140,30 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
                     {showLegend && legendGraph}
                 </Col>
             </>)
-            : <ShowMessageInModule message='No se ha encotrado data de simulación' />
+                : <ShowMessageInModule message='No se ha encotrado data de simulación' />
         }
     </>);
 }
 
 
-function CustomTooltip({ getStyle, primaryAxis, datum }:any) {
+function CustomTooltip({ getStyle, primaryAxis, datum }: any) {
     const data = React.useMemo(
-      () =>
-        datum
-          ? [
-              {
-                data: datum.group.map((d:any) => ({
-                  primary: "Espectro",
-                  secondary: d.secondary,
-                  color: getStyle(d).fill
-                }))
-              }
-            ]
-          : [],
-      [datum, getStyle]
+        () =>
+            datum
+                ? [
+                    {
+                        data: datum.group.map((d: any) => ({
+                            primary: "Espectro",
+                            secondary: d.secondary,
+                            color: getStyle(d).fill
+                        }))
+                    }
+                ]
+                : [],
+        [datum, getStyle]
     )
     return datum ? (<>
         Espesor: {primaryAxis.format(datum.secondary)}
-    </>): null
+    </>) : null
 }
 export default SimulacionGrafica;
