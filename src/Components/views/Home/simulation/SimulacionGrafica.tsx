@@ -19,6 +19,13 @@ interface IProps {
     dateEnd?: string
 }
 
+interface IDataGraph { 
+    simulacion: string[], 
+    dates: string[], 
+    perfilCritico : string[], 
+    perfilNominal: string[] 
+}
+
 const styleListOperationalVar: React.CSSProperties = { 'display': 'flex', 'justifyContent': 'center' }
 
 const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend = true, dateStart, dateEnd }: IProps) => {
@@ -33,15 +40,19 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
     const [dataSimulacion, setDataSimulacion] = useState<any>();
     const [datesSimulacion, setDatesSimulacion] = useState<any>();
     const [dataSimulacionSize, setDataSimulacionSize] = useState<number>(0);
+    const [perfilCritico, setPerfilCritico] = useState<string[]>([]);
+    const [perfilNominal, setPerfilNominal] = useState<string[]>([]);
 
     /*EFFECTS */
     useEffect(() => {
         async function feat() {
-            await ax.get<{ simulacion: string[], dates: string[] }>(resourceData).then(response => {
+            await ax.get<IDataGraph>(resourceData).then(response => {
                 if (response.data.simulacion.length > 0) {
                     setDataSimulacionSize(Object.keys(response.data.simulacion[0]).length)
                     setDataSimulacion(response.data.simulacion[0]);
                     setDatesSimulacion(response.data.dates[0]);
+                    setPerfilCritico(response.data.perfilCritico);
+                    setPerfilNominal(response.data.perfilNominal);
                 }
                 setLoadingData(false);
             }).catch((error: AxiosError) => {
@@ -70,9 +81,26 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
         { position: "right", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500, showTicks: true },
     ], []
     );
-    const series = useMemo(() => ({ type: "area", seriesLabel: "Espesor" }), []);
-    const getSeriesStyle = useCallback(series => ({ color: "#003be7" }), [])
-    const data = useMemo(() => [{ data: dataSimulacionSize > 0 ? dataSimulacion[rangeSelected] : [] }], [rangeSelected, dataSimulacion])
+    
+    // const series = useMemo(() => ({ type: "area", seriesLabel: "Espesor" }), []);
+    const series = React.useCallback(
+        (s, i) => ({
+          type: i === 1 ? 'area' :'line',
+          showPoints: false,
+        }),[]
+    )
+    const colorLinesGraph : string[]=  ["#d50000","#2962ff","#00c853"] 
+    const getSeriesStyle = useCallback(
+        (series) => ({
+            color: colorLinesGraph[series.index],
+            transition: 'all .2s ease'
+        }), [colorLinesGraph]
+    )
+    const data = useMemo(() => [
+        { data: perfilCritico },
+        { data: dataSimulacionSize > 0 ? dataSimulacion[rangeSelected] : [] },
+        { data: perfilNominal }
+    ], [rangeSelected, dataSimulacion, perfilCritico, perfilNominal])
 
     /*LEYENDA DE LA GRAFICA */
     const legendGraph: JSX.Element = <>
