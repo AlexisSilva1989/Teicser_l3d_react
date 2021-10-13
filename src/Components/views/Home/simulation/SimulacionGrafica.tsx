@@ -94,7 +94,7 @@ const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true, da
           showPoints: false,
         }),[]
     )
-    const colorLinesGraph : string[]=  ["#d50000","#2962ff","#00c853"] 
+    const colorLinesGraph : string[]=  ["#d50000","#2962ff","#212121"] 
     const getSeriesStyle = useCallback(
         (series) => ({
             color: colorLinesGraph[series.index],
@@ -142,7 +142,12 @@ const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true, da
     const graph: JSX.Element = <>
         <Col xl='6'>
             <Col sm="12" style={{ height: '250px' }}>
-                <Chart data={data} axes={axes} series={series} getSeriesStyle={getSeriesStyle} tooltip={tooltip} />
+                <Chart 
+                    data={data} 
+                    axes={axes} 
+                    series={series} 
+                    getSeriesStyle={getSeriesStyle} 
+                    tooltip={tooltip} />
             </Col>
             {(datesSimulacion !== undefined && Object.keys(datesSimulacion).length > 0) && (
                 <Form.Group as={Row}>
