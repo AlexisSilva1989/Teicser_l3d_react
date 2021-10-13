@@ -42,19 +42,19 @@ export const IndexProjection = () => {
 	const handleSubmitProjection = async (data: IdataFormProjection) => {
 		setLoading(true);
 		const type_projection_value: { [key: string]: any } = JSON.parse(JSON.stringify(data.type_projection));
-		const trag_sag : string= data.trat_sag !== "" ? data.trat_sag : dataPromedio !== undefined ? dataPromedio.TRAT_SAG_1011 : "";
-		const dwi = data.dwi !== "" ? data.dwi :  dataPromedio !== undefined ? dataPromedio?.DWI : "";
-		const vel_rpm = data.vel_rpm !== "" ? data.vel_rpm :  dataPromedio !== undefined ?  dataPromedio?.VEL_RPM : "";
-		const bolas_ton = data.bolas_ton !== "" ? data.bolas_ton :  dataPromedio !== undefined ? dataPromedio?.BOLAS_TON : "";
+		// const trag_sag : string= data.trat_sag !== "" ? data.trat_sag : dataPromedio !== undefined ? dataPromedio.TRAT_SAG_1011 : "";
+		// const dwi = data.dwi !== "" ? data.dwi :  dataPromedio !== undefined ? dataPromedio?.DWI : "";
+		// const vel_rpm = data.vel_rpm !== "" ? data.vel_rpm :  dataPromedio !== undefined ?  dataPromedio?.VEL_RPM : "";
+		// const bolas_ton = data.bolas_ton !== "" ? data.bolas_ton :  dataPromedio !== undefined ? dataPromedio?.BOLAS_TON : "";
 		setDataForm(data);
-		setDataPromedio(state => $u(state, {
-			$set:{
-				VEL_RPM: vel_rpm,
-				BOLAS_TON: bolas_ton,
-				DWI: dwi,
-				TRAT_SAG_1011: trag_sag
-			}
-		}));
+		// setDataPromedio(state => $u(state, {
+		// 	$set:{
+		// 		VEL_RPM: vel_rpm,
+		// 		BOLAS_TON: bolas_ton,
+		// 		DWI: dwi,
+		// 		TRAT_SAG_1011: trag_sag
+		// 	}
+		// }));
 		data.type_projection = type_projection_value['value'];
 		data.dates_last_projection = datesLastProjection;
 		data.last_date_measurement = lastDateProjection;
@@ -69,6 +69,7 @@ export const IndexProjection = () => {
 	};
 
 	const onChangeTypeProjection = (typeProjection: string) => {
+		if(dataForm){dataForm.type_projection = typeProjection}
 		setTypeProjection(typeProjection);
 	};
 
@@ -167,11 +168,12 @@ export const IndexProjection = () => {
 	const simulacionGrafica: JSX.Element = (<>
 		<SimulacionGrafica
 			// resourceData='service_render/data_projection_operational_var'
-			resourceData='service_render/extend/data_projection_operational_var'
-			dataForm={dataPromedio}
+			resourceData={$j('service_render/extend/data_projection_operational_var',EQUIPO_ID,typeProjection)}
+			// dataForm={dataPromedio}
 			dateStart={lastDateProjection}
 			dateEnd={dateFillEnd}
 			returnFunction={() => { setStatusService(undefined) }}
+			typeProjection = {typeProjection}
 		/>
 	</>)
 

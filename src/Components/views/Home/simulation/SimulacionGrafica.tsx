@@ -12,23 +12,25 @@ import { IdataFormProjection, IDataPromedio } from '../Projection/FormProjection
 
 interface IProps {
     resourceData: string
-    dataForm?: IDataPromedio
+    // dataForm?: IDataPromedio
     returnFunction?: () => void
     showLegend?: boolean
     dateStart?: string
     dateEnd?: string
+    typeProjection? : string
 }
 
 interface IDataGraph { 
     simulacion: string[], 
     dates: string[], 
     perfilCritico : string[], 
-    perfilNominal: string[] 
+    perfilNominal: string[],
+    dataPromedio?: any 
 }
 
 const styleListOperationalVar: React.CSSProperties = { 'display': 'flex', 'justifyContent': 'center' }
 
-const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend = true, dateStart, dateEnd }: IProps) => {
+const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true, dateStart, dateEnd , typeProjection}: IProps) => {
 
     /*CUSTOM HOOKS */
     const { capitalize: caps } = useFullIntl();
@@ -42,6 +44,7 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
     const [dataSimulacionSize, setDataSimulacionSize] = useState<number>(0);
     const [perfilCritico, setPerfilCritico] = useState<string[]>([]);
     const [perfilNominal, setPerfilNominal] = useState<string[]>([]);
+    const [dataPromedio, setDataPromedio] = useState<any>({});
 
     /*EFFECTS */
     useEffect(() => {
@@ -53,12 +56,15 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
                     setDatesSimulacion(response.data.dates[0]);
                     setPerfilCritico(response.data.perfilCritico);
                     setPerfilNominal(response.data.perfilNominal);
+                    response.data.dataPromedio && setDataPromedio(response.data.dataPromedio);
                 }
-                setLoadingData(false);
+               
             }).catch((error: AxiosError) => {
                 if (error.response) {
                     addToast(caps('errors:base.load', { element: 'data de simulación' }), { appearance: 'error', autoDismiss: true });
                 }
+            }).finally(()=>{
+                setLoadingData(false);
             });
         }
         feat();
@@ -72,7 +78,6 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
         }),
         []
     )
-
 
     /*MEMOS */
     const axes = useMemo(() => [
@@ -106,23 +111,23 @@ const SimulacionGrafica = ({ resourceData, dataForm, returnFunction, showLegend 
     const legendGraph: JSX.Element = <>
         <Col xl='4' className="mt-2">
             <Row className="mb-3 justify-content-center" style={{ 'display': 'flex' }}>
-                <p> Simulación realizada con <b>últimos 30 días</b></p>
+                <p> Simulación realizada con <b>{typeProjection == 'projection30Days' ? 'últimos 30 días' : 'campaña completa'}</b></p>
             </Row>
             <Row>
-                {dataForm?.TRAT_SAG_1011 && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
-                    <p> Tonelaje <b>{dataForm.TRAT_SAG_1011}</b></p>
+                {dataPromedio?.TRAT_SAG_1011 && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                    <p> Tonelaje <b>{dataPromedio.TRAT_SAG_1011}</b></p>
                 </Col>}
 
-                {dataForm?.VEL_RPM && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
-                    <p> Velocidad <b>{dataForm.VEL_RPM}</b></p>
+                {dataPromedio?.VEL_RPM && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                    <p> Velocidad <b>{dataPromedio.VEL_RPM}</b></p>
                 </Col>}
 
-                {dataForm?.DWI && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
-                    <p> Dureza <b>{dataForm.DWI}</b> </p>
+                {dataPromedio?.DWI && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                    <p> Dureza <b>{dataPromedio.DWI}</b> </p>
                 </Col>}
 
-                {dataForm?.BOLAS_TON && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
-                    <p> Cargío bolas <b>{dataForm.BOLAS_TON}</b></p>
+                {dataPromedio?.BOLAS_TON && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                    <p> Cargío bolas <b>{dataPromedio.BOLAS_TON}</b></p>
                 </Col>}
             </Row>
             <Row style={{ 'display': 'flex' }} className={'justify-content-center mt-3'}>

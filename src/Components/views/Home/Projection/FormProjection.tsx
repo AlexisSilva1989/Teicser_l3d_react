@@ -113,7 +113,7 @@ const FormProjection = ({
                 : optionsTypeProjection[findOptionsTypeProjection(typeProjection)]
         }
     });
-
+{console.log('dataInitialForm ',dataInitialForm)}
     /*EFFECTS */
     useEffect(() => {
         dateFillEnd !== undefined && setValue('date_project',dateFillEnd);
