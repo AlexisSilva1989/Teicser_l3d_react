@@ -31,6 +31,7 @@ export interface IDatesLastProjection {
 	fecha_end_xample: string
 	fecha_start_scaling: string
 	fecha_end_scaling: string
+    fecha_medicion?: string
 }
 export interface IdataFormProjection {
     type_projection: string | object

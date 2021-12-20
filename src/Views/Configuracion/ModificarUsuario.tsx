@@ -51,7 +51,7 @@ export const ModificarUsuario = () => {
 			errorElement='errors:elements.user'
 			onSerialize={onSerialize}
 			getId={(x) => x.nombre_usuario}
-			permission='configuracion'
+			permission='configuration'
 			validations={{
 				nombre: {
 					presence: {

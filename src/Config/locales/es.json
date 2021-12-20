@@ -1508,7 +1508,6 @@
 	"columns:barcode_provider": "codigo de barras / proveedor",
 	"columns:steps": "pasos",
 	"columns:procedures": "procedimientos",
-	"columns:id": "código",
 	"columns:assignmentPeriod": "Periodo de asignacion",
 
 	"columns:margen.hh": "Margen HH",
@@ -2530,5 +2529,18 @@
 	"placeholders:optional": "opcional",
 	"placeholders:select_client_to_continue": "seleccione un cliente para continuar",
 	"placeholders:select_provider_to_continue": "seleccione un proveedor para continuar",
-	"placeholders:file_not_selected": "archivo no seleccionado"
+	"placeholders:file_not_selected": "archivo no seleccionado",
+
+	"columns:id": "ID",
+	"columns:equipo": "equipo",
+	"columns:fecha_medicion": "fecha de medición",
+	"columns:fecha_simulacion": "fecha de simulación",
+	"columns:periodo_proyeccion": "periodo de proyección",
+	"columns:estado": "estado",
+
+	"titles:wear_projections": "Proyecciones de desgaste",
+	"label:projection30Days": "últimos 30 días",
+	"label:projectionComplete": "campaña completa"
+
+	
 }

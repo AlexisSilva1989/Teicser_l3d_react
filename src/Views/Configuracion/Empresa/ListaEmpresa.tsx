@@ -7,5 +7,5 @@ export const ListaEmpresa = () => {
 	return <ListaBase<Empresa> 
 	title='titles:company' 
 	source={$j('empresa')} 
-	permission='configuracion' columns={EmpresaColumns} />;
+	permission='configuration' columns={EmpresaColumns} />;
 };

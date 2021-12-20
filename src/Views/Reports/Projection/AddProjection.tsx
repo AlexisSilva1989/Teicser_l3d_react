@@ -11,8 +11,10 @@ import SimulacionGrafica from '../../../Components/views/Home/simulation/Simulac
 import { $m, $j, $u } from '../../../Common/Utils/Reimports';
 import { DateUtils } from '../../../Common/Utils/DateUtils';
 import { LoadingSpinner } from '../../../Components/Common/LoadingSpinner';
+import { Buttons } from '../../../Components/Common/Buttons';
+import { useCommonRoutes } from '../../../Common/Hooks/useCommonRoutes';
 
-export const IndexProjection = () => {
+export const AddProjection = () => {
 	const EQUIPO_ID = "1";
 
 	/*CONST */
@@ -21,7 +23,6 @@ export const IndexProjection = () => {
 
 	/*STATES*/
 	const [loadingData, setLoadingData] = useState(true);
-	const [tittleModule, setTittleModule] = useState<string>();
 	const [errorMessageModule, setErrorMessageModule] = useState<string[]>([]);
 	const [statusService, setStatusService] = useState<string>();
 	const [datesLastProjection, setDatesLastProjection] = useState<IDatesLastProjection>();
@@ -35,32 +36,23 @@ export const IndexProjection = () => {
 	/*HOOKS */
 	const api = useApi();
 	const { setLoading } = useDashboard();
-	const { addToast } = useToasts();
+	const { goBack } = useCommonRoutes();
 
 	/*HANDLES */
 	/*EJECUTAR EL SERVICIO DE PROYECCION DE VARIABLES OPERACIONALES */
 	const handleSubmitProjection = async (data: IdataFormProjection) => {
 		setLoading(true);
 		const type_projection_value: { [key: string]: any } = JSON.parse(JSON.stringify(data.type_projection));
-		// const trag_sag : string= data.trat_sag !== "" ? data.trat_sag : dataPromedio !== undefined ? dataPromedio.TRAT_SAG_1011 : "";
-		// const dwi = data.dwi !== "" ? data.dwi :  dataPromedio !== undefined ? dataPromedio?.DWI : "";
-		// const vel_rpm = data.vel_rpm !== "" ? data.vel_rpm :  dataPromedio !== undefined ?  dataPromedio?.VEL_RPM : "";
-		// const bolas_ton = data.bolas_ton !== "" ? data.bolas_ton :  dataPromedio !== undefined ? dataPromedio?.BOLAS_TON : "";
 		setDataForm(data);
-		// setDataPromedio(state => $u(state, {
-		// 	$set:{
-		// 		VEL_RPM: vel_rpm,
-		// 		BOLAS_TON: bolas_ton,
-		// 		DWI: dwi,
-		// 		TRAT_SAG_1011: trag_sag
-		// 	}
-		// }));
 		data.type_projection = type_projection_value['value'];
 		data.dates_last_projection = datesLastProjection;
 		data.last_date_measurement = lastDateProjection;
 		data.tonsForChange = data.tonsForChange.replace(/,/g,"");
 		await api.post("service_render/projection_operational_var", data)
-			.success((response) => { setStatusService('EN PROCESO') })
+			.success((response) => { 
+				goBack();
+				setLoading(false);
+			})
 			.fail("No se pudo consumir el servicio", null, () => { setLoading(false); });
 	};
 
@@ -73,13 +65,17 @@ export const IndexProjection = () => {
 		setTypeProjection(typeProjection);
 	};
 
+	const updateLastDataSimulate = (historial_data_render : IDatesLastProjection) => {
+		setDatesLastProjection(historial_data_render);
+		setLastDateProjection($m(historial_data_render.fecha_medicion, 'YYYY-MM-DD').format('DD-MM-YYYY'))
+	}
+
 	/*EFFECTS */
 	/*OBTENER DATOS ASOCIADOS A LA PROYECCION */
 	useEffect(() => {
 		const getLastDataSimulated = async () => {
 			interface responseInfoRender {
 				historial_data_render: IDatesLastProjection,
-				info_medicion: { fecha_medicion: string }
 				data_promedio: IDataPromedio
 			}
 
@@ -88,13 +84,9 @@ export const IndexProjection = () => {
 			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated",EQUIPO_ID,typeProjection))
 				.success((response) => {
 		
-					response.info_medicion === null
-						? errors.push('No se ha encontrado información de la medición 3D') 
-						: setLastDateProjection($m(response.info_medicion.fecha_medicion, 'YYYY-MM-DD').format('DD-MM-YYYY'));
-					
 					response.historial_data_render === null 
 						? errors.push('No se han encontrado datos operacionales')
-						: setDatesLastProjection(response.historial_data_render)
+						: updateLastDataSimulate(response.historial_data_render)
 					
 					response.data_promedio === null 
 						? errors.push('No se ha obtenido la data promedio')
@@ -113,45 +105,6 @@ export const IndexProjection = () => {
 		getLastDataSimulated()
 	}, [typeProjection]);
 
-	/*OBTENER ESTATUS DEL SERVICIO */
-	useEffect(() => {
-		const checkStatusService = async () => {
-			await api.get<{ status: string, message: string }>($j("service_render/get_status_last_projection_operational",EQUIPO_ID))
-				.success((response) => {
-					const statusServiceResponse = response.status;
-					setStatusService(statusServiceResponse)
-					if (statusServiceResponse === 'EN PROCESO' || statusServiceResponse === 'PENDIENTE') {
-						const timer = setTimeout(() => checkStatusService(), 30000);
-						return () => clearTimeout(timer);
-					} else {
-						setLoading(false);
-						statusServiceResponse === 'ERROR' && addToast('ERROR: ' + response.message, {
-							appearance: 'error',
-							autoDismiss: false,
-						});
-					}
-				})
-				.fail(
-					"Error al consultar status del servicio",
-					() => {
-						setStatusService('ERROR');
-						setLoading(false);
-					}
-				);
-		};
-
-		(statusService === 'PENDIENTE' ||  statusService === 'EN PROCESO') && checkStatusService()
-	}, [statusService]);
-
-	/*TITULO DE MODULO */
-	useEffect(() => {
-		if (statusService === 'SUCCESS') {
-			setTittleModule('Simulación de desgaste')
-		} else {
-			{ setTittleModule('titles:projection_variable') }
-		}
-	}, [statusService]);
-
 	/*CALCULAR EL NUMERO DE DIAS A PROYECTAR */
 	useEffect(() => {
 		if (lastDateProjection !== undefined && dateFillEnd !== undefined) {
@@ -165,17 +118,7 @@ export const IndexProjection = () => {
 			setDateFillEnd(($m(lastDateProjection, 'DD-MM-YYYY').add(countDaysToProjection, 'days')).format('DD-MM-YYYY'))
 	}, [lastDateProjection])
 
-	const simulacionGrafica: JSX.Element = (<>
-		<SimulacionGrafica
-			// resourceData='service_render/data_projection_operational_var'
-			resourceData={$j('service_render/extend/data_projection_operational_var',EQUIPO_ID,typeProjection)}
-			// dataForm={dataPromedio}
-			dateStart={lastDateProjection}
-			dateEnd={dateFillEnd}
-			returnFunction={() => { setStatusService(undefined) }}
-			typeProjection = {typeProjection}
-		/>
-	</>)
+
 
 	const simulacionForm: JSX.Element = (<>
 		<Col sm={6} className='text-left mb-2'>
@@ -200,17 +143,12 @@ export const IndexProjection = () => {
 		</Col>
 	</>)
 
-	const componentShowInModule: JSX.Element = (<>
-		{errorMessageModule.length > 0 ? <ShowMessageInModule message = {errorMessageModule}/> : 
-			statusService === 'SUCCESS'
-				? simulacionGrafica
-				: simulacionForm
-		}
-	</>)
-
 	return (<>
-		<BaseContentView title={tittleModule}>
-			{ loadingData ? <LoadingSpinner /> : componentShowInModule}
+		<BaseContentView title={'titles:projection_variable'}>
+			<div className="col-12 mb-4">
+				<Buttons.Back />
+			</div>
+			{ loadingData ? <LoadingSpinner /> : simulacionForm}
 		</BaseContentView>
 	</>);
 };

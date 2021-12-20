@@ -11,7 +11,7 @@ import { IndexCalibration } from "../Views/InformationLoad/Calibration/IndexCali
 import { IndexInformation } from "../Views/Reports/Information/IndexInformation";
 import { IndexRecords } from "../Views/Reports/Records/IndexRecords";
 import { IndexMeasurement } from "../Views/Reports/Measurement/IndexMeasurement";
-import { IndexProjection } from "../Views/Reports/Projection/IndexProjection";
+import { AddProjection } from "../Views/Reports/Projection/AddProjection";
 
 import Parametros from "../Views/Configuracion/Parametros";
 import { ModificarEmpresa } from "../Views/Configuracion/Empresa/ModificarEmpresa";
@@ -23,6 +23,8 @@ import { IndexDownloadableReport } from "../Views/Reports/DownloadableReport/Ind
 
 import { IndexOperationalData } from "../Views/InformationLoad/OperationalData/IndexOperationalData";
 import { IndexImagenCondicion } from "../Views/InformationLoad/ImagenCondicion/IndexImagenCondicion";
+import { ListProjection } from "../Views/Reports/Projection/ListProjection";
+import ShowProjection from "../Views/Reports/Projection/ShowProjection";
 
 
 interface Route {
@@ -109,7 +111,9 @@ const routes: RouteGroup[] = [
   {
     prefix: "routes:base.projection",
     routes: [
-      { path: "routes:meta.base", component: <IndexProjection /> },
+      { path: "routes:meta.base", component: <ListProjection /> },
+      { path: "routes:meta.add", component: <AddProjection /> },
+      { path: "routes:meta.modify", component: <ShowProjection /> },
     ],
   },
   {

@@ -37,6 +37,7 @@ interface Props<T> {
   innerPath?: string;
   //funcion
   handle?: () => void;
+  labelBotton?: string
 }
 
 interface State {
@@ -75,27 +76,13 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
 						})}
 				</div>
 			)}
+
 			<div className='col-3'>
 				
 				{
 				 	canCreate(props.permission) && 
 				 	<Buttons.Add path={props.innerPath ? localize('routes:meta.inner_add',{ element: localize(props.innerPath) }) : localize('routes:meta.add')} 
-				 	className='mr-3 ' />
-				}
-				
-				{/*boton para descargar listado cliente solo los que tengan permiso de eliminar*/}
-				
-				{(canDelete(props.permission) && isPathCliente ) ? 
-						< Buttons.Common 
-							className='mr-3 btn-outline-info' 
-							label='Descargar listado'
-							icon='fas fa-file-excel'
-							type='button'
-							//hacemos un llamadao a un hooks para Descargar
-							onClick={props.handle}
-						/>
-					: 
-						''
+				 	className='mr-3 ' label={props.labelBotton && props.labelBotton}/>
 				}
 				
 			</div>

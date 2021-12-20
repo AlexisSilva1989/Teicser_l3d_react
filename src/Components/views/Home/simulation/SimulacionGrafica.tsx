@@ -9,6 +9,7 @@ import { ax } from '../../../../Common/Utils/AxiosCustom';
 import { LoadingSpinner } from '../../../../Components/Common/LoadingSpinner';
 import { ShowMessageInModule } from '../../../../Components/Common/ShowMessageInModule';
 import { IdataFormProjection, IDataPromedio } from '../Projection/FormProjection';
+import { localizeIntl } from '../../../../Common/Utils/LocalizationUtils';
 
 interface IProps {
     resourceData: string
@@ -17,23 +18,24 @@ interface IProps {
     showLegend?: boolean
     dateStart?: string
     dateEnd?: string
-    typeProjection? : string
 }
 
 interface IDataGraph { 
-    simulacion: string[], 
-    dates: string[], 
-    perfilCritico : string[], 
-    perfilNominal: string[],
-    dataPromedio?: any 
+    simulacion: string[]
+    dates: string[]
+    perfilCritico : string[]
+    perfilNominal: string[]
+    dataPromedio?: any
+    status: string 
+    tipoProyeccion: string
 }
 
 const styleListOperationalVar: React.CSSProperties = { 'display': 'flex', 'justifyContent': 'center' }
 
-const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true, dateStart, dateEnd , typeProjection}: IProps) => {
+const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true}: IProps) => {
 
     /*CUSTOM HOOKS */
-    const { capitalize: caps } = useFullIntl();
+    const { capitalize: caps,  localize } = useFullIntl();
     const { addToast } = useToasts();
 
     /*STATES */
@@ -45,11 +47,15 @@ const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true, da
     const [perfilCritico, setPerfilCritico] = useState<string[]>([]);
     const [perfilNominal, setPerfilNominal] = useState<string[]>([]);
     const [dataPromedio, setDataPromedio] = useState<any>({});
+    const [statusSimulation, setStatusSimulation] = useState<string>();
+    const [typeProjection, setTypeProjection] = useState<string>();
 
     /*EFFECTS */
     useEffect(() => {
         async function feat() {
             await ax.get<IDataGraph>(resourceData).then(response => {
+                setStatusSimulation(response.data.status)
+                setTypeProjection(response.data.tipoProyeccion)
                 if (response.data.simulacion.length > 0) {
                     setDataSimulacionSize(Object.keys(response.data.simulacion[0]).length)
                     setDataSimulacion(response.data.simulacion[0]);
@@ -58,10 +64,12 @@ const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true, da
                     setPerfilNominal(response.data.perfilNominal);
                     response.data.dataPromedio && setDataPromedio(response.data.dataPromedio);
                 }
-               
             }).catch((error: AxiosError) => {
                 if (error.response) {
-                    addToast(caps('errors:base.load', { element: 'data de simulación' }), { appearance: 'error', autoDismiss: true });
+                    addToast(
+                        caps('errors:base.load', { element: 'data de simulación' }),
+                        { appearance: 'error', autoDismiss: true }
+                    );
                 }
             }).finally(()=>{
                 setLoadingData(false);
@@ -111,30 +119,32 @@ const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true, da
     const legendGraph: JSX.Element = <>
         <Col xl='4' className="mt-2">
             <Row className="mb-3 justify-content-center" style={{ 'display': 'flex' }}>
-                <p> Simulación realizada con <b>{typeProjection == 'projection30Days' ? 'últimos 30 días' : 'campaña completa'}</b></p>
+                {(typeProjection !== null && typeProjection !== undefined) && 
+                    (<p> Simulación realizada con <b>{localize('label:'+typeProjection)}</b></p>)}
+                
             </Row>
             <Row>
-                {dataPromedio?.TRAT_SAG_1011 && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                {dataPromedio?.TRAT_SAG_1011 && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
                     <p> Tonelaje <b>{dataPromedio.TRAT_SAG_1011}</b></p>
                 </Col>}
 
-                {dataPromedio?.VEL_RPM && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                {dataPromedio?.VEL_RPM && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
                     <p> Velocidad <b>{dataPromedio.VEL_RPM}</b></p>
                 </Col>}
 
-                {dataPromedio?.DWI && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                {dataPromedio?.DWI && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
                     <p> Dureza <b>{dataPromedio.DWI}</b> </p>
                 </Col>}
 
-                {dataPromedio?.BOLAS_TON && <Col xl='6' className="mb-2" style={styleListOperationalVar}>
+                {dataPromedio?.BOLAS_TON && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
                     <p> Cargío bolas <b>{dataPromedio.BOLAS_TON}</b></p>
                 </Col>}
             </Row>
-            <Row style={{ 'display': 'flex' }} className={'justify-content-center mt-3'}>
+            {/* <Row style={{ 'display': 'flex' }} className={'justify-content-center mt-3'}>
                 <Button variant='outline-info' className='mr-3' onClick={returnFunction}>
                     Cambiar datos de simulación
                 </Button>
-            </Row>
+            </Row> */}
         </Col>
     </>
 
@@ -170,17 +180,32 @@ const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true, da
         </Col>
     </>
 
-    return (<>
-        {loadingData ? <LoadingSpinner /> :
-            dataSimulacionSize > 0 ? (<>
-                <Col xl='12' className="justify-content-center" style={{ 'display': 'flex' }}>
-                    {graph}
-                    {showLegend && legendGraph}
-                </Col>
-            </>)
-                : <ShowMessageInModule message='No se ha encotrado data de simulación' />
+    const messagesDataNoReady : {[key: string]: string}= {
+        'PENDIENTE': 'La simulación se encuentra en cola para ser realizada, por favor espere',
+        'EN PROCESO': 'La simulación se está realizando, por favor espere',
+        'ERROR': 'Ha ocurrido un error durante la simulación'
+    }
+    /*VALIDACION DE DATA*/
+    const ShowModule: JSX.Element = <>
+        { dataSimulacionSize > 0 
+            ?   (<>
+                    <Col xl='12' className="justify-content-center" style={{ 'display': 'flex' }}>
+                        {graph}
+                        {showLegend && legendGraph}
+                    </Col>
+                </>)
+            :   (<>
+                    {(statusSimulation === "PENDIENTE" ||  statusSimulation === "EN PROCESO") && <LoadingSpinner/> }
+                    <ShowMessageInModule message={
+                        (statusSimulation !== undefined && messagesDataNoReady.hasOwnProperty(statusSimulation))
+                        ? messagesDataNoReady[statusSimulation]
+                        : 'Ha ocurrido un error'
+                    } />
+                </>)
         }
-    </>);
+    </>
+
+    return <>{loadingData ? <LoadingSpinner /> : ShowModule }</>;
 }
 
 

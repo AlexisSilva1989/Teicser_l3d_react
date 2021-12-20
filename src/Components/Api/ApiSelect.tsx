@@ -21,16 +21,19 @@ interface Props<T> {
 	className?: string
 	multiple?: boolean
 	filter?: (x: ValueDisplay) => boolean
-	onChange?: (value: string) => void
+	onChange?: (value: any) => void
 	onChangeMultiple?: (value: string[]) => void
 	selector: (data: T) => ValueDisplay
 	isDisabled?: boolean
+	valueInObject? : boolean
+    menuPortalTarget?: "body" | "parent"
 }
 
 interface State<T> {
 	data: T[]
 	loading: boolean
 	init: boolean
+    disabled: boolean
 }
 
 export interface ValueDisplay {
@@ -45,24 +48,27 @@ type OptionType = {
 
 export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 	const { capitalize: caps } = useFullIntl();
-	const { onChange, selector, filter } = props;
+	const { onChange, selector, filter, valueInObject } = props;
 	const { pushError } = usePushError();
 	const [value, setValue] = useState<string>();
 
 	const initial: State<T> = {
 		data: [],
 		loading: true,
+		disabled: true,
 		init: false
 	};
 	const [state, setState] = useState(initial);
 
 	const setLoading = useCallback((loading: boolean) => {
 		setState((s) => $u(s, { $merge: { loading } }));
+        if(!props.isDisabled){
+            setState((s) => $u(s, { disabled: { $set: loading } }));
+        }
+
 	}, []);
     
-
     const [valueOptionProps, setValueOptionProps] = useState<OptionType>();
-
 
 	useEffect(() => {
 		if (state.data == null || state.data.length <= 0 || state.init) {
@@ -74,7 +80,7 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 			if (props.value != null) { 
 				onChange(props.value);
 			} else {
-				onChange(selector(state.data[0]).value);
+				onChange(valueInObject ? state.data[0] as string : selector(state.data[0]).value);
 			}
 		}
 	}, [state.data, onChange, selector, state.init, props.value]);
@@ -99,8 +105,10 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 				} else {
 					const d = filter == null ? result.data : result.data.filter((x) => filter(selector(x)));
 					setState((s) => $u(s, { $merge: { data: d ?? [] } }));
+
 					if(d.length > 0 && onChange != null && props.value == null) {
-						onChange(selector(d[0]).value);
+						handleChange({ label: selector(d[0]).display , value:selector(d[0]).value });
+						// onChange(valueInObject ? selector(d[0]) :  selector(d[0]).value );
 					}
 				}
 			} else {
@@ -127,22 +135,21 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 		setValue(e.value)
 
 		if (props.onChange != null) {
-		   props.onChange(e.value);
+		   props.onChange(valueInObject ? e : e.value);
 		}
 	}
-
 
 	const options = state.data.map((e) => {
 		const val = selector(e);
 		return {
 			value: val.value,
-			label: $v.titleCase(val.display)
+			label: val.display
 		}
 	});
 	
 	const optionsValue = options?.filter((o , i) => {
 		if(props.value?.toString() != undefined){
-			if(o.value.toString() === props.value?.toString()){
+			if((o.value.toString() === props.value?.toString()) || (o.value.toString() ===   (props.value as any).value) ){
 				return { label: caps(o.label) , value: o.value }
 			}
 		}else{
@@ -156,8 +163,6 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 		{props.label && <label>
 			<b>{caps(props.label)}:</b>
 		</label>}
-		
-
 		<Select
 			id='select' 
 			name={props.name}
@@ -165,14 +170,24 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 			options={options} 
 			getOptionLabel = {({ label }) => label}
 			getOptionValue = {({ value }) => value}
-			menuPortalTarget={document.parentElement}
-			// menuPosition={'absolute'} 
 			onChange={handleChange}
 			value={optionsValue}  
 			isDisabled={props.isDisabled}
+			styles={{
+				control: base => ({
+					...base, 
+					minHeight: 'calc(1.5em + 1.25rem + 1.75px)', 
+					borderColor: '#e3eaef',
+					borderRadius: '0.25rem'
+				}),
+				indicatorsContainer: base => ({
+					...base,
+					div: {padding: 5 }
+				})
+			}}
+            isLoading={state.loading}
+            menuPortalTarget={props.menuPortalTarget == "body" ? document.body : document.parentElement}
 		/>
-
-		
 		{props.errors && <div>
 			{props.errors.map((e, i) => {
 				return <Fragment key={i}>
@@ -182,9 +197,6 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 			})}
 		</div>}
 	</div>;
-
-
-
 };
 
 

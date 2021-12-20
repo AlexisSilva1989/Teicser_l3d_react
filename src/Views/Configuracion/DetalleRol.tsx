@@ -92,10 +92,10 @@ export const DetalleRol = (props: Props) => {
 				<div className='row'>
 					<div className='font-weight-light text-uppercase text-white col-12 text-center py-2' style={{ backgroundColor: props.color }}>
 						<div className='d-flex'>
-							<div style={{ width: canDelete('configuracion') ? '95%' : '100%' }}>
+							<div style={{ width: canDelete('configuration') ? '95%' : '100%' }}>
 								<span className='h4 mb-0'>{props.role}</span>
 							</div>
-							{canDelete('configuracion') && (
+							{canDelete('configuration') && (
 								<div>
 									<i className='fas fa-trash-alt' style={{ cursor: 'pointer' }} onClick={onClickBorrar} />
 								</div>
