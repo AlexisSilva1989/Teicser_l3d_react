@@ -67,7 +67,7 @@ const SimulacionDias = () => {
 					/>
 				</Col>
 			</Col>
-			<Col sm={12} className='mt-4'>
+			<Col sm={12} className='mt-3'>
 				{((loading == false) && (errorMessageModule.length === 0))
 					? simulacionGrafica 
 					: <ShowMessageInModule message = {errorMessageModule}/> 
