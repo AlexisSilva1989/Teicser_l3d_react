@@ -16,7 +16,7 @@ import { AddProjection } from "../Views/Reports/Projection/AddProjection";
 import Parametros from "../Views/Configuracion/Parametros";
 import { ModificarEmpresa } from "../Views/Configuracion/Empresa/ModificarEmpresa";
 import { CambiarContrasena } from "../Views/Auth/CambiarContrasena";
-import SimulacionDias from "../Views/Reports/Projection/SimulacionDias";
+import SimulacionDias from "../Views/Reports/Simulacion/SimulacionDias";
 
 import { IndexReportsPdf } from "../Views/Reports/Reports_pdf/IndexReportsPdf";
 import { IndexDownloadableReport } from "../Views/Reports/DownloadableReport/IndexDownloadableReport";

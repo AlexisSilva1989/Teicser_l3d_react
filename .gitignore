@@ -30,7 +30,6 @@ debug.log
 *.log
 
 build.zip
-src/Config/Api.ts
 debug.log
 debug.txt   
 src/Config/Api.ts.example
