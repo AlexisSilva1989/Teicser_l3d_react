@@ -27,6 +27,7 @@ interface Props<T> {
 	isDisabled?: boolean
 	valueInObject? : boolean
     menuPortalTarget?: "body" | "parent"
+	firtsOptions?: { value: string; label: string; }
 }
 
 interface State<T> {
@@ -104,6 +105,7 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 					pushError('errors.enumLoad');
 				} else {
 					const d = filter == null ? result.data : result.data.filter((x) => filter(selector(x)));
+					
 					setState((s) => $u(s, { $merge: { data: d ?? [] } }));
 
 					if(d.length > 0 && onChange != null && props.value == null) {
@@ -139,14 +141,22 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 		}
 	}
 
-	const options = state.data.map((e) => {
-		const val = selector(e);
-		return {
-			value: val.value,
-			label: val.display
-		}
-	});
-	
+	const optionsMapped  = () => {
+
+		let options = state.data.map((e) => {
+			const val = selector(e);
+			return {
+				value: val.value,
+				label: val.display
+			}
+		})
+
+		props.firtsOptions && options.unshift(props.firtsOptions);
+		return options;
+	} ;
+
+	const options = optionsMapped();
+
 	const optionsValue = options?.filter((o , i) => {
 		if(props.value?.toString() != undefined){
 			if((o.value.toString() === props.value?.toString()) || (o.value.toString() ===   (props.value as any).value) ){
