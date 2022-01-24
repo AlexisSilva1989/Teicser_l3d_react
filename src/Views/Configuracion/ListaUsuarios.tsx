@@ -11,19 +11,20 @@ import { useNavigation } from '../../Common/Hooks/useNavigation';
 import { SearchBar } from '../../Components/Forms/SearchBar';
 import { useSearch } from '../../Common/Hooks/useSearch';
 import { useCommonRoutes } from "../../Common/Hooks/useCommonRoutes";
+import { ListaBase } from '../Common/ListaBase';
 
 export const ListaUsuarios = () => {
-	const [search, doSearch] = useSearch();
-	const { meta } = useLocalization();
-	const { intl } = useFullIntl();
-	const { goto } = useNavigation();
-	const { gotoModify } = useCommonRoutes();
+	// const [search, doSearch] = useSearch();
+	// const { meta } = useLocalization();
+	// const { intl } = useFullIntl();
+	// const { goto } = useNavigation();
+	// const { gotoModify } = useCommonRoutes();
 
 	const [filter, setFilter] = useState<{ tipo: string; usuario?: Usuario }>({
 		tipo: '1'
 	});
 
-	const customFilter = useCallback( (x: Usuario): boolean => {
+	const customFilter = useCallback((x: Usuario): boolean => {
 		if (filter.tipo === '-1') {
 			return true;
 		}
@@ -34,50 +35,44 @@ export const ListaUsuarios = () => {
 
 		return x.activo === false && filter.tipo === '0';
 
-	},[filter]);
+	}, [filter]);
 
-	return <BaseContentView title='titles:quotation_details'>
-		<Col sm={2}>
-			<Button className='d-flex justify-content-start btn-primary mr-3 mt-5' onClick={() => goto.relative('meta.add')}>
-				<i className='fas fa-plus mr-3' />
-				{meta('add')}
-			</Button>
-		</Col>
-		<Col sm={2} className='text-left offset-4 mb-2'>
-		 	<CustomSelect
-				preSelect={filter.tipo}
-				label="status"
-				onChange={(e) => {
-					const val = e.value;
-					setFilter((s) => $u(s, { tipo: { $set: val } }));
-				}}
-				options={[{
-					label: 'labels:all',
-					value: '-1'
-				},
-				{
-					label: 'labels:active',
-					value: '1'
-				},
-				{
-					label: 'labels:inactive',
-					value: '0'
-				}]}
-			/>
-		</Col>
-		<Col sm={3} className="offset-1">
-			<SearchBar onChange={doSearch} />
-		</Col>
-		<Col sm={12}>
-			<ApiTable<Usuario> 
-				source={$j('usuarios')} 
-				columns={UsuarioColumns(intl)} 
+
+	return (
+		<>
+			<ListaBase<Usuario>
+				title='titles:users'
+				source={$j('usuarios')}
+				permission='configuration'
+				columns={UsuarioColumns}
 				customFilter={customFilter}
-				search={search}
-				onSelect={e => gotoModify({ data: e })}
-			/>
-		</Col>
-	</BaseContentView>;
+			>
+				<Col>
+					<br className='mb-2' />
+
+					<CustomSelect
+						preSelect={filter.tipo}
+						onChange={(e) => {
+							const val = e.value;
+							setFilter((s) => $u(s, { tipo: { $set: val } }));
+						}}
+						options={[{
+							label: 'labels:all',
+							value: '-1'
+						},
+						{
+							label: 'labels:active',
+							value: '1'
+						},
+						{
+							label: 'labels:inactive',
+							value: '0'
+						}]}
+					/>
+				</Col>
+			</ListaBase>
+		</>
+	);
 };
 
 
