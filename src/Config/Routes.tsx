@@ -25,6 +25,9 @@ import { IndexOperationalData } from "../Views/InformationLoad/OperationalData/I
 import { IndexImagenCondicion } from "../Views/InformationLoad/ImagenCondicion/IndexImagenCondicion";
 import { ListProjection } from "../Views/Reports/Projection/ListProjection";
 import ShowProjection from "../Views/Reports/Projection/ShowProjection";
+import { ListaEquipos } from "../Views/Masters/Equipos/ListaEquipos";
+import { AddEquipo } from "../Views/Masters/Equipos/AddEquipo";
+import { EditEquipo } from "../Views/Masters/Equipos/EditEquipo";
 
 
 interface Route {
@@ -151,6 +154,14 @@ const routes: RouteGroup[] = [
   {
     prefix: "routes:base.change_password",
     routes: [{ path: "routes:meta.base", component: <CambiarContrasena /> }]
+  },
+  {
+    prefix: "routes:base.equipment",
+    routes: [
+      { path: "routes:meta.base", component: <ListaEquipos /> },
+      { path: "routes:meta.add", component: <AddEquipo /> },
+      { path: "routes:meta.modify", component: <EditEquipo /> },
+    ],
   },
 ];
 

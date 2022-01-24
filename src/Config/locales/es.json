@@ -1803,6 +1803,8 @@
 	"menus:calibration": "calibración",
 	"menus:operational_data": "datos operacionales",
 
+	"menus:equipment": "equipos",
+
 	
 
 	"labels:projectionTo30Days": "30 últimos días",
@@ -2321,7 +2323,8 @@
 
 	"routes:base.scam_3d": "medicion_3d",
 	"routes:base.image_condicion": "imagen_condicion",
-
+	"routes:base.equipment": "equipos",
+	
 
 	
 
@@ -2539,6 +2542,8 @@
 	"columns:estado": "estado",
 
 	"titles:wear_projections": "Proyecciones de desgaste",
+	"titles:equipment": "Equipos",
+	
 	"label:projection30Days": "últimos 30 días",
 	"label:projectionComplete": "campaña completa"
 
