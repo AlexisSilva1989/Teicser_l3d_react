@@ -7,6 +7,7 @@ import { useLocalization } from '../../../../Common/Hooks/useLocalization';
 import Select from 'react-select';
 import { $m } from '../../../../Common/Utils/Reimports';
 import { Textbox } from '../../../Forms/Textbox';
+import { ApiSelect } from '../../../Api/ApiSelect';
 
 interface IProps {
     onSubmit: (data: IdataFormProjection) => void
@@ -17,9 +18,11 @@ interface IProps {
     typeProjection: string
     onChangeDate?: (dateFill : string) => void
     onChangeTypeProjection?: (typeProjection : string) => void
+    onChangeEquipo?: (equipoId : string) => void
     daysProjection:string
     dataInitialForm?: IdataFormProjection
-    dataPromedio? : IDataPromedio
+    dataPromedio? : IDataPromedio,
+    idEquipoSelected?: string
 }
 
 export interface IDatesLastProjection {
@@ -44,6 +47,7 @@ export interface IdataFormProjection {
     tonsForChange: string
     last_date_measurement?: string
     dates_last_projection? : IDatesLastProjection
+    equipoId : string
 }
 
 export interface IDataPromedio {
@@ -90,9 +94,11 @@ const FormProjection = ({
     typeProjection,
     onChangeDate,
     onChangeTypeProjection,
+    onChangeEquipo,
     daysProjection,
     dataInitialForm,
-    dataPromedio }:IProps) => {
+    dataPromedio,
+    idEquipoSelected }:IProps) => {
     
     /*STATES */
     const [showLabelPercent, setShowLabelPercent] = useState<boolean>();
@@ -111,7 +117,8 @@ const FormProjection = ({
             isDataPercent: dataInitialForm ? dataInitialForm.isDataPercent : "false",
             type_projection : dataInitialForm 
                 ? optionsTypeProjection[findOptionsTypeProjection(dataInitialForm.type_projection as string)] 
-                : optionsTypeProjection[findOptionsTypeProjection(typeProjection)]
+                : optionsTypeProjection[findOptionsTypeProjection(typeProjection)],
+            equipoId :  idEquipoSelected
         }
     });
 {console.log('dataInitialForm ',dataInitialForm)}
@@ -124,9 +131,30 @@ const FormProjection = ({
         setShowLabelPercent(getValues('isDataPercent') === "true")
     },[]);
 
-    
     return (<form onSubmit={handleSubmit(onSubmit)}>
         <Row className='text-left mt-2'>
+            <Col sm={2} className='text-left mb-2'>
+                <label><b>Equipo:</b></label>
+                <Controller
+                    as={ApiSelect}
+                    control={control}
+                    name='equipoId'
+                    placeholder='Seleccione Equipo'
+                    source={'service_render/equipos'}
+                    selector={(option: any) => {
+                        return { display: option.nombre, value: option.id.toString() };
+                    }}
+                    value={idEquipoSelected}
+                    onChange={ (data) => {
+                        onChangeEquipo !== undefined && onChangeEquipo(data[0])
+                        return data[0];
+                    }}
+                    rules={{ required: {value:true, message:'Complete este campo'} }}
+                />
+                {errors.equipoId && <small className='text-danger'>
+                  {errors.equipoId.message}
+                </small>}
+            </Col>
             <Col sm={2} className='text-left mb-2'>
                 <label><b>Variables de proyección:</b></label>
                 <Controller
