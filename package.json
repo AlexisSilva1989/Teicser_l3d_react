@@ -150,6 +150,7 @@
 		"tslint": "^5.20.1",
 		"typescript": "^3.8.3",
 		"url-join": "^4.0.1",
+		"use-debounce": "^7.0.1",
 		"validate.js": "^0.13.1",
 		"validator": "^11.1.0",
 		"voca": "^1.4.0",
