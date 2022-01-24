@@ -7,7 +7,8 @@ import { $u } from '../../Common/Utils/Reimports';
 import { AxiosError } from 'axios';
 import { useLocalization } from '../../Common/Hooks/useLocalization';
 import { Col, Button } from 'react-bootstrap';
-
+import { removeAccents } from '../../Common/Utils/Utils';
+import { useDebounce } from 'use-debounce';
 export interface MultiselectData<T> {
 	allSelected: boolean
 	selectedCount: number
@@ -26,6 +27,7 @@ interface Props<T> {
 	pagination?: boolean
 	paginationServe?: boolean
 	onChangePage?: (page: number, totalRows: number) => void
+	onChangeRowsPerPage?: (totalRows: number) => void
 	sortable?: boolean
 	dense?: boolean
 	className?: string
@@ -50,6 +52,9 @@ interface Props<T> {
 	onClickAdd?: () => void
 	titleTable?: string
 	isLoading?: boolean
+	noRowsPerPage?: boolean
+	filterServeParams?:object
+	rowsPerPage?: number
 }
 
 interface State<T> {
@@ -58,6 +63,7 @@ interface State<T> {
 	loading: boolean
 	page: number
 	rowsPerPage: number
+	totalRows: number
 }
 
 createTheme('msig', {
@@ -105,20 +111,26 @@ export const ApiTable = <T extends unknown = any>(props: Props<T>) => {
 		filtered: [],
 		loading: true,
 		page: 1,
-		rowsPerPage: 10
+		rowsPerPage: 10,
+		totalRows: 0
 	};
-	const { meta } = useLocalization();
+
 	const [init, setInit] = useState(false);
 	const [state, setState] = useState(initial);
+	const [valueSearch] = useDebounce(props.search, 1500);
+
+	const { meta } = useLocalization();
 	const { customFilter, onDataChange } = props;
 	const { pushError } = usePushError();
-	const { onLoad: onLoadProp, onReload: onReloadProp } = props;
+	const { onLoad: onLoadProp, onReload: onReloadProp} = props;
 
+	//CALLBACKS
 	const onLoad = useCallback(() => {
 		if (onLoadProp != null) {
 			onLoadProp();
 		}
 	}, [onLoadProp]);
+	
 	const setLoading = useCallback(
 		(loading: boolean) => {
 			setState((s) => $u(s, { $merge: { loading } }));
@@ -127,62 +139,15 @@ export const ApiTable = <T extends unknown = any>(props: Props<T>) => {
 		[onLoad]
 	);
 
-	const columnsSelectorsMemo = useMemo(() : ((row: T) => string)[] => {
-		return props.columns.map(column => column.selector as (row: T) => string);
-	}, [props.columns]);
-
-	useEffect(() => {
-		const regex = new RegExp(props.search ?? '', 'i');
-
-		const filtered = state.data.filter((row) => {
-			return columnsSelectorsMemo.some(selector => {
-				if(selector == null) { return false; }
-				if(typeof selector === 'string') {
-					const stringSelector = selector as string;
-					return stringSelector in row && regex.test((row as any)[stringSelector] as string);
-				}
-				const selectedValue = selector(row);
-				return regex.test(selectedValue as string);
-			}) && (customFilter == null ? true : customFilter(row));
-		}) ?? [];
-
-		setState((s) => $u(s, { $merge: { filtered } }));
-	}, [state.data, props.search, customFilter, columnsSelectorsMemo]);
-
 	const onReload = useCallback(() => {
 		if (onReloadProp != null) {
 			onReloadProp();
 		}
 	}, [onReloadProp]);
 
-	useEffect(() => {
-		async function fetch() {
-			if (!init || (init && props.reload === true)) {
-				setLoading(true);
-				setInit(true);
-				if (typeof props.source === 'string') {
-					await ax.get<T[]>(props.source, { params: props.queryParams }).then((e) => {
-						setState((s) => $u(s, { $merge: { data: e.data ?? [], loading: false } }));
-						if (onDataChange != null) { onDataChange(e.data); }
-					}).catch((e: AxiosError) => {
-						if (e.response) { pushError('errors:base.load_any', { code: e.response.status }); }
-					});
-				} else {
-					const loader = props.isLoading ? props.isLoading : false;
-					setState((s) =>
-						$u(s, { $merge: { data: props.source as any, loading: loader } }));
-					if (onDataChange != null) { onDataChange(props.source as any); }
-				}
-			}
-			onReload();
-		}
-		if (props.load == null ? true : props.load) {
-			fetch();
-		}
-	}, [props.source, props.load, pushError, setLoading, props.queryParams, init, setInit, props.reload, props.onReload, onReload, onDataChange]);
-
+	//MEMOS
 	const columnsWithSortableMemo = useMemo(() => {
-		if(props.sortable == null || props.sortable) {
+		if (props.sortable == null || props.sortable) {
 			return props.columns.map((x) => { return { ...x, sortable: x.sortable == null ? true : x.sortable }; });
 		}
 		return props.columns;
@@ -192,27 +157,27 @@ export const ApiTable = <T extends unknown = any>(props: Props<T>) => {
 		return columnsWithSortableMemo.map(column => {
 			const canAddTitle = typeof column.selector === 'function' && column.cell == null;
 
-			function titleCellFunction(row: T) {
-				if(typeof column.selector === 'string') { return ''; }
-				const selectorResult = column.selector!(row, 1);
+			function titleCellFunction(row: T, rowIndex: number) {
+				if (typeof column.selector === 'string') { return ''; }
+				const selectorResult = column.selector!(row, rowIndex);
 				var cadena = ""
-				if(typeof selectorResult !== 'string') { return selectorResult; }
-				if(selectorResult.length > 45){
-					cadena = selectorResult.substr(0,45)
-					cadena = cadena+"..."
-				}else{
+				if (typeof selectorResult !== 'string') { return selectorResult; }
+				if (selectorResult.length > 45) {
+					cadena = selectorResult.substr(0, 45)
+					cadena = cadena + "..."
+				} else {
 					cadena = selectorResult
 				}
 
-				if(column.width === '80%'){
+				if (column.width === '80%') {
 
 					return <label title={selectorResult}>{selectorResult}</label>;
 				}
 				return <label style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} title={selectorResult}>{cadena}</label>;
-				
+
 			}
 
-			if(canAddTitle) { return { ...column, cell: titleCellFunction }; } 
+			if (canAddTitle) { return { ...column, cell: titleCellFunction }; }
 			return column;
 		});
 	}, [columnsWithSortableMemo]);
@@ -221,39 +186,154 @@ export const ApiTable = <T extends unknown = any>(props: Props<T>) => {
 		<span className='text-secondary'>{meta('no_data_available')}</span>
 	</div>, [meta]);
 
+	const columnsSelectorsMemo = useMemo((): ((row: T) => string)[] => {
+		return props.columns.map(column => column.selector as (row: T) => string);
+	}, [props.columns]);
+
+	//HANDLES
+	//CAMBIAR DE PAGINA
 	const handlePageChange = (page: number, totalRows: number) => {
 		if (props.paginationServe) {
-			// console.log(page, totalRows);
+			setState((s) => $u(s, { $merge: { page: page } }));
 		}
 	}
 
+	//CAMBIAR DE CANTIDAD DE FILAS
+	const handleRowsPerPageChange = (totalRows: number, page: number) => {
+		if (props.paginationServe) {
+			setState((s) =>	$u(s, { $merge: { rowsPerPage: totalRows } }));
+		}
+	}
+
+	//PARAMETROS PARA PETICION
+	const getParamsToPaginateServer = ()=>{
+		const paramsToPaginateServer = { 
+			...props.queryParams, 
+			...props.filterServeParams,
+			totalRows: state.rowsPerPage, 
+			page: state.page , 
+			search: valueSearch === '' ? null : valueSearch, 
+		}
+		return paramsToPaginateServer;
+	}
+
+	//CONSULTAR DATOS
+	const handleFecthData = async () => {
+		// if (!init || (init && props.reload === true)) {
+			setLoading(true);
+			setInit(true);
+			let dataResponse : any;
+			
+			if (typeof props.source === 'string') {
+
+				let params = props.paginationServe
+					? getParamsToPaginateServer()
+					: props.queryParams;
+
+				await ax.get<any>(props.source, { params: params }).then((e) => {
+					dataResponse = props.paginationServe ? e.data.data : e.data;
+					setState((s) =>
+						$u(s, {
+							$merge: {
+								data: dataResponse ?? [],
+								filtered: dataResponse ?? [],
+								totalRows: e.data.pagination && e.data.pagination.total
+							}
+						})
+					);
+				}).catch((e: AxiosError) => {
+					if (e.response) { pushError('errors:base.load_any', { code: e.response.status }); }
+				});
+			} else {
+
+				const loader = props.isLoading ? props.isLoading : false;
+				dataResponse = props.source as any;
+				setState((s) =>	$u(s, { $merge: { data: dataResponse, filtered:dataResponse, loading: loader } }));
+			}
+
+			if (onDataChange != null) { onDataChange(dataResponse); }
+			setLoading(false);
+			onReload();
+		// }
+	}
+
+	//EFFECTS
+	//CONSULTAR DATOS
+	useEffect(() => {
+		const load = (props.load == null || props.load == undefined) ? true : props.load;
+		if (((!init) ||  (init && props.reload )) || ( props.paginationServe && (init && load)) ) {
+			handleFecthData();
+		}
+	}, [
+		state.page,state.rowsPerPage, 
+		props.source, props.load, props.queryParams, props.filterServeParams,
+		props.reload, props.onReload, onReload, onDataChange
+	]);
+
+	//BUSQUEDA SIN PAGINACION
+	useEffect(() => {
+		if (props.paginationServe) {return};
+
+		let search: string | undefined = props.search !== undefined ? removeAccents(props.search) : props.search;
+		search = escape(search ?? '');
+		const regex = new RegExp(search, 'i');
+
+		const filtered = state.data.filter((row: any) => {
+			return columnsSelectorsMemo.some(selector => {
+				if (selector == null) { return false; }
+				if (typeof selector === 'string') {
+					const stringSelector = selector as string;
+					let selected: string = (row)[selector] as string;
+					if (typeof selected === 'string') {
+						selected = removeAccents(selected);
+					}
+					return stringSelector in row && regex.test(escape(selected));
+				}
+				let selectedValue = selector(row);
+				if (typeof selectedValue === 'string') {
+					selectedValue = removeAccents(selectedValue);
+				}
+
+				return regex.test(escape(selectedValue as string));
+			}) && (customFilter == null ? true : customFilter(row));
+		}) ?? [];
 	
+		setState((s) => $u(s, { $merge: { filtered } }));
+	
+	}, [ state.data, props.search, customFilter, columnsSelectorsMemo]);
+
+	//BUSQUEDA CON PAGINACION
+	useEffect(()=>{
+		if (!props.paginationServe) {return};
+		init && handleFecthData();
+	},[valueSearch])
+
+	useEffect(()=>{
+		props.isLoading && setLoading(props.isLoading);
+	},[props.isLoading])
+
 	return (
 		<>
-			{props.hasButtonAdd && (
-				<>
+			{
+				props.hasButtonAdd && (<>
 					<Col sm={4} className={"mb-2"}>
-						<Button
-							variant={"primary"}
-							onClick={props.onClickAdd}
-						>
-							<i className={"fas fa-plus mr-1"}/> Agregar
+						<Button	variant={"primary"} onClick={props.onClickAdd}>
+							<i className={"fas fa-plus mr-1"} /> Agregar
 						</Button>
 					</Col>
 					<Col sm={8} className={"mb-2"}>
 						<b>{props.titleTable}</b>
 					</Col>
-				</>
-			)}
+				</>)
+			}
+
 			<DataTable conditionalRowStyles={props.rowStyles}
 				className={['border rounded', props.className ?? ''].join(' ')}
 				pagination={props.pagination == null ? true : props.pagination}
-				paginationServer={props.paginationServe ?? false}
-				onChangePage={props.onChangePage ?? handlePageChange}
 				noHeader
 				theme='msig'
-				paginationPerPage={state.rowsPerPage}
-				paginationTotalRows={props.paginationServe ? props.paginationTotalRows : state.filtered.length}
+				paginationPerPage={props.rowsPerPage ?? state.rowsPerPage}
+				paginationTotalRows={props.paginationTotalRows ?? (props.paginationServe ? state.totalRows : state.filtered.length)}
 				striped={props.striped}
 				noDataComponent={noData}
 				dense={props.dense == null ? true : props.dense}
@@ -272,6 +352,16 @@ export const ApiTable = <T extends unknown = any>(props: Props<T>) => {
 				selectableRowsHighlight={props.highlight}
 				customStyles={tableStyles}
 				progressComponent={<BounceLoader color='var(--primary)' css={{ margin: '2.5rem' } as any} />}
+				paginationComponentOptions={{ noRowsPerPage: props.noRowsPerPage ?? false }}
+				
+				//pagination server
+				paginationServer={props.paginationServe ?? false}
+				onChangePage={props.onChangePage ?? handlePageChange}
+				onChangeRowsPerPage={props.onChangeRowsPerPage ?? handleRowsPerPageChange}
+				paginationServerOptions={{
+					persistSelectedOnPageChange: props.paginationServe, 
+					persistSelectedOnSort: true
+				}}
 			/>
 		</>
 	);
