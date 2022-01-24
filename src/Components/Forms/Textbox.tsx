@@ -4,6 +4,7 @@ import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { useRut  } from '../../Common/Hooks/useRut';
 import { ONLY_NUMBER } from '../../Enums';
 import { Format } from '../../Dtos/Utils';
+import { FieldError } from 'react-hook-form';
 
 interface Props {
 	label?: string
@@ -21,6 +22,7 @@ interface Props {
 	onChange?: (e: string | ChangeEvent<HTMLInputElement>) => void
 	hidden?: boolean 
 	format?: "RUT" | "NUMBER-SEPARATOR"
+	errorForm?: FieldError
 }
 
 export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInputElement>) => {
@@ -109,6 +111,14 @@ export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInput
 				<br />
 			</Fragment>)}
 		</div>}
+
+		{props.errorForm && (
+          <div>
+            <small className="text-danger">
+              {props.errorForm.message}
+            </small>
+          </div>
+        )}
 			
 	</Fragment>
 });
