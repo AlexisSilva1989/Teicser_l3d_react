@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef } from 'react';
 import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { Utils } from '../../Common/Utils/Utils';
 
-export type acceptedFormat = "jpg" | "png" | "gif" | "jpeg" | "xls" | "xlsx" | "pdf" | "csv";
+export type acceptedFormat = "jpg" | "png" | "gif" | "jpeg" | "xls" | "xlsx" | "pdf" | "csv" | "h5" | "pkl";
 interface Props {
 	accept?: acceptedFormat[]
 	label?: string
@@ -24,18 +24,12 @@ export const FileInputWithDescription = (props: Props) => {
 	const acceptFormat = useMemo( () => {
 		if( props.accept && props.accept.length > 0 ){
 			const accept = props.accept.reduce( ( acc , format ) => {
-				return (
-                    format === "xls" 
-                    || format === "xlsx" 
-                    || format === "csv" 
-                )
-                    ? `${acc},.${format}` 
-                    : `${acc},image/${format}`
+				return `${acc},.${format}`
 			} , "" );
 			return accept.substr(1, accept.length);
 		}
 
-		return "image/jpg,image/png,image/jpeg,image/git,.xls,.xlsx,.csv"; 
+		return "image/*,.xls,.xlsx,.csv"; 
 	}, [props.accept, props.accept?.length]);
 
     const openFileSelect = () => {
@@ -49,7 +43,8 @@ export const FileInputWithDescription = (props: Props) => {
 					<b>{caps(props.label)}:</b>
 				</label>
 			)}
-
+            {
+}
             <div className='input-group'>
                 <input type='text' className='form-control border rounded' 
                     onClick={ openFileSelect }
@@ -82,6 +77,13 @@ export const FileInputWithDescription = (props: Props) => {
                         onChange={(e) => {
                             const files = e.target.files;
                             if(files  && files.length !== 0 ){
+                                //VALIDAR QUE EL ARCHIVO SELECCIONADO ESTA DENTRO DE LOS FORMATOS PERMITIDOS
+                                let extFile : string | undefined = files[0].name.split('.').pop();
+                                if(props.accept && props.accept.length > 0 && extFile != undefined){
+                                    if(!props.accept.some(value => value == extFile?.toLowerCase())){
+                                        return;
+                                    }
+                                }
                                 if (props.onChangeDisplay) { props.onChangeDisplay(files[0].name); }
                                 if (props.onChange) { props.onChange(files[0]); }
                             }
