@@ -14,15 +14,20 @@ import { LoadingSpinner } from '../../../Components/Common/LoadingSpinner';
 import { Buttons } from '../../../Components/Common/Buttons';
 import { useCommonRoutes } from '../../../Common/Hooks/useCommonRoutes';
 
+interface responseInfoRender {
+	historial_data_render: IDatesLastProjection,
+	data_promedio: IDataPromedio
+}
+
 export const AddProjection = () => {
-	const EQUIPO_ID = "1";
+	// const EQUIPO_ID = "1";
 
 	/*CONST */
 	const maxDaysToProjection = 35;
 	const countDaysToProjection = maxDaysToProjection - 5;
 
 	/*STATES*/
-	const [loadingData, setLoadingData] = useState(true);
+	const [loadingData, setLoadingData] = useState(false);
 	const [errorMessageModule, setErrorMessageModule] = useState<string[]>([]);
 	const [statusService, setStatusService] = useState<string>();
 	const [datesLastProjection, setDatesLastProjection] = useState<IDatesLastProjection>();
@@ -32,6 +37,7 @@ export const AddProjection = () => {
 	const [dateFillEnd, setDateFillEnd] = useState<string>()
 	const [typeProjection, setTypeProjection] = useState<string>('projection30Days')
 	const [dataPromedio, setDataPromedio] = useState<IDataPromedio>()
+	const [idEquipoSelected, setIdEquipoSelected] = useState<string>();
 	
 	/*HOOKS */
 	const api = useApi();
@@ -65,6 +71,10 @@ export const AddProjection = () => {
 		setTypeProjection(typeProjection);
 	};
 
+	const onChangeEquipo = (equipoId : string) => {
+		setIdEquipoSelected(equipoId);
+	}
+
 	const updateLastDataSimulate = (historial_data_render : IDatesLastProjection) => {
 		setDatesLastProjection(historial_data_render);
 		setLastDateProjection($m(historial_data_render.fecha_medicion, 'YYYY-MM-DD').format('DD-MM-YYYY'))
@@ -74,14 +84,11 @@ export const AddProjection = () => {
 	/*OBTENER DATOS ASOCIADOS A LA PROYECCION */
 	useEffect(() => {
 		const getLastDataSimulated = async () => {
-			interface responseInfoRender {
-				historial_data_render: IDatesLastProjection,
-				data_promedio: IDataPromedio
-			}
 
+			if (idEquipoSelected == undefined){return}
 			const errors : string[] = [];
 
-			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated",EQUIPO_ID,typeProjection))
+			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated",idEquipoSelected,typeProjection))
 				.success((response) => {
 		
 					response.historial_data_render === null 
@@ -103,7 +110,7 @@ export const AddProjection = () => {
 		};
 		setLoadingData(true);
 		getLastDataSimulated()
-	}, [typeProjection]);
+	}, [typeProjection,idEquipoSelected]);
 
 	/*CALCULAR EL NUMERO DE DIAS A PROYECTAR */
 	useEffect(() => {
@@ -122,7 +129,7 @@ export const AddProjection = () => {
 
 	const simulacionForm: JSX.Element = (<>
 		<Col sm={6} className='text-left mb-2'>
-			<h4>Periodo a considerar para la proyección de desgaste</h4>
+			<h5>Periodo a considerar para la proyección de desgaste</h5>
 		</Col>
 		<Col sm={6} className='text-center mb-2'>
 			<h5>Fecha de última medición: {lastDateProjection}</h5>
@@ -137,6 +144,8 @@ export const AddProjection = () => {
 				daysProjection={daysProjection}
 				onChangeDate={onChangeDate}
 				onChangeTypeProjection={onChangeTypeProjection}
+				onChangeEquipo={onChangeEquipo}
+				idEquipoSelected={idEquipoSelected}
 				dataInitialForm={dataForm}
 				dataPromedio = {dataPromedio}
 			/>
