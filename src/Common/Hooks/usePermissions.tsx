@@ -4,7 +4,7 @@ import { Permissions } from '../Utils/Permissions';
 import { IAppState } from '../../Store/AppStore';
 import { IUserPermission } from '../Utils/IUserPermission';
 
-export type UserPermission = 'gemelo_digital' | 'information_load' | 'reports' | 'configuration';
+export type UserPermission = 'gemelo_digital' | 'information_load' | 'reports' | 'configuration' | 'masters';
 
 export const usePermissions = () => {
 	const permissions = useSelector<IAppState, IUserPermission[]>((s) => s.dashboard.user?.permissions ?? []);
