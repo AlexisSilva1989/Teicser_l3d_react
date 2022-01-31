@@ -36,7 +36,9 @@ export interface IDataFormEquipo {
 	tipo_equipo: {label: string, value: string} 
 	file_scaler?: any 
 	file_model?: any 
-	status?: string 
+	status?: string
+	perfil_nominal?: object[] 
+	perfil_critico?: object[]  
   }
 
 export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] = (intl) => {

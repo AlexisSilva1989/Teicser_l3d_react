@@ -51,11 +51,13 @@ export const EditEquipo = ( ) => {
         data?.status && formData.append("status", data?.status);
         data.file_model && formData.append("file_model", data.file_model);
         data.file_scaler && formData.append("file_scaler", data.file_scaler);
+        data.perfil_nominal && formData.append("perfil_nominal", JSON.stringify(data.perfil_nominal) );
+        data.perfil_critico && formData.append("perfil_critico", JSON.stringify(data.perfil_critico) );
         
         setIsSaving(true);
         await ax.patch('service_render/equipos/edit', formData, headers)
           .then((response) => {
-            // goBack();
+            goBack();
             addToast(caps('success:base.save'), {
               appearance: 'success',
               autoDismiss: true,

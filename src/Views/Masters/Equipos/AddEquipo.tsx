@@ -26,12 +26,14 @@ export const AddEquipo = ( ) => {
       console.log('data: ', data);
         const formData = new FormData();
 		    const headers = { headers: { "Content-Type": "multipart/form-data" } };
-        
         formData.append("nombre", data.name);
         formData.append("tipo_equipo", data.tipo_equipo.value);
         formData.append("file_model", data.file_model);
         formData.append("file_scaler", data.file_scaler);
+        data.perfil_nominal && formData.append("perfil_nominal", JSON.stringify(data.perfil_nominal) );
+        data.perfil_critico && formData.append("perfil_critico", JSON.stringify(data.perfil_critico) );
         
+        // 
         setIsSaving(true);
         await ax.post('service_render/equipos/save', formData, headers)
           .then((response) => {
