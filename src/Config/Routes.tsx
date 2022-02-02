@@ -117,6 +117,7 @@ const routes: RouteGroup[] = [
       { path: "routes:meta.base", component: <ListProjection /> },
       { path: "routes:meta.add", component: <AddProjection /> },
       { path: "routes:meta.modify", component: <ShowProjection /> },
+      { path: "/:data_select?", component: <ShowProjection /> },
     ],
   },
   {

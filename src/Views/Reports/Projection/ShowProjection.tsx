@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col } from 'react-bootstrap';
+import { useLocation, useParams } from 'react-router-dom';
+import { useCommonRoutes } from '../../../Common/Hooks/useCommonRoutes';
+import { useFullLocation } from '../../../Common/Hooks/useFullLocation';
 import { useNavigation } from '../../../Common/Hooks/useNavigation';
 import { $j } from '../../../Common/Utils/Reimports';
 import { Buttons } from '../../../Components/Common/Buttons';
@@ -8,16 +11,33 @@ import { BaseContentView } from '../../Common/BaseContentView';
 
 const ShowProjection = () => {
     const { stateAs } = useNavigation();
-    const { data } = stateAs<{ data: {id:number}}>();
+    const dataStateAs = stateAs<{ data: {id:number}}>();
+    const { pushAbsolute } = useFullLocation();
+    const {data_select} = useParams<{data_select: string}>();
+    
+    const [dataId , setDataId] = useState<string>();
+    
+    useEffect(()=>{
+        console.log('data_select: ', data_select);
+        if(dataStateAs === undefined && data_select === undefined){ 
+            pushAbsolute("routes:base.projection") 
+            return
+        }
+
+        data_select !== undefined 
+            ? setDataId(data_select)
+            : setDataId(dataStateAs.data.id.toString())
+    },[])
+
     return (<>
 		<BaseContentView title={"Simulación de desgaste"}>
             <Col className="col-12 mb-4">
-				<Buttons.Back />
+				<Buttons.GoTo path={"routes:base.projection"} />
 			</Col>
             <Col>
-                <SimulacionGrafica
-                    resourceData={$j('service_render/extend/projection',data.id.toString())}
-                />
+                {dataId && <SimulacionGrafica
+                    resourceData={$j('service_render/extend/projection',dataId)}
+                />}
             </Col>
 		</BaseContentView>
 	</>);
