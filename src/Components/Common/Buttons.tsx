@@ -110,5 +110,23 @@ export const Buttons = {
 			onClick={props.onClick}
 			type='button'
 		/>
-	)
+	),
+	GoTo: (props: Pick<IButtonProps, 'path'| 'onClick' | 'disabled' | 'className'>) => {
+		const history = useHistory();
+		const { pushAbsolute } = useFullLocation();
+
+		const goto = ()=>{
+			props.path && pushAbsolute(props.path.toString()) 		
+		}
+
+		return (
+			<Buttons.Common
+				label='labels:links.go_back'
+				icon='fas fa-arrow-left'
+				disabled={props.disabled}
+				onClick={props.onClick ?? goto}
+				className={'btn-outline-primary ' + (props.className ?? '')}
+			/>
+		);
+	},
 };
