@@ -28,6 +28,9 @@ import ShowProjection from "../Views/Reports/Projection/ShowProjection";
 import { ListaEquipos } from "../Views/Masters/Equipos/ListaEquipos";
 import { AddEquipo } from "../Views/Masters/Equipos/AddEquipo";
 import { EditEquipo } from "../Views/Masters/Equipos/EditEquipo";
+import { ListaServidores } from "../Views/Masters/Servidores/ListaServidores";
+import { AddServidores } from "../Views/Masters/Servidores/AddServidores";
+import { EditServidores } from "../Views/Masters/Servidores/EditServidores";
 
 
 interface Route {
@@ -162,6 +165,14 @@ const routes: RouteGroup[] = [
       { path: "routes:meta.base", component: <ListaEquipos /> },
       { path: "routes:meta.add", component: <AddEquipo /> },
       { path: "routes:meta.modify", component: <EditEquipo /> },
+    ],
+  },
+  {
+    prefix: "routes:base.site_servers",
+    routes: [
+      { path: "routes:meta.base", component: <ListaServidores /> },
+      { path: "routes:meta.add", component: <AddServidores /> },
+      { path: "routes:meta.modify", component: <EditServidores /> },
     ],
   },
 ];
