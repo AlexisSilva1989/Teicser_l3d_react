@@ -1,0 +1,16 @@
+export default {
+    availableFilterHeader: 'Filtro disponible',
+    availableHeader: 'Disponible',
+    moveAllLeft: 'Mover todo a la izquierda',
+    moveAllRight: 'Mover todo a la derecha',
+    moveLeft: 'Mover a la izquierda',
+    moveRight: 'Mover a la derecha',
+    moveBottom: 'Mover al fondo',
+    moveDown: 'Mover hacia abajo',
+    moveUp: 'Mover hacia arriba',
+    moveTop: 'Mover al principio',
+    noAvailableOptions: 'Sin opciones disponibles',
+    noSelectedOptions: 'Sin opciones seleccionadas',
+    selectedFilterHeader: 'Filtro seleccionado',
+    selectedHeader: 'Seleccionado',
+};
