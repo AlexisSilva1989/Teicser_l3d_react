@@ -29,7 +29,7 @@ export const FileInputWithDescription = (props: Props) => {
 			return accept.substr(1, accept.length);
 		}
 
-		return "image/*,.xls,.xlsx,.csv"; 
+		return "*"; 
 	}, [props.accept, props.accept?.length]);
 
     const openFileSelect = () => {
