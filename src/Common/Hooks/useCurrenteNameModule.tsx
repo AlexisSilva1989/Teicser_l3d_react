@@ -10,7 +10,7 @@ path => "/providers_selection" => useCurrenteNameModule => PROVIDERS SELECTION
 
 import {useLocation} from "react-router-dom";
 
-export const DEFAULT_NAME = 'QZ - Sistema de gestión';
+export const DEFAULT_NAME = 'Sistema de proyecciones';
 
 export const useCurrenteNameModule = (newTitleName?:string) => {
     
