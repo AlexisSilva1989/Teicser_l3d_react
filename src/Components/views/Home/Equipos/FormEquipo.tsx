@@ -10,9 +10,12 @@ import { FileInputWithDescription } from "../../../Forms/FileInputWithDescriptio
 import { RadioSelect } from "../../../Forms/RadioSelect";
 import { useShortModal } from "../../../../Common/Hooks/useModal";
 import { FileUtils } from "../../../../Common/Utils/FileUtils";
-import { WorkBook } from "xlsx/types";
-
-
+import 'react-dual-listbox/lib/react-dual-listbox.css';
+import DualListBox, { Option } from 'react-dual-listbox';
+import DualListLang from "../../../../Data/Models/Common/DualListLang";
+import { ax } from "../../../../Common/Utils/AxiosCustom";
+import { AxiosError } from "axios";
+import { useToasts } from "react-toast-notifications";
 interface IProps {
   onSubmit: (data: IDataFormEquipo) => void
   isSaving?: boolean
@@ -23,6 +26,7 @@ interface IProps {
 const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps) => {
 
   const { capitalize: caps } = useFullIntl();
+  const { addToast } = useToasts();
   const { handleSubmit, control, errors, setValue, register, setError, clearError } = useForm<IDataFormEquipo>({
     mode: "onSubmit",
     submitFocusError: true
@@ -32,21 +36,55 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
   const [displayModel, setDisplayModel] = useState<string>();
   const [displayPerfilNominal, setDisplayPerfilNominal] = useState<string>();
   const [displayPerfilCritico, setDisplayPerfilCritico] = useState<string>();
+  const [displayCheckpoint, setDisplayCheckpoint] = useState<string>();
+  
+  const [serverSelected, setServerSelected] = useState<string[] | undefined >([]);
+  const [serverAvailable, setServerAvailable] = useState<Option<string>[]>([]);
 
-  const useModalPerfiles = useShortModal();
 
   useEffect(() => {
     { isEdit && register({ name: "id" }, { required: true }) }
   }, [register])
 
   useEffect(() => {
+
+    if(!isEdit){
+      getServesEquipo(undefined);
+    }else{
+      if(initialData?.id !== undefined){
+        getServesEquipo(initialData.id);
+      }
+    }
+
     setValue([
       { name: initialData?.name },
       { tipo_equipo: initialData?.tipo_equipo },
       { status: initialData?.status?.toString() },
-      { id: initialData?.id }
+      { id: initialData?.id },
     ]);
+
   }, [initialData]);
+
+
+  /*OBTENER SERVIDORES REGISTRADOS Y SELECCIONADOS */
+  const getServesEquipo = async (equipoId: string | undefined) => {
+    await ax.get<{serversSelected: string[], serversAvailable: Option<string>[] }>('service_render/equipos/servidores',{ params: {equipoId : equipoId }})
+      .then((response) => {
+        setServerSelected(response.data.serversSelected );
+        setServerAvailable(response.data.serversAvailable);
+        setValue([
+          { server_selected: response.data.serversSelected}
+        ]);
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(caps('errors:base.load', { element: "servidores" }), {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
+      });
+  }
 
   const setPerfilNominal = async (file : File) => {
     let fileRead = await FileUtils.fileToWorkbook(file);
@@ -61,203 +99,193 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
               
     setValue([{"perfil_critico":sheetValues}])
   }
-  	/*MODAL PARA FORMULARIO DE VARIABLES */
-	const modalPerfiles: JSX.Element = <>
-    <Modal show={useModalPerfiles.visible} onHide={useModalPerfiles.hide}>
-      <Modal.Header closeButton>
-        <b>Variables de operación</b>
-      </Modal.Header>
-      <Modal.Body>
-
-
-      </Modal.Body>
-    </Modal>
-  </>
 
   return (<>
     <form onSubmit={handleSubmit(onSubmit)}>
       <Row>
-        <Col sm={3} className={"mb-2"}>
-          <Textbox
-            label={`Nombre *`}
-            name={"name"}
-            id={"name"}
-            placeholder={"Nombre del equipo"}
-            ref={register({
-              required: { value: true, message: caps('validations:required') },
-              maxLength: {
-                value: 50,
-                message: "Máximo 50 caracteres permitidos",
-              },
-            })}
-            errorForm={errors.name}
-          />
-        </Col>
+          <Col sm={3} className={"mb-2"}>
+            <Textbox
+              label={`Nombre *`}
+              name={"name"}
+              id={"name"}
+              placeholder={"Nombre del equipo"}
+              ref={register({
+                required: { value: true, message: caps('validations:required') },
+                maxLength: {
+                  value: 50,
+                  message: "Máximo 50 caracteres permitidos",
+                },
+              })}
+              errorForm={errors.name}
+            />
+          </Col>
 
-        <Col sm={3} className={"mb-2"}>
-          <label><b>Tipo *:</b></label>
-          <Controller
-            name="tipo_equipo"
-            control={control}
-            rules={{ required: caps('validations:required') }}
-            id={"tipo_equipo"}
-            options={tiposEquipos}
+          <Col sm={3} className={"mb-2"}>
+            <label><b>Tipo *:</b></label>
+            <Controller
+              name="tipo_equipo"
+              control={control}
+              rules={{ required: caps('validations:required') }}
+              id={"tipo_equipo"}
+              options={tiposEquipos}
 
-            styles={{
-              control: (base: any) => ({
-                ...base,
-                minHeight: 'calc(1.5em + 1.25rem + 1.75px)',
-                borderColor: '#e3eaef',
-                borderRadius: '0.25rem'
-              }),
-              indicatorsContainer: (base: any) => ({
-                ...base,
-                div: { padding: 5 }
-              })
-            }}
-            as={Select}
-          />
-          <ErrorMessage errors={errors} name="tipo_equipo">
-            {({ message }) => <small className={'text-danger'}>{message}</small>}
-          </ErrorMessage>
-        </Col>
+              styles={{
+                control: (base: any) => ({
+                  ...base,
+                  minHeight: 'calc(1.5em + 1.25rem + 1.75px)',
+                  borderColor: '#e3eaef',
+                  borderRadius: '0.25rem'
+                }),
+                indicatorsContainer: (base: any) => ({
+                  ...base,
+                  div: { padding: 5 }
+                })
+              }}
+              as={Select}
+            />
+            <ErrorMessage errors={errors} name="tipo_equipo">
+              {({ message }) => <small className={'text-danger'}>{message}</small>}
+            </ErrorMessage>
+          </Col>
 
-        <Col sm={3}>
-          <label><b>Modelo (.h5) *:</b></label>
-          <Controller control={control}
-            id={"file_model"}
-            name={"file_model"}
-            onChangeDisplay={(display: string | undefined) => {
-              setDisplayModel(state => $u(state, { $set: display }));
-            }}
-            display={displayModel}
-            rules={{ required: { value: !isEdit, message: caps('validations:required') } }}
-            as={FileInputWithDescription}
-            accept={["h5"]}
-          />
+          <Col sm={3}>
+            <label><b>Modelo (.h5){!isEdit && ' *'}:</b></label>
+            <Controller control={control}
+              id={"file_model"}
+              name={"file_model"}
+              onChangeDisplay={(display: string | undefined) => {
+                setDisplayModel(state => $u(state, { $set: display }));
+              }}
+              display={displayModel}
+              rules={{ required: { value: !isEdit, message: caps('validations:required') } }}
+              as={FileInputWithDescription}
+              accept={["h5"]}
+            />
 
-          <ErrorMessage errors={errors} name="file_model">
-            {({ message }) => <small className='text-danger'>{message}</small>}
-          </ErrorMessage>
-        </Col>
+            <ErrorMessage errors={errors} name="file_model">
+              {({ message }) => <small className='text-danger'>{message}</small>}
+            </ErrorMessage>
+          </Col>
 
-        <Col sm={3}>
-          <label><b>Scaler (.pkl) *:</b></label>
-          <Controller control={control}
-            id={"file_scaler"}
-            name={"file_scaler"}
-            onChangeDisplay={(display: string | undefined) => {
-              setDisplayScaler(state => $u(state, { $set: display }));
-            }}
-            display={displayScaler}
-            rules={{ required: { value: !isEdit, message: caps('validations:required') } }}
-            as={FileInputWithDescription}
-            accept={["pkl"]}
-          />
+          <Col sm={3}>
+            <label><b>Scaler (.pkl){!isEdit && ' *'}:</b></label>
+            <Controller control={control}
+              id={"file_scaler"}
+              name={"file_scaler"}
+              onChangeDisplay={(display: string | undefined) => {
+                setDisplayScaler(state => $u(state, { $set: display }));
+              }}
+              display={displayScaler}
+              rules={{ required: { value: !isEdit, message: caps('validations:required') } }}
+              as={FileInputWithDescription}
+              accept={["pkl"]}
+            />
 
-          <ErrorMessage errors={errors} name="file_scaler">
-            {({ message }) => <small className='text-danger'>{message}</small>}
-          </ErrorMessage>
-        </Col>
+            <ErrorMessage errors={errors} name="file_scaler">
+              {({ message }) => <small className='text-danger'>{message}</small>}
+            </ErrorMessage>
+          </Col>
 
-        <Col sm={3}>
-          <label><b>Perfil Nominal:</b></label>
-          <Row>
+          <Col sm={3}>
+            <label><b>Checkpoint{!isEdit && ' *'}:</b></label>
+            <Controller control={control}
+              id={"file_checkpoint"}
+              name={"file_checkpoint"}
+              onChangeDisplay={(display: string | undefined) => {
+                setDisplayCheckpoint(state => $u(state, { $set: display }));
+              }}
+              display={displayCheckpoint}
+              rules={{ required: { value: !isEdit, message: caps('validations:required') } }}
+              as={FileInputWithDescription}
+            />
 
-            <Col sm={9} className="pr-0">
-              <Controller control={control}
-                id={"perfil_nominal"} 
-                name={"perfil_nominal"}
-				        onChangeDisplay={setDisplayPerfilNominal}
-                display={displayPerfilNominal}
-                onChange={ (data )=> {
-                  let file : File | null =  data[0];
-                  if (file) {
-                    setPerfilNominal(file);
-                  }else{
-                   return undefined;
-                  }
-                }}
-                as={FileInputWithDescription}
-                accept={["csv"]}
-                rules={{ validate: 
-                  { 
-                    value: value => {
-                      let isValueCorrect : boolean = true;
-                      if (value && value[0]){
-                        let primeraColumna = ((value[0][0]).toString()).toLowerCase();
-                        let segundaColumna = ((value[0][1]).toString()).toLowerCase();
-                        isValueCorrect =  (( primeraColumna == "coordenada_x") && ( segundaColumna == "coordenada_y") )
-                      }
-                      return isValueCorrect || 'Cabecera de primera columna como (coordenada_x) y segunda columna como (coordenada_y)'
+            <ErrorMessage errors={errors} name="file_checkpoint">
+              {({ message }) => <small className='text-danger'>{message}</small>}
+            </ErrorMessage>
+          </Col>
+
+          <Col sm={3}>
+            <label><b>Perfil Nominal:</b></label>
+            <Row>
+
+              <Col sm={12}>
+                <Controller control={control}
+                  id={"perfil_nominal"} 
+                  name={"perfil_nominal"}
+                  onChangeDisplay={setDisplayPerfilNominal}
+                  display={displayPerfilNominal}
+                  onChange={ (data )=> {
+                    let file : File | null =  data[0];
+                    if (file) {
+                      setPerfilNominal(file);
+                    }else{
+                    return undefined;
                     }
-                  } 
-                }}
-
-              />
-            </Col>
-            {/* <Col sm={3}>
-              <Button variant={"outline-success"} onClick={()=>{useModalPerfiles.show()}} disabled={isSaving}>
-                {'Ver'}
-              </Button>
-            </Col> */}
-          </Row>
-
-          <ErrorMessage errors={errors} name="perfil_nominal">
-            {({ message }) => <small className='text-danger'>{message}</small>}
-          </ErrorMessage>
-        </Col>
-
-        <Col sm={4}>
-          <label><b>Perfil Crítico:</b></label>
-          <Row>
-
-            <Col sm={9} className="pr-0">
-              <Controller control={control}
-                id={"perfil_critico"}
-                name={"perfil_critico"}
-                onChange={ (data )=> {
-                  let file : File | null =  data[0];
-                  if (file) {
-                    setPerfilCritico(file);
-                  }else{
-                   return undefined;
-                  }
-                }}
-                display={displayPerfilCritico}
-				        onChangeDisplay={setDisplayPerfilCritico}
-                as={FileInputWithDescription}
-                accept={["csv"]}
-                rules={{ validate: 
-                  { 
-                    value: value => {
-                      let isValueCorrect : boolean = true;
-                      if (value && value[0]){
-                        let primeraColumna = ((value[0][0]).toString()).toLowerCase();
-                        let segundaColumna = ((value[0][1]).toString()).toLowerCase();
-                        isValueCorrect =  (( primeraColumna == "coordenada_x") && ( segundaColumna == "coordenada_y") )
+                  }}
+                  as={FileInputWithDescription}
+                  accept={["csv"]}
+                  rules={{ validate: 
+                    { 
+                      value: value => {
+                        let isValueCorrect : boolean = true;
+                        if (value && value[0]){
+                          let primeraColumna = ((value[0][0]).toString()).toLowerCase();
+                          let segundaColumna = ((value[0][1]).toString()).toLowerCase();
+                          isValueCorrect =  (( primeraColumna == "coordenada_x") && ( segundaColumna == "coordenada_y") )
+                        }
+                        return isValueCorrect || 'Cabecera de primera columna como (coordenada_x) y segunda columna como (coordenada_y)'
                       }
-                      return isValueCorrect || 'Cabecera de primera columna como (coordenada_x) y segunda columna como (coordenada_y)'
+                    } 
+                  }}
+
+                />
+              </Col>
+            </Row>
+
+            <ErrorMessage errors={errors} name="perfil_nominal">
+              {({ message }) => <small className='text-danger'>{message}</small>}
+            </ErrorMessage>
+          </Col>
+
+          <Col sm={3}>
+            <label><b>Perfil Crítico:</b></label>
+            <Controller control={control}
+              id={"perfil_critico"}
+              name={"perfil_critico"}
+              onChange={(data) => {
+                let file: File | null = data[0];
+                if (file) {
+                  setPerfilCritico(file);
+                } else {
+                  return undefined;
+                }
+              }}
+              display={displayPerfilCritico}
+              onChangeDisplay={setDisplayPerfilCritico}
+              as={FileInputWithDescription}
+              accept={["csv"]}
+              rules={{
+                validate:
+                {
+                  value: value => {
+                    let isValueCorrect: boolean = true;
+                    if (value && value[0]) {
+                      let primeraColumna = ((value[0][0]).toString()).toLowerCase();
+                      let segundaColumna = ((value[0][1]).toString()).toLowerCase();
+                      isValueCorrect = ((primeraColumna == "coordenada_x") && (segundaColumna == "coordenada_y"))
                     }
-                  } 
-                }}
-              />
-            </Col>
-            {/* <Col sm={3}>
-              <Button variant={"outline-success"} disabled={isSaving} onClick={()=>{useModalPerfiles.show()}}>
-                {'Ver'}
-              </Button>
-            </Col> */}
-          </Row>
-
-          <ErrorMessage errors={errors} name="perfil_critico">
-            {({ message }) => <small className='text-danger'>{message}</small>}
-          </ErrorMessage>
-        </Col>
-
+                    return isValueCorrect || 'Cabecera de primera columna como (coordenada_x) y segunda columna como (coordenada_y)'
+                  }
+                }
+              }}
+            />
+            <ErrorMessage errors={errors} name="perfil_critico">
+              {({ message }) => <small className='text-danger'>{message}</small>}
+            </ErrorMessage>
+          </Col>
         {
           isEdit && <Col sm={3}>
-            <label><b>Activo:</b></label>
+            <label><b>Activo *:</b></label>
             <Controller control={control}
               name={"status"}
               options={[
@@ -269,6 +297,7 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
                   value: "0"
                 }
               ]}
+              
               rules={{ required: { value: !isEdit, message: caps('validations:required') } }}
               as={RadioSelect}
             />
@@ -278,8 +307,42 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
             </ErrorMessage>
           </Col>
         }
+      </Row>
 
-        <Col sm={12} className={"text-right"}>
+      <Row>
+        <Col sm={12}>
+          <label><b>Servidores{!isEdit && ' *'}:</b></label>
+          <Controller control={control}
+            as={DualListBox}
+            id={"server_selected"} 
+            name={"server_selected"}
+            options={serverAvailable}
+            selected={serverSelected}
+            canFilter
+            filterPlaceholder={'Buscar servidor...'}
+            showHeaderLabels={true}
+            lang={DualListLang}
+            onChange={ (data )=> {
+              setServerSelected(data[0]);
+              return data[0];
+            }}
+            rules={{
+              validate:
+              {
+                value: (value: string[]) => {
+                  return (value != undefined && value.length > 0) || 'Seleccione almenos un (1) servidor'
+                }
+              }
+            }}
+          />
+          <ErrorMessage errors={errors} name="server_selected">
+            {({ message }) => <small className='text-danger'>{message}</small>}
+          </ErrorMessage>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col sm={12} className={"text-right mt-3"}>
           <Button variant={"primary"} type="submit" disabled={isSaving}>
             {isSaving
               ? (<i className="fas fa-circle-notch fa-spin"></i>)
@@ -289,10 +352,9 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
             }
           </Button>
         </Col>
-
       </Row>
+
     </form>
-    {modalPerfiles}  
   </>);
 };
 

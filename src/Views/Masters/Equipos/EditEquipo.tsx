@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
+import { Option } from 'react-dual-listbox';
 import { useToasts } from 'react-toast-notifications';
 import { useApi } from '../../../Common/Hooks/useApi';
 import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
@@ -19,7 +20,6 @@ export const EditEquipo = ( ) => {
     const { addToast } = useToasts();
     const { capitalize: caps } = useFullIntl();
     const { getState } = useFullLocation();
-    // const { goBack } = useCommonRoutes();
 
     /*STATES */
     const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -30,18 +30,39 @@ export const EditEquipo = ( ) => {
       if (element == null || element== undefined) {
         goBack();
       }else{
+        // getServesEquipo(element?.id);
         setEquipoSelected({
           name:element?.nombre,
           tipo_equipo:{label:element?.tipo, value:element?.tipo},
           status: element?.status,
-          id: element?.id
+          id: element?.id,
         });
-      }
 
+        
+      }
     },[]);
+
+    /*OBTENER SERVIDORES REGISTRADOS Y SELECCIONADOS */
+    // const getServesEquipo = async (equipoId: string) => {
+    //   await ax.get<{serversSelected: string[], serversAvailable: Option<string>[] }>('service_render/equipos/servidores',{ params: {equipoId : equipoId }})
+    //     .then((response) => {
+    //       setEquipoSelected((s) => $u(s, { 
+    //         serversAvailabe: { $set: response.data.serversAvailable } ,
+    //         serversSelected: { $set: response.data.serversSelected }
+    //       }));
+    //     })
+    //     .catch((e: AxiosError) => {
+    //       if (e.response) {
+    //         addToast(caps('errors:base.load', { element: "servidores" }), {
+    //           appearance: 'error',
+    //           autoDismiss: true,
+    //         });
+    //       }
+    //     });
+    // }
+
     /*HANDLES */
     const handleSubmit = async (data: IDataFormEquipo) => {
-        console.log('data: ', data);
         const formData = new FormData();
 		    const headers = { headers: { "Content-Type": "multipart/form-data" } };
         
@@ -51,6 +72,8 @@ export const EditEquipo = ( ) => {
         data?.status && formData.append("status", data?.status);
         data.file_model && formData.append("file_model", data.file_model);
         data.file_scaler && formData.append("file_scaler", data.file_scaler);
+        data.file_checkpoint && formData.append("file_checkpoint", data.file_checkpoint);
+        data.server_selected && formData.append("server_selected", JSON.stringify(data.server_selected));
         data.perfil_nominal && formData.append("perfil_nominal", JSON.stringify(data.perfil_nominal) );
         data.perfil_critico && formData.append("perfil_critico", JSON.stringify(data.perfil_critico) );
         
@@ -74,7 +97,7 @@ export const EditEquipo = ( ) => {
           .finally(() => { setIsSaving(false) });
     };
 
-    return (<BaseContentView title="Agregar Equipo">
+    return (<BaseContentView title="Modificar Equipo">
         <div className="col-12 mb-4">
           <Buttons.Back />
         </div>

@@ -1,7 +1,6 @@
 import { IDataTableColumn } from "react-data-table-component";
 import { IntlShape } from "react-intl";
 import { Utils } from "../../../Common/Utils/Utils";
-import { OptionType } from "../../../Components/Forms/CustomSelect";
 
 export const tiposEquipos = [
 	{
@@ -39,6 +38,8 @@ export interface IDataFormEquipo {
 	status?: string
 	perfil_nominal?: object[] 
 	perfil_critico?: object[]  
+	file_checkpoint?: any 
+	server_selected?: string[]
   }
 
 export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] = (intl) => {
