@@ -14,7 +14,7 @@ import { localizeIntl } from '../../../../Common/Utils/LocalizationUtils';
 interface IProps {
     resourceData: string
     // dataForm?: IDataPromedio
-    returnFunction?: () => void
+    setFechaSimulacion?: (fecha: string) => void
     showLegend?: boolean
     dateStart?: string
     dateEnd?: string
@@ -28,11 +28,12 @@ interface IDataGraph {
     dataPromedio?: any
     status: string 
     tipoProyeccion: string
+    fechaSimulacion: string
 }
 
 const styleListOperationalVar: React.CSSProperties = { 'display': 'flex', 'justifyContent': 'center' }
 
-const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true}: IProps) => {
+const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true}: IProps) => {
 
     /*CUSTOM HOOKS */
     const { capitalize: caps,  localize } = useFullIntl();
@@ -62,6 +63,7 @@ const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true}: I
                     setDatesSimulacion(response.data.dates[0]);
                     setPerfilCritico(response.data.perfilCritico);
                     setPerfilNominal(response.data.perfilNominal);
+                    setFechaSimulacion && setFechaSimulacion(response.data.fechaSimulacion);
                     response.data.dataPromedio && setDataPromedio(response.data.dataPromedio);
                 }
             }).catch((error: AxiosError) => {
@@ -150,7 +152,7 @@ const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true}: I
 
     /*COMPOSICION DE LA GRAFICA */
     const graph: JSX.Element = <>
-        <Col xl='6'>
+        <Col className="col-xl-6 col-md-6">
             <Col sm="12" style={{ height: '250px' }}>
                 <Chart 
                     data={data} 
@@ -189,7 +191,7 @@ const SimulacionGrafica = ({ resourceData, returnFunction, showLegend = true}: I
     const ShowModule: JSX.Element = <>
         { dataSimulacionSize > 0 
             ?   (<>
-                    <Col xl='12' className="justify-content-center" style={{ 'display': 'flex' }}>
+                    <Col xl='12' className="justify-content-center d-md-flex">
                         {graph}
                         {showLegend && legendGraph}
                     </Col>
