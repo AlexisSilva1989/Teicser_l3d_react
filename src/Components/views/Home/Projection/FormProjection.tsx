@@ -121,7 +121,7 @@ const FormProjection = ({
             equipoId :  idEquipoSelected
         }
     });
-{console.log('dataInitialForm ',dataInitialForm)}
+
     /*EFFECTS */
     useEffect(() => {
         dateFillEnd !== undefined && setValue('date_project',dateFillEnd);
