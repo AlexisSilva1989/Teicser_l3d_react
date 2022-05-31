@@ -35,7 +35,7 @@ export interface EquipoTipo extends Equipo {
 export interface IDataFormEquipo {
 	id?: string
 	name: string 
-	tipo_equipo: {label: string, value: string} 
+	tipo_equipo: string
 	file_scaler?: any 
 	file_model?: any 
 	status?: string
@@ -51,7 +51,7 @@ export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] 
 		{
 			selector: 'id',
 			name: header('columns:id'),
-			format: (equipo) => equipo.id
+			format: (equipo) => equipo.id.toString().padStart(6, '0')
 		},
 		{
 			selector: 'nombre',

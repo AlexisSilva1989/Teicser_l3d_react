@@ -26,10 +26,10 @@ export const AddEquipo = ( ) => {
         const formData = new FormData();
 		    const headers = { headers: { "Content-Type": "multipart/form-data" } };
         formData.append("nombre", data.name);
-        formData.append("tipo_equipo", data.tipo_equipo.value);
+        formData.append("tipo_equipo", data.tipo_equipo);
         formData.append("file_model", data.file_model);
         formData.append("file_scaler", data.file_scaler);
-        formData.append("file_checkpoint", data.file_checkpoint);
+        // formData.append("file_checkpoint", data.file_checkpoint);
         formData.append("server_selected", JSON.stringify(data.server_selected));
         data.perfil_nominal && formData.append("perfil_nominal", JSON.stringify(data.perfil_nominal) );
         data.perfil_critico && formData.append("perfil_critico", JSON.stringify(data.perfil_critico) );

@@ -36,7 +36,7 @@ export const ListaEquipos = () => {
 		>
 			<ApiSelect<{ id: string, nombre_corto: string }>
 				name='equipo_status'
-				label='Activo'
+				label='Tipo'
 				source={'service_render/equipos/tipos'}
 				value={filter.tipo}
 				firtsOptions={{ value: '-1', label: caps('labels:all') }}
