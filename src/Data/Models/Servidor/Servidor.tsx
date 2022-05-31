@@ -25,7 +25,7 @@ export const ServidorColumns: (intl: IntlShape) => IDataTableColumn<Servidor>[] 
 		{
 			selector: 'id',
 			name: header('columns:id'),
-			format: (server) => server.id
+			format: (server) => server.id.toString().padStart(6, '0')
 		},
 		{
 			selector: 'name',
