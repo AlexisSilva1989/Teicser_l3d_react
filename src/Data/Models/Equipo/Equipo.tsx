@@ -25,7 +25,10 @@ export interface Equipo {
 }
 
 export interface EquipoTipo extends Equipo {
-	tipo: string
+	equipo_tipo: {
+		id: string 
+		nombre_corto: string
+	}
 }
 
 
@@ -58,7 +61,7 @@ export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] 
 		{
 			selector: 'tipo',
 			name: header('columns:type'),
-			format: (equipo) => equipo.tipo
+			format: (equipo) => equipo.equipo_tipo.nombre_corto
 		},
 		{
 			selector: 'activo',

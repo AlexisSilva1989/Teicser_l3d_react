@@ -33,7 +33,7 @@ export const EditEquipo = ( ) => {
         // getServesEquipo(element?.id);
         setEquipoSelected({
           name:element?.nombre,
-          tipo_equipo:{label:element?.tipo, value:element?.tipo},
+          tipo_equipo:{label:element?.equipo_tipo?.nombre_corto, value:element?.equipo_tipo?.id},
           status: element?.status,
           id: element?.id,
         });
