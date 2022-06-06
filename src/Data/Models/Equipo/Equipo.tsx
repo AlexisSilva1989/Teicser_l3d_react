@@ -43,6 +43,7 @@ export interface IDataFormEquipo {
 	perfil_critico?: object[]  
 	file_checkpoint?: any 
 	server_selected?: string[]
+	components_selected?: string[]
   }
 
 export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] = (intl) => {

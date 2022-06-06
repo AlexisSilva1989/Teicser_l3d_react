@@ -27,12 +27,14 @@ export const AddEquipo = ( ) => {
 		    const headers = { headers: { "Content-Type": "multipart/form-data" } };
         formData.append("nombre", data.name);
         formData.append("tipo_equipo", data.tipo_equipo);
-        formData.append("file_model", data.file_model);
-        formData.append("file_scaler", data.file_scaler);
-        // formData.append("file_checkpoint", data.file_checkpoint);
         formData.append("server_selected", JSON.stringify(data.server_selected));
-        data.perfil_nominal && formData.append("perfil_nominal", JSON.stringify(data.perfil_nominal) );
-        data.perfil_critico && formData.append("perfil_critico", JSON.stringify(data.perfil_critico) );
+        formData.append("components_selected", JSON.stringify(data.components_selected));
+        
+        // formData.append("file_model", data.file_model);
+        // formData.append("file_scaler", data.file_scaler);
+        // // formData.append("file_checkpoint", data.file_checkpoint);
+        // data.perfil_nominal && formData.append("perfil_nominal", JSON.stringify(data.perfil_nominal) );
+        // data.perfil_critico && formData.append("perfil_critico", JSON.stringify(data.perfil_critico) );
         
         // 
         setIsSaving(true);
