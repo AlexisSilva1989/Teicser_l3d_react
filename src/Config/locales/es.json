@@ -1805,6 +1805,8 @@
 
 	"menus:equipment": "equipos",
 	"menus:site_servers": "servidores",
+	"menus:component": "Componentes",
+	"menus:training": "Entrenamiento",
 	
 	
 
@@ -2326,6 +2328,8 @@
 	"routes:base.image_condicion": "imagen_condicion",
 	"routes:base.equipment": "equipos",
 	"routes:base.site_servers": "servidores",
+	"routes:base.training": "entrenamiento",
+	"routes:base.component": "componentes",
 	
 
 	
