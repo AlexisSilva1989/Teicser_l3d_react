@@ -43,6 +43,7 @@ interface Props<T> {
 
   labelBotton?: string
   queryParams?: any
+  isRemoveAddButon?: boolean 
 }
 
 interface State {
@@ -87,7 +88,7 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
       {/* BOTONERA */}
       <div className='col-12 mb-2'>
         {/*BOTON DE AGREGAR*/}
-        {canCreate(props.permission) &&
+        {((!props.isRemoveAddButon) && canCreate(props.permission)) &&
           <Buttons.Add path={props.innerPath
             ? localize('routes:meta.inner_add', { element: localize(props.innerPath) })
             : localize('routes:meta.add')}

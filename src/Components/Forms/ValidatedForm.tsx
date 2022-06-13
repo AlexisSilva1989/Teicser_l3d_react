@@ -471,7 +471,7 @@ export const ValidatedForm = (props: Props) => {
 							errors={x.name == null ? undefined : errors[x.name]}
 							showNone={x.showNone}
 							selector={(e: any) => {
-								return { display: x.selectDisplay(e), value: x.selectValue(e) };
+								return { label: x.selectDisplay(e), value: x.selectValue(e) };
 							}}
 							value={x.name == null ? undefined : values[x.name]}
 						/>

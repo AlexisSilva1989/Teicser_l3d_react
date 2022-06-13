@@ -19,7 +19,6 @@ const ShowProjection = () => {
     const [fechaSimulacion , setFechaSimulacion] = useState<string>();
     
     useEffect(()=>{
-        console.log('data_select: ', data_select);
         if(dataStateAs === undefined && data_select === undefined){ 
             pushAbsolute("routes:base.projection") 
             return

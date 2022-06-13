@@ -134,7 +134,7 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
             source={'service_render/equipos/tipos'}
             defaultValue={'-1'}
             selector={(option: any) => {
-              return { display: option.nombre_corto, value: option.id };
+              return { label: option.nombre_corto, value: option.id };
             }}
 
             onChange={(data) => {

@@ -37,6 +37,7 @@ import { EditComponentes } from "../Views/Masters/Componentes/EditComponentes";
 import { EditEntrenamiento} from "../Views/Masters/Entrenamiento/EditEntrenamiento";
 import { AddEntrenamiento } from "../Views/Masters/Entrenamiento/AddEntrenamiento";
 import { ListaEntrenamiento } from "../Views/Masters/Entrenamiento/ListaEntrenamiento";
+import { ListSimulacion } from "../Views/Reports/Simulacion/ListSimulacion";
 
 
 interface Route {
@@ -132,7 +133,10 @@ const routes: RouteGroup[] = [
   {
     prefix: "routes:base.simulation_days",
     routes: [
-      { path: "routes:meta.base", component: <SimulacionDias /> },
+      { path: "routes:meta.base", component: <ListSimulacion /> },
+      { path: "routes:meta.modify", component: <SimulacionDias /> },
+      { path: "/:data_select?", component: <SimulacionDias /> },
+
     ],
   },
   {

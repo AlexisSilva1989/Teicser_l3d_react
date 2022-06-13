@@ -16,11 +16,7 @@ export const ListaEquipos = () => {
 
 	const customFilter = useCallback((equipo: EquipoTipo): boolean => {
 		const isFilterByStatus: boolean = filter.status == '-1' || equipo.status.toString() == filter.status;
-		console.log('filter.status: ', filter.status);
 		const isFilterByTipo: boolean = filter.tipo == '-1' || equipo.equipo_tipo.id == filter.tipo;
-		console.log('filter.tipo : ', filter.tipo);
-
-
 		return isFilterByStatus && isFilterByTipo;
 	}, [filter]);
 
@@ -41,7 +37,7 @@ export const ListaEquipos = () => {
 				value={filter.tipo}
 				firtsOptions={{ value: '-1', label: caps('labels:all') }}
 				selector={(option) => {
-					return { display: option.nombre_corto, value: option.id };
+					return { label: option.nombre_corto, value: option.id };
 				}}
 				onChange={(data) => {
 					console.log('data: ', data);
@@ -69,7 +65,7 @@ export const ListaEquipos = () => {
 				]}
 				value={filter.status}
 				selector={(option) => {
-					return { display: option.label, value: option.value };
+					return { label: option.label, value: option.value };
 				}}
 				onChange={(data) => {
 					setFilter((s) => $u(s, { status: { $set: data } }));

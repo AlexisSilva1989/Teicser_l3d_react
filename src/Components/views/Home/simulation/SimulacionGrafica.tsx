@@ -8,8 +8,6 @@ import { useFullIntl } from '../../../../Common/Hooks/useFullIntl';
 import { ax } from '../../../../Common/Utils/AxiosCustom';
 import { LoadingSpinner } from '../../../../Components/Common/LoadingSpinner';
 import { ShowMessageInModule } from '../../../../Components/Common/ShowMessageInModule';
-import { IdataFormProjection, IDataPromedio } from '../Projection/FormProjection';
-import { localizeIntl } from '../../../../Common/Utils/LocalizationUtils';
 
 interface IProps {
     resourceData: string
@@ -20,30 +18,29 @@ interface IProps {
     dateEnd?: string
 }
 
-interface IDataGraph { 
+interface IDataGraph {
     simulacion: string[]
     dates: string[]
-    perfilCritico : string[]
+    perfilCritico: string[]
     perfilNominal: string[]
     dataPromedio?: any
-    status: string 
+    status: string
     tipoProyeccion: string
     fechaSimulacion: string
 }
 
 const styleListOperationalVar: React.CSSProperties = { 'display': 'flex', 'justifyContent': 'center' }
 
-const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true}: IProps) => {
+const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true }: IProps) => {
 
     /*CUSTOM HOOKS */
-    const { capitalize: caps,  localize } = useFullIntl();
+    const { capitalize: caps, localize } = useFullIntl();
     const { addToast } = useToasts();
 
     /*STATES */
     const [loadingData, setLoadingData] = useState(true);
-    const [rangeSelected, setRangeSelected] = useState(1);
+    const [rangeSelected, setRangeSelected] = useState(0);
     const [dataSimulacion, setDataSimulacion] = useState<any>();
-    const [datesSimulacion, setDatesSimulacion] = useState<any>();
     const [dataSimulacionSize, setDataSimulacionSize] = useState<number>(0);
     const [perfilCritico, setPerfilCritico] = useState<string[]>([]);
     const [perfilNominal, setPerfilNominal] = useState<string[]>([]);
@@ -60,10 +57,10 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
                 if (response.data.simulacion.length > 0) {
                     setDataSimulacionSize(Object.keys(response.data.simulacion[0]).length)
                     setDataSimulacion(response.data.simulacion[0]);
-                    setDatesSimulacion(response.data.dates[0]);
                     setPerfilCritico(response.data.perfilCritico);
                     setPerfilNominal(response.data.perfilNominal);
-                    setFechaSimulacion && setFechaSimulacion(response.data.fechaSimulacion);
+                    setFechaSimulacion && setFechaSimulacion(response.data.fechaSimulacion)
+
                     response.data.dataPromedio && setDataPromedio(response.data.dataPromedio);
                 }
             }).catch((error: AxiosError) => {
@@ -73,13 +70,12 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
                         { appearance: 'error', autoDismiss: true }
                     );
                 }
-            }).finally(()=>{
-                setLoadingData(false);
-            });
+            }).finally(() => { setLoadingData(false); });
         }
         feat();
     }, []);
 
+    /*MEMOS */
     const tooltip = React.useMemo(
         () => ({
             render: ({ datum, primaryAxis, getStyle }: any) => {
@@ -89,22 +85,21 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
         []
     )
 
-    /*MEMOS */
     const axes = useMemo(() => [
         { primary: true, position: "bottom", type: "linear", show: true, showTicks: true },
         { position: "left", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500, showTicks: true },
         { position: "right", type: "linear", show: true, stacked: false, hardMin: 0, hardMax: 500, showTicks: true },
     ], []
     );
-    
+
     // const series = useMemo(() => ({ type: "area", seriesLabel: "Espesor" }), []);
     const series = React.useCallback(
         (s, i) => ({
-          type: i === 1 ? 'area' :'line',
-          showPoints: false,
-        }),[]
+            type: i === 1 ? 'area' : 'line',
+            showPoints: false,
+        }), []
     )
-    const colorLinesGraph : string[]=  ["#d50000","#2962ff","#212121"] 
+    const colorLinesGraph: string[] = ["#d50000", "#2962ff", "#212121"]
     const getSeriesStyle = useCallback(
         (series) => ({
             color: colorLinesGraph[series.index],
@@ -113,7 +108,7 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
     )
     const data = useMemo(() => [
         { data: perfilCritico },
-        { data: dataSimulacionSize > 0 ? dataSimulacion[rangeSelected] : [] },
+        { data: dataSimulacionSize > 0 ? dataSimulacion[Object.keys(dataSimulacion)[rangeSelected]] : [] },
         { data: perfilNominal }
     ], [rangeSelected, dataSimulacion, perfilCritico, perfilNominal])
 
@@ -121,13 +116,12 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
     const legendGraph: JSX.Element = <>
         <Col xl='4' className="mt-2">
             <Row className="mb-3 justify-content-center" style={{ 'display': 'flex' }}>
-                {(typeProjection !== null && typeProjection !== undefined) && 
-                    (<p> Simulación realizada con <b>{localize('label:'+typeProjection)}</b></p>)}
-                
+                {(typeProjection !== null && typeProjection !== undefined) &&
+                    (<p> Simulación realizada con <b>{localize('label:' + typeProjection)}</b></p>)}
             </Row>
             <Row>
-                {dataPromedio?.TRAT_SAG_1011 && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
-                    <p> Tonelaje <b>{dataPromedio.TRAT_SAG_1011}</b></p>
+                {dataPromedio?.TRAT_MOLINO && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
+                    <p> Tonelaje <b>{dataPromedio.TRAT_MOLINO}</b></p>
                 </Col>}
 
                 {dataPromedio?.VEL_RPM && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
@@ -154,27 +148,28 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
     const graph: JSX.Element = <>
         <Col className="col-xl-6 col-md-6">
             <Col sm="12" style={{ height: '250px' }}>
-                <Chart 
-                    data={data} 
-                    axes={axes} 
-                    series={series} 
-                    getSeriesStyle={getSeriesStyle} 
+                <Chart
+                    data={data}
+                    axes={axes}
+                    series={series}
+                    getSeriesStyle={getSeriesStyle}
                     tooltip={tooltip} />
             </Col>
-            {(datesSimulacion !== undefined && Object.keys(datesSimulacion).length > 0) && (
+            {(dataSimulacion !== undefined && Object.keys(dataSimulacion).length > 0) && (
                 <Form.Group as={Row}>
                     <Form.Label column sm="3" className={'text-right'}>
-                        {datesSimulacion[1]}
+                        {Object.keys(dataSimulacion)[0]}
                     </Form.Label>
                     <Col sm="6">
                         <Form.Control value={rangeSelected} type="range"
-                            min={1} max={dataSimulacionSize}
+                            min={0} max={dataSimulacionSize -1}
                             onChange={e => setRangeSelected(Number(e.target.value))}
-                        />
-                        <h4 className="text-center" >{datesSimulacion[rangeSelected]}</h4>
+                            />
+                        <h4 className="text-center" >{Object.keys(dataSimulacion)[rangeSelected]}</h4>
+                        
                     </Col>
                     <Form.Label column sm="3">
-                        {datesSimulacion[Object.keys(datesSimulacion).length]}
+                        {Object.keys(dataSimulacion)[Object.keys(dataSimulacion).length - 1]}
                     </Form.Label>
                 </Form.Group>
             )}
@@ -182,32 +177,32 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
         </Col>
     </>
 
-    const messagesDataNoReady : {[key: string]: string}= {
+    const messagesDataNoReady: { [key: string]: string } = {
         'PENDIENTE': 'La simulación se encuentra en cola para ser realizada, por favor espere',
         'EN PROCESO': 'La simulación se está realizando, por favor espere',
         'ERROR': 'Ha ocurrido un error durante la simulación'
     }
     /*VALIDACION DE DATA*/
     const ShowModule: JSX.Element = <>
-        { dataSimulacionSize > 0 
-            ?   (<>
-                    <Col xl='12' className="justify-content-center d-md-flex">
-                        {graph}
-                        {showLegend && legendGraph}
-                    </Col>
-                </>)
-            :   (<>
-                    {(statusSimulation === "PENDIENTE" ||  statusSimulation === "EN PROCESO") && <LoadingSpinner/> }
-                    <ShowMessageInModule message={
-                        (statusSimulation !== undefined && messagesDataNoReady.hasOwnProperty(statusSimulation))
+        {dataSimulacionSize > 0
+            ? (<>
+                <Col xl='12' className="justify-content-center d-md-flex">
+                    {graph}
+                    {showLegend && legendGraph}
+                </Col>
+            </>)
+            : (<>
+                {(statusSimulation === "PENDIENTE" || statusSimulation === "EN PROCESO") && <LoadingSpinner />}
+                <ShowMessageInModule message={
+                    (statusSimulation !== undefined && messagesDataNoReady.hasOwnProperty(statusSimulation))
                         ? messagesDataNoReady[statusSimulation]
                         : 'Ha ocurrido un error'
-                    } />
-                </>)
+                } />
+            </>)
         }
     </>
 
-    return <>{loadingData ? <LoadingSpinner /> : ShowModule }</>;
+    return <>{loadingData ? <LoadingSpinner /> : ShowModule}</>;
 }
 
 

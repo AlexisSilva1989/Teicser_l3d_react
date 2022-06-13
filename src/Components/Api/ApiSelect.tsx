@@ -20,14 +20,16 @@ interface Props<T> {
 	showNone?: boolean
 	className?: string
 	multiple?: boolean
-	filter?: (x: ValueDisplay) => boolean
+	filter?: (x: OptionType) => boolean
 	onChange?: (value: any) => void
 	onChangeMultiple?: (value: string[]) => void
-	selector: (data: T) => ValueDisplay
+	selector: (data: T) => OptionType
 	isDisabled?: boolean
 	valueInObject? : boolean
-    menuPortalTarget?: "body" | "parent"
-	firtsOptions?: { value: string; label: string; }
+	menuPortalTarget?: "body" | "parent"
+	firtsOptions?: OptionType
+	isLoading?: boolean
+  isSelectFirtsOption?: boolean
 }
 
 interface State<T> {
@@ -42,7 +44,7 @@ export interface ValueDisplay {
 	display: string
 }
 
-type OptionType = {
+export type OptionType = {
   value: string;
   label: string;
 };
@@ -72,13 +74,17 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
     const [valueOptionProps, setValueOptionProps] = useState<OptionType>();
 
 	useEffect(() => {
+		props.isLoading !== undefined && setLoading(props.isLoading)
+	},[props.isLoading])
+	
+	useEffect(() => {
 		if (state.data == null || state.data.length <= 0 || state.init) {
 			return;
 		}
 		setState((s) => $u(s, { init: { $set: true } }));
 
 		if (onChange != null) {
-			if (props.value != null) { 
+			if (props.value != undefined) { 
 				onChange(props.value);
 			} else {
 				onChange(valueInObject ? state.data[0] as string : selector(state.data[0]).value);
@@ -99,20 +105,22 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 			setLoading(true);
 			if (typeof props.source === 'string') {
 				const result = await ax
-					.get<T[]>(props.source, { params: props.queryParams })
-					.catch(() => null);
-				if (result == null || result.data == null) {
-					pushError('errors.enumLoad');
-				} else {
-					const d = filter == null ? result.data : result.data.filter((x) => filter(selector(x)));
+					.get<T[]>(props.source, { params: props.queryParams }).then((response)=>{
+						if(response.data){
+							const d = filter == null ? response.data : response.data.filter((x) => filter(selector(x)));
 					
-					setState((s) => $u(s, { $merge: { data: d ?? [] } }));
-
-					if(d.length > 0 && onChange != null && props.value == null) {
-						handleChange({ label: selector(d[0]).display , value:selector(d[0]).value });
-						// onChange(valueInObject ? selector(d[0]) :  selector(d[0]).value );
-					}
-				}
+							setState((s) => $u(s, { $merge: { data: d ?? [] } }));
+		
+							if(d.length > 0 && onChange != null && props.value == undefined) {
+								if(props.isSelectFirtsOption === undefined || props.isSelectFirtsOption){
+									handleChange(selector(d[0]));
+								}
+								// onChange(valueInObject ? selector(d[0]) :  selector(d[0]).value );
+							}
+						}
+					})
+					.catch(() => pushError('errors.enumLoad'));
+			
 			} else {
 				mappingSourceArray();
 			}
@@ -137,7 +145,7 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 		setValue(e.value)
 
 		if (props.onChange != null) {
-		   props.onChange(valueInObject ? e : e.value);
+			props.onChange(valueInObject ? e : e.value);
 		}
 	}
 
@@ -145,10 +153,8 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
 
 		let options = state.data.map((e) => {
 			const val = selector(e);
-			return {
-				value: val.value,
-				label: val.display
-			}
+			return val
+
 		})
 
 		props.firtsOptions && options.unshift(props.firtsOptions);

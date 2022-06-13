@@ -12,6 +12,7 @@ import { IDataFormEntrenamiento } from "../../../../Data/Models/Entrenamiento/En
 import { TextArea } from "../../../Forms/TextArea";
 import { ax } from "../../../../Common/Utils/AxiosCustom";
 import { AxiosError } from "axios";
+import { IComponente } from "../../../../Data/Models/Componentes/Componentes";
 
 interface IProps {
   onSubmit: (data: IDataFormEntrenamiento) => void
@@ -78,10 +79,8 @@ const FormEntrenamiento = ({ onSubmit, isSaving, initialData, isEdit = false }: 
   }
 
   const updateComponentes = async (equipoId: string) => {
-    console.log('equipoId: ', equipoId);
     await ax.get<{ id: string, nombre: string }[]>('service_render/equipos/componentes_entrenar', { params: { equipo_id: equipoId } })
       .then((response) => {
-        console.log('response.data: ', response.data);
         setComponentsForTraining(response.data);
       })
       .catch((e: AxiosError) => {
@@ -107,7 +106,7 @@ const FormEntrenamiento = ({ onSubmit, isSaving, initialData, isEdit = false }: 
               queryParams={{ isSelectFilter: true }}
               placeholder={"Seleccione equipo ..."}
               selector={(option: any) => {
-                return { display: option.nombre, value: option.id };
+                return { label: option.nombre, value: option.id };
               }}
               onChange={(data) => {
                 updateComponentes(data[0]);
@@ -129,7 +128,7 @@ const FormEntrenamiento = ({ onSubmit, isSaving, initialData, isEdit = false }: 
               source={componentsForTraining}
               placeholder={"Seleccione componente ..."}
               selector={(option: any) => {
-                return { display: option.nombre, value: option.id };
+                return { label: option.nombre, value: option.id };
               }}
               onChange={(data) => {
                 return data[0];
