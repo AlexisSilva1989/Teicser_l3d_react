@@ -1805,6 +1805,8 @@
 
 	"menus:equipment": "equipos",
 	"menus:site_servers": "servidores",
+	"menus:component": "Componentes",
+	"menus:training": "Entrenamiento",
 	
 	
 
@@ -2326,6 +2328,8 @@
 	"routes:base.image_condicion": "imagen_condicion",
 	"routes:base.equipment": "equipos",
 	"routes:base.site_servers": "servidores",
+	"routes:base.training": "entrenamiento",
+	"routes:base.component": "componentes",
 	
 
 	
@@ -2519,7 +2523,7 @@
 	"errors:entities.quotationAllDataShip": "No se pudo obtener las nave de la cotización seleccionada",
 	"errors:send_mail_recovery": "No se pudo enviar el correo de recuperación",
 	"success:base.success":"Operación exitosa",
-	"success:base.save":"Datos registrados de manera exitos",
+	"success:base.save":"Datos registrados de manera exitosa",
 	"success:base.update":"Datos actualizados de manera exitosa",
 	"warning:provider_rut": "Proveedor, RUT ya se encuentra registrado",
 	"warning:customer_rut": "Cliente, RUT ya se encuentra registrado",

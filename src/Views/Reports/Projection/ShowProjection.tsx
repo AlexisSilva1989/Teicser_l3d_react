@@ -11,32 +11,39 @@ import { BaseContentView } from '../../Common/BaseContentView';
 
 const ShowProjection = () => {
     const { stateAs } = useNavigation();
-    const dataStateAs = stateAs<{ data: {id:number}}>();
+    const dataStateAs = stateAs<{ data: {id:number, fecha_simulacion: string }}>();
     const { pushAbsolute } = useFullLocation();
     const {data_select} = useParams<{data_select: string}>();
     
     const [dataId , setDataId] = useState<string>();
+    const [fechaSimulacion , setFechaSimulacion] = useState<string>();
     
     useEffect(()=>{
-        console.log('data_select: ', data_select);
         if(dataStateAs === undefined && data_select === undefined){ 
             pushAbsolute("routes:base.projection") 
             return
         }
 
-        data_select !== undefined 
-            ? setDataId(data_select)
-            : setDataId(dataStateAs.data.id.toString())
+        if(data_select !== undefined){
+            setDataId(data_select)
+        }else{
+            setDataId(dataStateAs.data.id.toString());
+            setFechaSimulacion(dataStateAs.data.fecha_simulacion);
+        }
     },[])
 
     return (<>
 		<BaseContentView title={"Simulación de desgaste"}>
-            <Col className="col-12 mb-4">
-				<Buttons.GoTo path={"routes:base.projection"} />
+            <Col className="col-12 mb-4 d-flex justify-content-between">
+                <Col><Buttons.GoTo path={"routes:base.projection"} /></Col>
+                <Col className="d-flex justify-content-end align-items-center">
+                    {fechaSimulacion && <b>Fecha simulación: {fechaSimulacion}</b>}
+                </Col>
 			</Col>
             <Col>
-                {dataId && <SimulacionGrafica
-                    resourceData={$j('service_render/extend/projection',dataId)}
+                {dataId && <SimulacionGrafica 
+                    resourceData={$j('service_render/extend/projection',dataId)} 
+                    setFechaSimulacion = {setFechaSimulacion}
                 />}
             </Col>
 		</BaseContentView>

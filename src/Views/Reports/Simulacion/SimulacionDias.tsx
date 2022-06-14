@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Col } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 import { useApi } from '../../../Common/Hooks/useApi';
+import { useFullLocation } from '../../../Common/Hooks/useFullLocation';
+import { useNavigation } from '../../../Common/Hooks/useNavigation';
 import { $j, $m } from '../../../Common/Utils/Reimports';
 import { ApiSelect } from '../../../Components/Api/ApiSelect';
+import { Buttons } from '../../../Components/Common/Buttons';
 import { ShowMessageInModule } from '../../../Components/Common/ShowMessageInModule';
 import { IDatesLastProjection } from '../../../Components/views/Home/Projection/FormProjection';
 import SimulacionGrafica from '../../../Components/views/Home/simulation/SimulacionGrafica';
@@ -10,68 +14,44 @@ import { Equipo } from '../../../Data/Models/Equipo/Equipo';
 import { BaseContentView } from '../../Common/BaseContentView';
 
 const SimulacionDias = () => {
-	const api = useApi();
+	//HOOKS
+	const { stateAs } = useNavigation();
+	const dataStateAs = stateAs<{ data: { id: number, fecha_simulacion: string } }>();
+	const { pushAbsolute } = useFullLocation();
+	const { data_select } = useParams<{ data_select: string }>();
 
-	const [datesLastProjection, setDatesLastProjection] = useState<IDatesLastProjection>();
-	const [errorMessageModule, setErrorMessageModule] = useState<string[]>([]);
-	const [loading, setLoading] = useState<boolean>(false);
-	const [idEquipoSelected, setIdEquipoSelected] = useState<string>();
-	
-	/*OBTENER DATOS ASOCIADOS A LA PROYECCION */
+
+	//STATES
+	const [dataId, setDataId] = useState<string>();
+	const [fechaSimulacion, setFechaSimulacion] = useState<string>();
+
+	//EFFECTS
 	useEffect(() => {
-		const getLastDataSimulated = async () => {
-			interface responseInfoRender {
-				historial_data_render: IDatesLastProjection,
-			}
-			if (idEquipoSelected == undefined){return}
-			const errors : string[] = [];
-			await api.get<responseInfoRender>($j("service_render/get_last_data_simulated/",idEquipoSelected,"original"))
-				.success((response) => {
-					response.historial_data_render === null 
-						? errors.push('No se han encontrado datos operacionales')
-						: setDatesLastProjection(response.historial_data_render)
-				})
-				.fail("Error al consultar los datos de simulación")
-				.finally(()=>{
-					setLoading(false)
-					setErrorMessageModule(errors);
-				});
-		};
-		setLoading(true)
+		if (dataStateAs === undefined && data_select === undefined) {
+			pushAbsolute("routes:base.simulation_days")
+		}
 
-		getLastDataSimulated()
-	}, [idEquipoSelected]);
+		if (data_select !== undefined) {
+			setDataId(data_select)
+		} else {
+			setDataId(dataStateAs.data.id.toString());			
+			setFechaSimulacion(dataStateAs.data.fecha_simulacion);
+		}
+	}, [])
 
-	const simulacionGrafica : JSX.Element = <>
-
-		{idEquipoSelected && (<SimulacionGrafica 
-			resourceData={$j('service_render/extend/data_proyeccion',idEquipoSelected)}
-		/>)}
-	</>
-
-	return  (
+	return (
 		<BaseContentView title='titles:simulation_prediction_days'>
-			<Col sm={12}>
-				<Col sm={3}>
-					<ApiSelect<Equipo>
-						name='equipo_select'
-						placeholder='Seleccione Equipo'
-						source={'service_render/equipos'}
-						value={idEquipoSelected}
-						selector={(option) => {
-							return { display: option.nombre, value: option.id.toString() };
-						}}
-						onChange={ (data) => {
-							setIdEquipoSelected(data);
-						}}
-					/>
+			<Col className="col-12 mb-4 d-flex justify-content-between">
+				<Col><Buttons.GoTo path={"routes:base.simulation_days"} /></Col>
+				<Col className="d-flex justify-content-end align-items-center">
+					{fechaSimulacion && <b>Fecha simulación: {fechaSimulacion}</b>}
 				</Col>
 			</Col>
-			<Col sm={12} className='mt-4'>
-				{((loading == false) && (errorMessageModule.length === 0))
-					? simulacionGrafica 
-					: <ShowMessageInModule message = {errorMessageModule}/> 
-				}
+			<Col>
+				{dataId && <SimulacionGrafica
+					resourceData={$j('service_render/extend/data_proyeccion', dataId)}
+					setFechaSimulacion={setFechaSimulacion}
+				/>}
 			</Col>
 		</BaseContentView>
 	);

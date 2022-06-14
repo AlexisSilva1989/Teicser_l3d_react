@@ -25,14 +25,17 @@ export interface Equipo {
 }
 
 export interface EquipoTipo extends Equipo {
-	tipo: string
+	equipo_tipo: {
+		id: string 
+		nombre_corto: string
+	}
 }
 
 
 export interface IDataFormEquipo {
 	id?: string
 	name: string 
-	tipo_equipo: {label: string, value: string} 
+	tipo_equipo: string
 	file_scaler?: any 
 	file_model?: any 
 	status?: string
@@ -40,6 +43,7 @@ export interface IDataFormEquipo {
 	perfil_critico?: object[]  
 	file_checkpoint?: any 
 	server_selected?: string[]
+	components_selected?: string[]
   }
 
 export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] = (intl) => {
@@ -48,7 +52,7 @@ export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] 
 		{
 			selector: 'id',
 			name: header('columns:id'),
-			format: (equipo) => equipo.id
+			format: (equipo) => equipo.id.toString().padStart(6, '0')
 		},
 		{
 			selector: 'nombre',
@@ -58,7 +62,7 @@ export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] 
 		{
 			selector: 'tipo',
 			name: header('columns:type'),
-			format: (equipo) => equipo.tipo
+			format: (equipo) => equipo.equipo_tipo.nombre_corto
 		},
 		{
 			selector: 'activo',

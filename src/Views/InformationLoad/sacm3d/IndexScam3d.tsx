@@ -98,7 +98,7 @@ export const IndexScam3d = () => {
 						placeholder='Seleccione Equipo'
 						source={'service_render/equipos'}
 						selector={(option: any) => {
-							return { display: option.nombre, value: option.id.toString() };
+							return { label: option.nombre, value: option.id.toString() };
 						}}
 						as={ApiSelect}
 					/>

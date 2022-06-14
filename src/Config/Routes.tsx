@@ -31,6 +31,13 @@ import { EditEquipo } from "../Views/Masters/Equipos/EditEquipo";
 import { ListaServidores } from "../Views/Masters/Servidores/ListaServidores";
 import { AddServidores } from "../Views/Masters/Servidores/AddServidores";
 import { EditServidores } from "../Views/Masters/Servidores/EditServidores";
+import { ListaComponentes } from "../Views/Masters/Componentes/ListaComponentes";
+import { AddComponentes } from "../Views/Masters/Componentes/AddComponentes";
+import { EditComponentes } from "../Views/Masters/Componentes/EditComponentes";
+import { EditEntrenamiento} from "../Views/Masters/Entrenamiento/EditEntrenamiento";
+import { AddEntrenamiento } from "../Views/Masters/Entrenamiento/AddEntrenamiento";
+import { ListaEntrenamiento } from "../Views/Masters/Entrenamiento/ListaEntrenamiento";
+import { ListSimulacion } from "../Views/Reports/Simulacion/ListSimulacion";
 
 
 interface Route {
@@ -126,7 +133,10 @@ const routes: RouteGroup[] = [
   {
     prefix: "routes:base.simulation_days",
     routes: [
-      { path: "routes:meta.base", component: <SimulacionDias /> },
+      { path: "routes:meta.base", component: <ListSimulacion /> },
+      { path: "routes:meta.modify", component: <SimulacionDias /> },
+      { path: "/:data_select?", component: <SimulacionDias /> },
+
     ],
   },
   {
@@ -173,6 +183,22 @@ const routes: RouteGroup[] = [
       { path: "routes:meta.base", component: <ListaServidores /> },
       { path: "routes:meta.add", component: <AddServidores /> },
       { path: "routes:meta.modify", component: <EditServidores /> },
+    ],
+  },
+  {
+    prefix: "routes:base.component",
+    routes: [
+      { path: "routes:meta.base", component: <ListaComponentes /> },
+      { path: "routes:meta.add", component: <AddComponentes /> },
+      { path: "routes:meta.modify", component: <EditComponentes /> },
+    ],
+  },
+  {
+    prefix: "routes:base.training",
+    routes: [
+      { path: "routes:meta.base", component: <ListaEntrenamiento /> },
+      { path: "routes:meta.add", component: <AddEntrenamiento /> },
+      { path: "routes:meta.modify", component: <EditEntrenamiento /> },
     ],
   },
 ];

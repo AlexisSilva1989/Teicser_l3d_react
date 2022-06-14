@@ -158,13 +158,13 @@ export const IndexImagenCondicion = () => {
 					accept={["png" , "jpg"]}
 				/>
 			</Col>
-			<Col sm={2}>
-				<Button className='d-flex justify-content-start btn-primary mr-3 mt-4' onClick={onClickEnviar}>
+			<Col sm={2} className="d-flex justify-content-end align-items-end">
+				<Button onClick={onClickEnviar}>
 					Guardar
 				</Button>
 			</Col>
 			<hr/>
-			<Col sm={10} className="mt-5">
+			<Col sm={12} className="mt-5">
 				<ApiTable<reportePdf>
 					columns={colums}
 					reload={reloadTable}
