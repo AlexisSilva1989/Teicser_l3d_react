@@ -63,103 +63,6 @@ export class Utils {
 		}
 	}
 
-	static mapTipoFalta(tipo: string) {
-		switch (tipo) {
-			case 'INA':
-				return 'labels:absence_types.absence';
-			case 'VAC':
-				return 'labels:absence_types.vacations';
-			case 'LIC':
-				return 'labels:absence_types.medical_leave';
-			default:
-				return 'labels:not_applicable';
-		}
-	}
-
-	static mapTipoPermiso(tipo: string) {
-		switch (tipo) {
-			case 'EXT':
-				return 'labels:permission_types.extra_hours';
-			case 'PER':
-				return 'labels:permission_types.permission';
-			default:
-				return 'labels:not_applicable';
-		}
-	}
-
-	static mapTipoActividad(tipo: string) {
-		switch (tipo) {
-			case 'ASE':
-				return 'labels:activity_types.cleaning';
-			case 'TRA':
-				return 'labels:activity_types.transporting';
-			case 'APO':
-				return 'labels:activity_types.backing';
-			case 'CAP':
-				return 'labels:activity_types.training';
-			default:
-				return 'labels:not_applicable';
-		}
-	}
-
-	static mapEstado(estado: string): string {
-		switch (estado) {
-			case 'FAC':
-				estado = 'labels:status.billed';
-				break;
-			case 'PEN':
-				estado = 'labels:status.pending';
-				break;
-			case 'CAN':
-				estado = 'labels:status.cancelled';
-				break;
-			case 'PRO':
-				estado = 'labels:status.processed';
-				break;
-			case 'APB':
-				estado = 'labels:status.approved';
-				break;
-			case 'TRA':
-				estado = 'labels:status.wip';
-				break;
-			case 'TER':
-				estado = 'labels:status.finished';
-				break;
-			case 'PCO':
-				estado = 'labels:status.pending_quotation';
-				break;
-			case 'PCM':
-				estado = 'labels:status.pending_comercial_approval';
-				break;
-			case 'PCL':
-				estado = 'labels:status.pending_client_approval';
-				break;
-			case 'PAT':
-				estado = 'labels:status.pending_workshop_approval';
-				break;
-			case 'PAC':
-				estado = 'labels:status.pending_ceo_approval';
-				break;
-			case 'APR':
-				estado = 'labels:status.approved';
-				break;
-			case 'COT':
-				estado = 'labels:status.requoted';
-				break;
-			case 'DEN':
-				estado = 'labels:status.denied';
-				break;
-			case 'ASU':
-				estado = 'labels:status.assumed';
-				break;
-			case 'REP':
-				estado = 'labels:filters.status.replacement_request';
-				break;
-		}
-
-		return estado;
-	}
-
 	static deconstructPermission(permission: number | null = null) {
 		if (permission == null) {
 			return {
@@ -254,27 +157,6 @@ export class Utils {
 	static capitalize(intl: IntlShape) {
 		const get = localizeIntl(intl);
 		return (id: string, args?: any) => $v.capitalize(get(id, args));
-	}
-
-	static calcularHoras(hora_inicio: IMoment, hora_fin: IMoment, trabajadores: number, duracion_colacion: number) {
-		const hi = this.getFullMoment($m().format('DD-MM-YYYY'), hora_inicio.format('HH:mm'));
-		const hf = this.getFullMoment($m().format('DD-MM-YYYY'), hora_fin.format('HH:mm'));
-		if (hi == null || hf == null) {
-			return '';
-		}
-		let horas = hf.diff(hi, 'minutes');
-
-		const minCol = Utils.getMoment('12:00');
-		const maxCol = Utils.getMoment('15:00');
-
-		const colacion = hi < maxCol && hf > minCol;
-		// TODO: Soportar más de 2 trabajadores
-		const ayudante = trabajadores === 2;
-
-		if (colacion) {
-			horas -= duracion_colacion;
-		}
-		return Utils.fixed(horas / 60, 2) + (ayudante ? ' x 2 = ' + Utils.fixed((horas * 2) / 60, 1) : '') + (colacion ? ' (Aplica colación)' : '');
 	}
 
 	static dataToWorksheet<T>(data: T[], intl?: IntlShape) {
