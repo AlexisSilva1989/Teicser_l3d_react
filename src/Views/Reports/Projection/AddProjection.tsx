@@ -48,14 +48,15 @@ export const AddProjection = () => {
 	/*HANDLES */
 	/*EJECUTAR EL SERVICIO DE PROYECCION DE VARIABLES OPERACIONALES */
 	const handleSubmitProjection = async (data: IdataFormProjection) => {
-		console.log('data: ', data);
 		setLoading(true);
 		const type_projection_value: { [key: string]: any } = JSON.parse(JSON.stringify(data.type_projection));
 		setDataForm(data);
 		data.type_projection = type_projection_value['value'];
 		data.dates_last_projection = datesLastProjection;
 		data.last_date_measurement = lastDateProjection;
-		data.tonsForChange = data.tonsForChange.replace(/,/g, "");
+		if(data.tonsForChange){
+			data.tonsForChange = data.tonsForChange.replace(/,/g, "");
+		}
 		await api.post("service_render/projection_operational_var", data)
 			.success((response) => {
 				goBack();

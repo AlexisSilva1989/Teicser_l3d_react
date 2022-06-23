@@ -14,6 +14,8 @@ import { IComponente } from '../../../../Data/Models/Componentes/Componentes';
 import { ax } from '../../../../Common/Utils/AxiosCustom';
 import { useFullIntl } from '../../../../Common/Hooks/useFullIntl';
 import { LoadingSpinner } from '../../../Common/LoadingSpinner';
+import { EquipoTipo } from '../../../../Data/Models/Equipo/Equipo';
+import { Utils } from '../../../../Common/Utils/Utils';
 
 interface IProps {
     onSubmit: (data: IdataFormProjection) => void
@@ -47,7 +49,7 @@ export interface IDatesLastProjection {
 }
 export interface IdataFormProjection {
     type_projection: string | object
-    date_project: string 
+    date_project: string
     isDataPercent: string
     trat_sag: string
     vel_rpm: string
@@ -117,12 +119,13 @@ const FormProjection = ({
     const [showLabelPercent, setShowLabelPercent] = useState<boolean>();
     const [componentsForTraining, setComponentsForTraining] = useState<IComponente[]>([]);
     const [loadingComponent, setLoadingComponent] = useState(false);
+    const [tipoEquipoSelected, setTipoEquipoSelected] = useState<string | undefined>(undefined);
 
     /*HOOKS */
     const { input, title } = useLocalization();
     const { addToast } = useToasts();
     const { capitalize: caps } = useFullIntl();
-    const { handleSubmit, register, errors, control, setValue, getValues } = useForm<IdataFormProjection>({
+    const { handleSubmit, register, watch, errors, control, setValue, getValues } = useForm<IdataFormProjection>({
         mode: "onSubmit",
         submitFocusError: true,
         defaultValues: {
@@ -139,6 +142,9 @@ const FormProjection = ({
             componenteId: idComponentSelected,
         }
     });
+
+    const watchFields = watch(["trat_sag", "dwi", "bolas_ton", "vel_rpm"]);
+
     //handles
     const updateComponentes = async (equipoId: string) => {
         setLoadingComponent(true);
@@ -160,7 +166,7 @@ const FormProjection = ({
 
     /*EFFECTS */
     // useEffect(() => {
-        // dateFillEnd !== undefined && setValue('date_project', "01-06-2021");
+    // dateFillEnd !== undefined && setValue('date_project', "01-06-2021");
     //     dateFillEnd !== undefined && console.log('dateFillEnd: ', dateFillEnd);
     // }, [dateFillEnd]);
 
@@ -179,14 +185,18 @@ const FormProjection = ({
                     placeholder='Seleccione ...'
                     source={'service_render/equipos'}
                     selector={(option: any) => {
-                        return { label: option.nombre, value: option.id.toString() };
+                        return { label: option.nombre, value: option.id.toString(), tipo: option.equipo_tipo.nombre_corto };
                     }}
                     value={idEquipoSelected}
-                    onChange={(data) => {
-                        setValue([{'componenteId':undefined}])
-                        updateComponentes(data[0])
-                        onChangeEquipo !== undefined && onChangeEquipo(data[0])
-                        return data[0];
+                    valueInObject={true}
+                    onChange={(data: any) => {
+                        if (data[0].value) {
+                            setValue([{ 'componenteId': undefined }])
+                            updateComponentes(data[0].value)
+                            setTipoEquipoSelected(data[0].tipo)
+                            onChangeEquipo !== undefined && onChangeEquipo(data[0].value)
+                            return data[0].value;
+                        }
                     }}
                     rules={{ required: { value: true, message: 'Complete este campo' } }}
                 />
@@ -220,7 +230,7 @@ const FormProjection = ({
                 </small>}
             </Col>
             <Col sm={3} className='text-left mb-2'>
-                <label>Periodo</label>
+                <label><strong>Periodo:</strong></label>
                 <Controller
                     id="type_projection"
                     name="type_projection"
@@ -240,127 +250,218 @@ const FormProjection = ({
         </Row>
         {isLoadingData ? <LoadingSpinner /> : (
             dataPromedio !== undefined && (<>
-        
-            <Row className='text-left mt-2'>
-                <Col sm={2} className='text-left mb-2'>
-                    <label><b>{input('date_project')}:</b></label>
-                    <Controller control={control}
-                        name="date_project"
-                        minDate={($m(lastDateProjection, 'DD-MM-YYYY').add(1, 'days')).format('DD-MM-YYYY')}
-                        maxDate={($m(lastDateProjection, 'DD-MM-YYYY').add(35, 'days')).format('DD-MM-YYYY')}
-                        onChange={(e) => {
-                            onChangeDate !== undefined && onChangeDate(e[0])
-                            return e[0]
-                        }}
-                        defaultValue={dateFillEnd}
-                        as={Datepicker} />
-                </Col>
 
-                <Col sm={2} className='text-left mb-2'>
-                    <Textbox
-                        id='days_project'
-                        name='days_project'
-                        label={'forms:inputs.days_project'}
-                        readonly={true}
-                        value={daysProjection} />
-                </Col>
-            </Row>
+                <Row className='text-left mt-2'>
+                    <Col sm={2} className='text-left mb-2'>
+                        <label><b>{input('date_project')}:</b></label>
+                        <Controller control={control}
+                            name="date_project"
+                            minDate={($m(lastDateProjection, 'DD-MM-YYYY').add(1, 'days')).format('DD-MM-YYYY')}
+                            maxDate={($m(lastDateProjection, 'DD-MM-YYYY').add(90, 'days')).format('DD-MM-YYYY')}
+                            onChange={(e) => {
+                                onChangeDate !== undefined && onChangeDate(e[0])
+                                return e[0]
+                            }}
+                            defaultValue={dateFillEnd}
+                            as={Datepicker} />
+                    </Col>
 
-            <Row className='text-left mt-2'>
-                <Col sm={6} >
-                    <Card>
-                        <Card.Body>
-                            <Col sm={6}><h4>{title("variable_simulation")}</h4></Col>
-                            <Col sm={6}>
-                                <Controller
-                                    name="isDataPercent"
-                                    style={{ display: "inline" }}
-                                    control={control}
-                                    as={RadioSelect}
-                                    options={optionsTypeData}
-                                    onChange={(value) => {
-                                        setShowLabelPercent(value[0] === "true")
-                                        return value[0]
-                                    }}
-                                />
-                            </Col>
+                    <Col sm={2} className='text-left mb-2'>
+                        <Textbox
+                            id='days_project'
+                            name='days_project'
+                            label={'forms:inputs.days_project'}
+                            readonly={true}
+                            value={daysProjection} />
+                    </Col>
+                </Row>
 
-                            <hr />
-                            <Col sm={12} className={"d-flex align-items-center"}>
-
-                                <Col sm={4}>Tonelaje a procesado</Col>
-                                <Col sm={4}>
-                                    <div className='d-flex align-items-center'>
-                                        <Textbox id="trat_sag" name="trat_sag" onlyNumber={true} ref={register()} />
-                                        {showLabelPercent && <span className="ml-2">%</span>}
-                                    </div>
-                                </Col>
-                                <Col sm={4}> <strong>{dataPromedio?.TRAT_MOLINO} Ton/día</strong>	</Col>
-                            </Col>
-                            <hr />
-                            <Col sm={12} className={"d-flex align-items-center"}>
-                                <Col sm={4}>Velocidad</Col>
-                                
-                                <Col sm={4}>
-                                    <div className='d-flex align-items-center'>
-                                        <Textbox id="vel_rpm" 
-                                            name="vel_rpm" 
-                                            onlyNumber={true} 
-                                            ref={register()}
-                                            readonly={dataPromedio?.VEL_RPM === undefined}
+                <Row className='text-left mt-2'>
+                    <Col sm={12} >
+                        <Card>
+                            <Card.Body>
+                                <Row className={"d-flex align-items-center"}>
+                                    <Col sm={6}><h4>{title("variable_simulation")}</h4></Col>
+                                    <Col sm={6} className="d-flex justify-content-sm-end mt-sm-0 mt-3">
+                                        <Controller
+                                            name="isDataPercent"
+                                            style={{ display: "inline" }}
+                                            control={control}
+                                            as={RadioSelect}
+                                            options={optionsTypeData}
+                                            onChange={(value) => {
+                                                setShowLabelPercent(value[0] === "true")
+                                                return value[0]
+                                            }}
                                         />
-                                        {showLabelPercent && <span className="ml-2">%</span>}
-                                    </div>
-                                </Col>
-                                <Col sm={4}> <strong>{dataPromedio?.VEL_RPM} RPM</strong></Col>
-                            </Col>
-                            <hr />
-                            <Col sm={12} className={"d-flex align-items-center"}>
+                                    </Col>
+                                </Row>
+                                <hr />
+                                <Row>
+                                    <Col sm={4} className={"d-flex align-items-center "}>
 
-                                <Col sm={4}>Dureza DWI</Col>
-                                <Col sm={4}>
-                                    <div className='d-flex align-items-center'>
-                                        <Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()} />
-                                        {showLabelPercent && <span className="ml-2">%</span>}
-                                    </div>
-                                </Col>
-                                <Col sm={4}><strong>{dataPromedio?.DWI} DWI</strong></Col>
-                            </Col>
-                            <hr />
-                            <Col sm={12} className={"d-flex align-items-center"}>
-                                <Col sm={4}>Carguío Bolas</Col>
-                                <Col sm={4}>
-                                    <div className='d-flex align-items-center'>
-                                        <Textbox id="bolas_ton" name="bolas_ton" onlyNumber={true} ref={register()} />
-                                        {showLabelPercent && <span className="ml-2">%</span>}
-                                    </div>
-                                </Col>
-                                <Col sm={4}><strong>{dataPromedio?.BOLAS_TON} Ton/día</strong></Col>
-                            </Col>
-                        </Card.Body>
-                    </Card>
-                </Col>
+                                        <Col sm={6}>
+                                            <Col sm={12}>
+                                                <strong>Tonelaje procesado </strong>
+                                            </Col>
+                                            <Col sm={12}>
+                                                <strong>({dataPromedio?.TRAT_MOLINO} Ton/día)</strong>
+                                            </Col>
+                                        </Col>
+                                        <Col sm={6}>
+                                            <div className='d-flex align-items-center'>
+                                                <Textbox id="trat_sag" name="trat_sag" onlyNumber={true} ref={register()} />
+                                                {showLabelPercent && <span className="ml-2">%</span>}
 
-                <Col sm={6}>
-                    <Card style={{ height: "90%" }}>
-                        <Card.Body>
-                            <Col sm={12}><h4>{title("changes_of_senses")}</h4></Col>
-                            <hr />
-                            <Col sm={8}>Toneladas para cambio de sentido de giro</Col>
-                            <Col sm={4}><Textbox id="tonsForChange" name="tonsForChange"
-                                format="NUMBER-SEPARATOR"
-                                ref={register()} /></Col>
-                        </Card.Body>
-                    </Card>
-                </Col>
+                                            </div>
+                                            {(showLabelPercent && watchFields["trat_sag"] !== "" && !isNaN(Number(watchFields["trat_sag"]))) && (
+                                                <Col sm={12} className="text-center pl-0">
+                                                    <span >
+                                                        {Utils.fixed((Number(watchFields["trat_sag"]) *
+                                                            Number(dataPromedio?.TRAT_MOLINO)) / 100)
+                                                        } Ton/día
+                                                    </span>
+                                                </Col>
+                                            )}
+                                        </Col>
 
-                <Col sm={2} className="offset-10">
-                    <Button type={"submit"} disabled={isSaving} className='d-flex justify-content-start btn-primary mr-3 mt-5'>
-                        {textButtonSubmit}
-                    </Button>
-                </Col>
-            </Row>
-        </>))}
+
+                                    </Col>
+                                    <Col className="d-sm-none d-block">
+                                        <hr />
+                                    </Col>
+                                    <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0"}>
+                                        <Col sm={6}>
+                                            <Col sm={12}>
+                                                <strong>Dureza DWI </strong>
+                                            </Col>
+                                            <Col sm={12}>
+                                                <strong>({dataPromedio?.DWI} DWI)</strong>
+                                            </Col>
+                                        </Col>
+                                        <Col sm={6}>
+                                            <div className='d-flex align-items-center'>
+                                                <Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()} />
+                                                {showLabelPercent && <span className="ml-2">%</span>}
+                                            </div>
+                                            {(showLabelPercent && watchFields["dwi"] !== "" && !isNaN(Number(watchFields["dwi"]))) && (
+                                                <Col sm={12} className="text-center pl-0">
+                                                    <span >
+                                                        {Utils.fixed((Number(watchFields["dwi"]) *
+                                                            Number(dataPromedio?.DWI)) / 100)
+                                                        } DWI
+                                                    </span>
+                                                </Col>
+                                            )}
+                                        </Col>
+                                    </Col>
+                                    <Col className="d-sm-none d-block">
+                                        <hr />
+                                    </Col>
+                                    <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0 "}>
+                                        <Col sm={6}>
+                                            <Col sm={12}>
+                                                <strong>Carguío Bolas </strong>
+                                            </Col>
+                                            <Col sm={12}>
+                                                <strong>({dataPromedio?.BOLAS_TON} Ton/día)</strong>
+                                            </Col>
+                                        </Col>
+                                        <Col sm={6}>
+                                            <div className='d-flex align-items-center'>
+                                                <Textbox id="bolas_ton" name="bolas_ton" onlyNumber={true} ref={register()} />
+                                                {showLabelPercent && <span className="ml-2">%</span>}
+                                            </div>
+                                            {(showLabelPercent && watchFields["bolas_ton"] !== "" && !isNaN(Number(watchFields["bolas_ton"]))) && (
+                                                <Col sm={12} className="text-center pl-0">
+                                                    <span >
+                                                        {Utils.fixed((Number(watchFields["bolas_ton"]) *
+                                                            Number(dataPromedio?.BOLAS_TON)) / 100)
+                                                        } Ton/día
+                                                    </span>
+                                                </Col>
+                                            )}
+                                        </Col>
+                                    </Col>
+                                </Row>
+                                {tipoEquipoSelected !== "MOBO" && (<>
+                                    <hr />
+                                    <Row>
+                                        <Col sm={4} className={"d-flex align-items-center "}>
+                                            <Col sm={6}>
+                                                <Col sm={12}>
+                                                    <strong>Velocidad</strong>
+                                                </Col>
+                                                <Col sm={12}>
+                                                    <strong>({dataPromedio?.VEL_RPM} RPM)</strong>
+                                                </Col>
+                                            </Col>
+                                            <Col sm={6}>
+                                                <div className='d-flex align-items-center'>
+                                                    <Textbox id="vel_rpm"
+                                                        name="vel_rpm"
+                                                        onlyNumber={true}
+                                                        ref={register()}
+                                                    // readonly={dataPromedio?.VEL_RPM === undefined}
+                                                    />
+                                                    {showLabelPercent && <span className="ml-2">%</span>}
+                                                </div>
+                                                {(showLabelPercent && watchFields["vel_rpm"] !== "" && !isNaN(Number(watchFields["vel_rpm"]))) && (
+                                                    <Col sm={12} className="text-center pl-0">
+                                                        <span >
+                                                            {Utils.fixed((Number(watchFields["vel_rpm"]) *
+                                                                Number(dataPromedio?.VEL_RPM)) / 100)
+                                                            } RPM
+                                                        </span>
+                                                    </Col>
+                                                )}
+                                            </Col>
+                                        </Col>
+                                    </Row>
+
+
+                                    <hr />
+                                    <Row>
+                                        <Col sm={12} className="mt-3"><h4>{title("changes_of_senses")}</h4>
+                                            <hr />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col sm={4} xs={12} className={"d-flex align-items-center "}>
+                                            <Col sm={6}>
+                                                <Col sm={12}>
+                                                    <strong>Toneladas para cambio</strong>
+                                                </Col>
+                                            </Col>
+
+                                            <Col sm={6}>
+                                                <Textbox
+                                                    id="tonsForChange" name="tonsForChange"
+                                                    format="NUMBER-SEPARATOR"
+                                                    ref={register()}
+                                                />
+                                            </Col>
+                                        </Col>
+                                        <Col sm={8} xs={12} className="mt-sm-0 mt-4">
+                                            <div className="alert alert-info mb-0" >
+                                                <i className="fa fa-info mr-2" aria-hidden="true" />
+                                                Especificar cada cuantas toneladas se desea realizar el cambio de sentido de giro
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                </>)}
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col sm={12} className="d-flex justify-content-end">
+                        <Button type={"submit"} disabled={isSaving} >
+                            {textButtonSubmit}
+                        </Button>
+                    </Col>
+                </Row>
+            </>))}
     </form>);
 }
 
