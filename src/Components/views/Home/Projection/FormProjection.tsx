@@ -16,6 +16,7 @@ import { useFullIntl } from '../../../../Common/Hooks/useFullIntl';
 import { LoadingSpinner } from '../../../Common/LoadingSpinner';
 import { EquipoTipo } from '../../../../Data/Models/Equipo/Equipo';
 import { Utils } from '../../../../Common/Utils/Utils';
+import { ONLY_NUMBER } from '../../../../Enums';
 
 interface IProps {
     onSubmit: (data: IdataFormProjection) => void
@@ -314,11 +315,14 @@ const FormProjection = ({
                                                 {showLabelPercent && <span className="ml-2">%</span>}
 
                                             </div>
-                                            {(showLabelPercent && watchFields["trat_sag"] !== "" && !isNaN(Number(watchFields["trat_sag"]))) && (
+                                            {(showLabelPercent && watchFields["trat_sag"] !== "" 
+                                                && !isNaN(Number(watchFields["trat_sag"])) ) && (
                                                 <Col sm={12} className="text-center pl-0">
                                                     <span >
-                                                        {Utils.fixed((Number(watchFields["trat_sag"]) *
-                                                            Number(dataPromedio?.TRAT_MOLINO)) / 100)
+                                                        {Utils.fixed(
+                                                            Number(dataPromedio?.TRAT_MOLINO)+
+                                                            ((Number(watchFields["trat_sag"].replace(ONLY_NUMBER, '')) *
+                                                            Number(dataPromedio?.TRAT_MOLINO)) / 100))
                                                         } Ton/día
                                                     </span>
                                                 </Col>
@@ -344,11 +348,14 @@ const FormProjection = ({
                                                 <Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()} />
                                                 {showLabelPercent && <span className="ml-2">%</span>}
                                             </div>
-                                            {(showLabelPercent && watchFields["dwi"] !== "" && !isNaN(Number(watchFields["dwi"]))) && (
+                                            {(showLabelPercent && watchFields["dwi"] !== ""
+                                                && !isNaN(Number(watchFields["dwi"])) ) && (
                                                 <Col sm={12} className="text-center pl-0">
                                                     <span >
-                                                        {Utils.fixed((Number(watchFields["dwi"]) *
-                                                            Number(dataPromedio?.DWI)) / 100)
+                                                        {Utils.fixed(
+                                                            Number(dataPromedio?.DWI) +
+                                                            ((Number(watchFields["dwi"].replace(ONLY_NUMBER, '')) *
+                                                            Number(dataPromedio?.DWI)) / 100))
                                                         } DWI
                                                     </span>
                                                 </Col>
@@ -372,11 +379,14 @@ const FormProjection = ({
                                                 <Textbox id="bolas_ton" name="bolas_ton" onlyNumber={true} ref={register()} />
                                                 {showLabelPercent && <span className="ml-2">%</span>}
                                             </div>
-                                            {(showLabelPercent && watchFields["bolas_ton"] !== "" && !isNaN(Number(watchFields["bolas_ton"]))) && (
+                                            {(showLabelPercent && watchFields["bolas_ton"] !== ""
+                                                && !isNaN(Number(watchFields["bolas_ton"])) ) && (
                                                 <Col sm={12} className="text-center pl-0">
                                                     <span >
-                                                        {Utils.fixed((Number(watchFields["bolas_ton"]) *
-                                                            Number(dataPromedio?.BOLAS_TON)) / 100)
+                                                        {Utils.fixed(
+                                                            Number(dataPromedio?.BOLAS_TON) + 
+                                                            ((Number(watchFields["bolas_ton"].replace(ONLY_NUMBER, '')) *
+                                                            Number(dataPromedio?.BOLAS_TON)) / 100))
                                                         } Ton/día
                                                     </span>
                                                 </Col>
@@ -406,11 +416,14 @@ const FormProjection = ({
                                                     />
                                                     {showLabelPercent && <span className="ml-2">%</span>}
                                                 </div>
-                                                {(showLabelPercent && watchFields["vel_rpm"] !== "" && !isNaN(Number(watchFields["vel_rpm"]))) && (
+                                                {(showLabelPercent && watchFields["vel_rpm"] !== ""
+                                                     && !isNaN(Number(watchFields["vel_rpm"])) ) && (
                                                     <Col sm={12} className="text-center pl-0">
                                                         <span >
-                                                            {Utils.fixed((Number(watchFields["vel_rpm"]) *
-                                                                Number(dataPromedio?.VEL_RPM)) / 100)
+                                                            {Utils.fixed( 
+                                                                Number(dataPromedio?.VEL_RPM) +
+                                                                ((Number(watchFields["vel_rpm"].replace(ONLY_NUMBER, '')) *
+                                                                Number(dataPromedio?.VEL_RPM)) / 100))
                                                             } RPM
                                                         </span>
                                                     </Col>
