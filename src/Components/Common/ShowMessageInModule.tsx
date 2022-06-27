@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { Col } from 'react-bootstrap';
 
-export const ShowMessageInModule = ({message} : {message:string | string[]}) => {
+export const ShowMessageInModule = ({message,className} : {message:string | string[] , className?: string}) => {
 
     const getMessages = ()=>{
         const errors : JSX.Element[] = [];
@@ -15,7 +15,7 @@ export const ShowMessageInModule = ({message} : {message:string | string[]}) => 
     };
 
     return (
-        <Col sm='12' className={'justify-content-center'} style={{'display': 'flex'}}>
+        <Col sm='12' className={`justify-content-center ${className}`} style={{'display': 'flex'}}>
             <p style={{'textAlign': 'center'}}> {getMessages() } </p>
         </Col>
     )
