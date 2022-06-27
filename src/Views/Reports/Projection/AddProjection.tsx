@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useToasts } from 'react-toast-notifications';
 import { Col } from 'react-bootstrap';
 
 import { BaseContentView } from '../../Common/BaseContentView';
 import { useApi } from "../../../Common/Hooks/useApi";
 import FormProjection, { IdataFormProjection, IDataPromedio, IDatesLastProjection } from '../../../Components/views/Home/Projection/FormProjection';
-import { ShowMessageInModule } from '../../../Components/Common/ShowMessageInModule';
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
-import SimulacionGrafica from '../../../Components/views/Home/simulation/SimulacionGrafica';
 import { $m, $j, $u } from '../../../Common/Utils/Reimports';
 import { DateUtils } from '../../../Common/Utils/DateUtils';
-import { LoadingSpinner } from '../../../Components/Common/LoadingSpinner';
 import { Buttons } from '../../../Components/Common/Buttons';
 import { useCommonRoutes } from '../../../Common/Hooks/useCommonRoutes';
 
 interface responseInfoRender {
 	historial_data_render: IDatesLastProjection,
 	data_promedio: IDataPromedio
+	dates_sampling: {start: string , end:string}
 }
 
 export const AddProjection = () => {
@@ -29,7 +26,6 @@ export const AddProjection = () => {
 	/*STATES*/
 	const [loadingData, setLoadingData] = useState(false);
 	const [errorMessageModule, setErrorMessageModule] = useState<string[]>([]);
-	const [statusService, setStatusService] = useState<string>();
 	const [datesLastProjection, setDatesLastProjection] = useState<IDatesLastProjection>();
 	const [lastDateProjection, setLastDateProjection] = useState<string>();
 	const [dataForm, setDataForm] = useState<IdataFormProjection>();
@@ -39,6 +35,9 @@ export const AddProjection = () => {
 	const [dataPromedio, setDataPromedio] = useState<IDataPromedio>()
 	const [idEquipoSelected, setIdEquipoSelected] = useState<string>();
 	const [idComponentSelected, setIdComponentSelected] = useState<string>();
+	const [datesSampling, setDatesSampling] = useState<{start: string|undefined , end:string|undefined}>(
+		{start: undefined , end:undefined}
+	);
 
 	/*HOOKS */
 	const api = useApi();
@@ -49,11 +48,12 @@ export const AddProjection = () => {
 	/*EJECUTAR EL SERVICIO DE PROYECCION DE VARIABLES OPERACIONALES */
 	const handleSubmitProjection = async (data: IdataFormProjection) => {
 		setLoading(true);
-		const type_projection_value: { [key: string]: any } = JSON.parse(JSON.stringify(data.type_projection));
+
+		data.type_projection = typeProjection;
+		data.date_start_scaling = datesLastProjection?.fecha_start_scaling;
+		data.date_end_scaling = datesLastProjection?.fecha_end_scaling;
 		setDataForm(data);
-		data.type_projection = type_projection_value['value'];
-		data.dates_last_projection = datesLastProjection;
-		data.last_date_measurement = lastDateProjection;
+
 		if(data.tonsForChange){
 			data.tonsForChange = data.tonsForChange.replace(/,/g, "");
 		}
@@ -66,7 +66,6 @@ export const AddProjection = () => {
 	};
 
 	const onChangeDate = (dateFill: string) => {
-		console.log('dateFill: ', dateFill);
 		setDateFillEnd(dateFill);
 	};
 
@@ -112,6 +111,23 @@ export const AddProjection = () => {
 					response.data_promedio === null
 						? errors.push('No se ha obtenido la data promedio')
 						: setDataPromedio(response.data_promedio)
+					
+					response.dates_sampling.start === null
+						? (errors.push('No se ha encontrado fecha de sampling inicial') && setDatesSampling(( state => 
+							$u( state, { start: { $set: undefined }
+						}))))
+						: setDatesSampling(( state => $u( state, { 
+							start: { $set: $m(response.dates_sampling.start, 'YYYY-MM-DD').format('DD-MM-YYYY') }
+						})))
+					
+					response.dates_sampling.end === null
+						? (errors.push('No se ha encontrado fecha de sampling final') && setDatesSampling(( state => 
+							$u( state, { end: { $set: undefined }
+						}))))
+						: setDatesSampling(( state => $u( state, { 
+							end: { $set: $m(response.dates_sampling.end, 'YYYY-MM-DD').format('DD-MM-YYYY')  }
+						})))
+						
 				})
 				.fail("Error al consultar los datos de simulación", () => {
 					setLastDateProjection(undefined)
@@ -138,18 +154,6 @@ export const AddProjection = () => {
 			setDateFillEnd(($m(lastDateProjection, 'DD-MM-YYYY').add(countDaysToProjection, 'days')).format('DD-MM-YYYY'))
 	}, [lastDateProjection])
 
-
-
-	const simulacionForm: JSX.Element = (<>
-		{/* <Col sm={6} className='text-left mb-2'>
-			<h5>Periodo a considerar para la proyección de desgaste</h5>
-		</Col>
-		<Col sm={6} className='text-center mb-2'>
-			<h5>Fecha de última medición: {lastDateProjection}</h5>
-		</Col> */}
-
-	</>)
-
 	return (<>
 		<BaseContentView title={'titles:projection_variable'}>
 			<Col sm={12} className="mb-4">
@@ -173,6 +177,8 @@ export const AddProjection = () => {
 					dataInitialForm={dataForm}
 					dataPromedio={dataPromedio}
 					isLoadingData={loadingData}
+					errorMessageModule={errorMessageModule}
+					datesSampling={datesSampling}
 				/>
 			</Col>
 		</BaseContentView>

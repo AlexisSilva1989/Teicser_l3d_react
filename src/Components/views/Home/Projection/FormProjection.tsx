@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Row } from 'react-bootstrap';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, ErrorMessage, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { AxiosError } from 'axios';
 import { useToasts } from 'react-toast-notifications';
@@ -8,15 +8,15 @@ import { Datepicker } from '../../../Forms/Datepicker';
 import { Textbox } from '../../../Forms/Textbox';
 import { RadioSelect } from '.././../../../Components/Forms/RadioSelect';
 import { useLocalization } from '../../../../Common/Hooks/useLocalization';
-import { $m, IMoment } from '../../../../Common/Utils/Reimports';
+import { $m } from '../../../../Common/Utils/Reimports';
 import { ApiSelect } from '../../../Api/ApiSelect';
 import { IComponente } from '../../../../Data/Models/Componentes/Componentes';
 import { ax } from '../../../../Common/Utils/AxiosCustom';
 import { useFullIntl } from '../../../../Common/Hooks/useFullIntl';
 import { LoadingSpinner } from '../../../Common/LoadingSpinner';
-import { EquipoTipo } from '../../../../Data/Models/Equipo/Equipo';
 import { Utils } from '../../../../Common/Utils/Utils';
 import { ONLY_NUMBER } from '../../../../Enums';
+import { ShowMessageInModule } from '../../../Common/ShowMessageInModule';
 
 interface IProps {
     onSubmit: (data: IdataFormProjection) => void
@@ -35,6 +35,8 @@ interface IProps {
     idEquipoSelected?: string
     idComponentSelected?: string | undefined
     isLoadingData: boolean
+    errorMessageModule?: string[]
+    datesSampling: {start: string|undefined , end:string|undefined}
 }
 
 export interface IDatesLastProjection {
@@ -61,6 +63,8 @@ export interface IdataFormProjection {
     dates_last_projection?: IDatesLastProjection
     equipoId: string
     componenteId: string | undefined
+    date_start_scaling?: string
+    date_end_scaling?: string
 }
 
 export interface IDataPromedio {
@@ -114,7 +118,9 @@ const FormProjection = ({
     dataInitialForm,
     dataPromedio,
     idComponentSelected,
-    idEquipoSelected }: IProps) => {
+    idEquipoSelected,
+    errorMessageModule,
+    datesSampling }: IProps) => {
 
     /*STATES */
     const [showLabelPercent, setShowLabelPercent] = useState<boolean>();
@@ -123,7 +129,7 @@ const FormProjection = ({
     const [tipoEquipoSelected, setTipoEquipoSelected] = useState<string | undefined>(undefined);
 
     /*HOOKS */
-    const { input, title } = useLocalization();
+    const { title } = useLocalization();
     const { addToast } = useToasts();
     const { capitalize: caps } = useFullIntl();
     const { handleSubmit, register, watch, errors, control, setValue, getValues } = useForm<IdataFormProjection>({
@@ -167,8 +173,7 @@ const FormProjection = ({
 
     const mappedSubmit = (data: IdataFormProjection) => {
         if (data["isDataPercent"] === "true") {
-            console.log('true: ');
-            data["trat_sag"] &&  (data["trat_sag"] = Utils.fixed(
+            data["trat_sag"] && (data["trat_sag"] = Utils.fixed(
                 Number(dataPromedio?.TRAT_MOLINO) +
                 ((Number(watchFields["trat_sag"].replace(ONLY_NUMBER, '')) *
                     Number(dataPromedio?.TRAT_MOLINO)) / 100)
@@ -192,7 +197,7 @@ const FormProjection = ({
                     Number(dataPromedio?.VEL_RPM)) / 100)
             ).toString())
 
-        } 
+        }
         onSubmit(data)
     }
 
@@ -280,9 +285,60 @@ const FormProjection = ({
 
                 <Row className='text-left mt-2'>
                     <Col sm={2} className='text-left mb-2'>
-                        <label><b>{input('date_project')}:</b></label>
+                        <label><b>Fecha de última medición :</b></label>
                         <Controller control={control}
-                            name="date_project"
+                            name="date_last_medition"
+                            readonly={true}
+                            defaultValue={lastDateProjection}
+                            rules={{ required: caps('validations:required') }}
+                            as={Datepicker} />
+                        <ErrorMessage errors={errors} name="date_last_medition">
+                            {({ message }) => <small className={'text-danger'}>{message}</small>}
+                        </ErrorMessage>
+                    </Col>
+                    <Col sm={2} className='text-left mb-2'>
+                        <label><b>Fecha inicial del periodo:</b></label>
+                        <Controller control={control}
+                            name="date_sampling_start"
+                            readonly={true}
+                            defaultValue={datesSampling.start}
+                            rules={{ required: caps('validations:required') }}
+                            as={Datepicker}
+                        />
+                        <ErrorMessage errors={errors} name="date_sampling_start">
+                            {({ message }) => <small className={'text-danger'}>{message}</small>}
+                        </ErrorMessage>
+                    </Col>
+                    <Col sm={2} className='text-left mb-2'>
+                        <label><b>Fecha final del periodo:</b></label>
+                        <Controller control={control}
+                            name="date_sampling_end"
+                            readonly={true}
+                            defaultValue={datesSampling.end}
+                            rules={{ required: caps('validations:required') }}
+                            as={Datepicker}
+                        />
+                        <ErrorMessage errors={errors} name="date_sampling_end">
+                            {({ message }) => <small className={'text-danger'}>{message}</small>}
+                        </ErrorMessage>
+                    </Col>
+                    <Col sm={2} className='text-left mb-2'>
+                        <label><b>Fecha inicial de proyección:</b></label>
+                        <Controller control={control}
+                            name="date_project_start"
+                            readonly={true}
+                            defaultValue={lastDateProjection}
+                            rules={{ required: caps('validations:required') }}
+                            as={Datepicker}
+                        />
+                        <ErrorMessage errors={errors} name="date_project_start">
+                            {({ message }) => <small className={'text-danger'}>{message}</small>}
+                        </ErrorMessage>
+                    </Col>
+                    <Col sm={2} className='text-left mb-2'>
+                        <label><b>Fecha final de proyección:</b></label>
+                        <Controller control={control}
+                            name="date_project_end"
                             minDate={($m(lastDateProjection, 'DD-MM-YYYY').add(1, 'days')).format('DD-MM-YYYY')}
                             maxDate={($m(lastDateProjection, 'DD-MM-YYYY').add(90, 'days')).format('DD-MM-YYYY')}
                             onChange={(e) => {
@@ -290,7 +346,11 @@ const FormProjection = ({
                                 return e[0]
                             }}
                             defaultValue={dateFillEnd}
+                            rules={{ required: caps('validations:required') }}
                             as={Datepicker} />
+                        <ErrorMessage errors={errors} name="date_project_end">
+                            {({ message }) => <small className={'text-danger'}>{message}</small>}
+                        </ErrorMessage>
                     </Col>
 
                     <Col sm={2} className='text-left mb-2'>
@@ -302,200 +362,206 @@ const FormProjection = ({
                             value={daysProjection} />
                     </Col>
                 </Row>
-
-                <Row className='text-left mt-2'>
-                    <Col sm={12} >
-                        <Card>
-                            <Card.Body>
-                                <Row className={"d-flex align-items-center"}>
-                                    <Col sm={6}><h4>{title("variable_simulation")}</h4></Col>
-                                    <Col sm={6} className="d-flex justify-content-sm-end mt-sm-0 mt-3">
-                                        <Controller
-                                            name="isDataPercent"
-                                            style={{ display: "inline" }}
-                                            control={control}
-                                            as={RadioSelect}
-                                            options={optionsTypeData}
-                                            onChange={(value) => {
-                                                setShowLabelPercent(value[0] === "true")
-                                                return value[0]
-                                            }}
-                                        />
-                                    </Col>
-                                </Row>
-                                <hr />
-                                <Row>
-                                    <Col sm={4} className={"d-flex align-items-center "}>
-
-                                        <Col sm={6}>
-                                            <Col sm={12}>
-                                                <strong>Tonelaje procesado </strong>
-                                            </Col>
-                                            <Col sm={12}>
-                                                <strong>({dataPromedio?.TRAT_MOLINO} Ton/día)</strong>
-                                            </Col>
-                                        </Col>
-                                        <Col sm={6}>
-                                            <div className='d-flex align-items-center'>
-                                                <Textbox id="trat_sag" name="trat_sag" onlyNumber={true} ref={register()} />
-                                                {showLabelPercent && <span className="ml-2">%</span>}
-
-                                            </div>
-                                            {(showLabelPercent && watchFields["trat_sag"] !== ""
-                                                && !isNaN(Number(watchFields["trat_sag"]))) && (
-                                                    <Col sm={12} className="text-center pl-0">
-                                                        <span >
-                                                            {Utils.fixed(
-                                                                Number(dataPromedio?.TRAT_MOLINO) +
-                                                                ((Number(watchFields["trat_sag"].replace(ONLY_NUMBER, '')) *
-                                                                    Number(dataPromedio?.TRAT_MOLINO)) / 100))
-                                                            } Ton/día
-                                                        </span>
-                                                    </Col>
-                                                )}
-                                        </Col>
-
-
-                                    </Col>
-                                    <Col className="d-sm-none d-block">
-                                        <hr />
-                                    </Col>
-                                    <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0"}>
-                                        <Col sm={6}>
-                                            <Col sm={12}>
-                                                <strong>Dureza DWI </strong>
-                                            </Col>
-                                            <Col sm={12}>
-                                                <strong>({dataPromedio?.DWI} DWI)</strong>
-                                            </Col>
-                                        </Col>
-                                        <Col sm={6}>
-                                            <div className='d-flex align-items-center'>
-                                                <Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()} />
-                                                {showLabelPercent && <span className="ml-2">%</span>}
-                                            </div>
-                                            {(showLabelPercent && watchFields["dwi"] !== ""
-                                                && !isNaN(Number(watchFields["dwi"]))) && (
-                                                    <Col sm={12} className="text-center pl-0">
-                                                        <span >
-                                                            {Utils.fixed(
-                                                                Number(dataPromedio?.DWI) +
-                                                                ((Number(watchFields["dwi"].replace(ONLY_NUMBER, '')) *
-                                                                    Number(dataPromedio?.DWI)) / 100))
-                                                            } DWI
-                                                        </span>
-                                                    </Col>
-                                                )}
-                                        </Col>
-                                    </Col>
-                                    <Col className="d-sm-none d-block">
-                                        <hr />
-                                    </Col>
-                                    <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0 "}>
-                                        <Col sm={6}>
-                                            <Col sm={12}>
-                                                <strong>Carguío Bolas </strong>
-                                            </Col>
-                                            <Col sm={12}>
-                                                <strong>({dataPromedio?.BOLAS_TON} Ton/día)</strong>
-                                            </Col>
-                                        </Col>
-                                        <Col sm={6}>
-                                            <div className='d-flex align-items-center'>
-                                                <Textbox id="bolas_ton" name="bolas_ton" onlyNumber={true} ref={register()} />
-                                                {showLabelPercent && <span className="ml-2">%</span>}
-                                            </div>
-                                            {(showLabelPercent && watchFields["bolas_ton"] !== ""
-                                                && !isNaN(Number(watchFields["bolas_ton"]))) && (
-                                                    <Col sm={12} className="text-center pl-0">
-                                                        <span >
-                                                            {Utils.fixed(
-                                                                Number(dataPromedio?.BOLAS_TON) +
-                                                                ((Number(watchFields["bolas_ton"].replace(ONLY_NUMBER, '')) *
-                                                                    Number(dataPromedio?.BOLAS_TON)) / 100))
-                                                            } Ton/día
-                                                        </span>
-                                                    </Col>
-                                                )}
-                                        </Col>
-                                    </Col>
-                                </Row>
-                                {tipoEquipoSelected !== "MOBO" && (<>
-                                    <hr />
-                                    <Row>
-                                        <Col sm={4} className={"d-flex align-items-center "}>
-                                            <Col sm={6}>
-                                                <Col sm={12}>
-                                                    <strong>Velocidad</strong>
-                                                </Col>
-                                                <Col sm={12}>
-                                                    <strong>({dataPromedio?.VEL_RPM} RPM)</strong>
-                                                </Col>
-                                            </Col>
-                                            <Col sm={6}>
-                                                <div className='d-flex align-items-center'>
-                                                    <Textbox id="vel_rpm"
-                                                        name="vel_rpm"
-                                                        onlyNumber={true}
-                                                        ref={register()}
-                                                    // readonly={dataPromedio?.VEL_RPM === undefined}
-                                                    />
-                                                    {showLabelPercent && <span className="ml-2">%</span>}
-                                                </div>
-                                                {(showLabelPercent && watchFields["vel_rpm"] !== ""
-                                                    && !isNaN(Number(watchFields["vel_rpm"]))) && (
-                                                        <Col sm={12} className="text-center pl-0">
-                                                            <span >
-                                                                {Utils.fixed(
-                                                                    Number(dataPromedio?.VEL_RPM) +
-                                                                    ((Number(watchFields["vel_rpm"].replace(ONLY_NUMBER, '')) *
-                                                                        Number(dataPromedio?.VEL_RPM)) / 100))
-                                                                } RPM
-                                                            </span>
-                                                        </Col>
-                                                    )}
-                                            </Col>
-                                        </Col>
-                                    </Row>
-
-
-                                    <hr />
-                                    <Row>
-                                        <Col sm={12} className="mt-3"><h4>{title("changes_of_senses")}</h4>
-                                            <hr />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col sm={4} xs={12} className={"d-flex align-items-center "}>
-                                            <Col sm={6}>
-                                                <Col sm={12}>
-                                                    <strong>Toneladas para cambio</strong>
-                                                </Col>
-                                            </Col>
-
-                                            <Col sm={6}>
-                                                <Textbox
-                                                    id="tonsForChange" name="tonsForChange"
-                                                    format="NUMBER-SEPARATOR"
-                                                    ref={register()}
+                {(errorMessageModule && errorMessageModule?.length > 0)
+                    ? (
+                        <ShowMessageInModule className="pt-4" message={errorMessageModule} />
+                    )
+                    : (
+                        <Row className='text-left mt-2'>
+                            <Col sm={12} >
+                                <Card>
+                                    <Card.Body>
+                                        <Row className={"d-flex align-items-center"}>
+                                            <Col sm={6}><h4>{title("variable_simulation")}</h4></Col>
+                                            <Col sm={6} className="d-flex justify-content-sm-end mt-sm-0 mt-3">
+                                                <Controller
+                                                    name="isDataPercent"
+                                                    style={{ display: "inline" }}
+                                                    control={control}
+                                                    as={RadioSelect}
+                                                    options={optionsTypeData}
+                                                    onChange={(value) => {
+                                                        setShowLabelPercent(value[0] === "true")
+                                                        return value[0]
+                                                    }}
                                                 />
                                             </Col>
-                                        </Col>
-                                        <Col sm={8} xs={12} className="mt-sm-0 mt-4">
-                                            <div className="alert alert-info mb-0" >
-                                                <i className="fa fa-info mr-2" aria-hidden="true" />
-                                                Especificar cada cuantas toneladas se desea realizar el cambio de sentido de giro
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                </>)}
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
+                                        </Row>
+                                        <hr />
+                                        <Row>
+                                            <Col sm={4} className={"d-flex align-items-center "}>
+
+                                                <Col sm={6}>
+                                                    <Col sm={12}>
+                                                        <strong>Tonelaje procesado </strong>
+                                                    </Col>
+                                                    <Col sm={12}>
+                                                        <strong>({dataPromedio?.TRAT_MOLINO} Ton/día)</strong>
+                                                    </Col>
+                                                </Col>
+                                                <Col sm={6}>
+                                                    <div className='d-flex align-items-center'>
+                                                        <Textbox id="trat_sag" name="trat_sag" onlyNumber={true} ref={register()} />
+                                                        {showLabelPercent && <span className="ml-2">%</span>}
+
+                                                    </div>
+                                                    {(showLabelPercent && watchFields["trat_sag"] !== ""
+                                                        && !isNaN(Number(watchFields["trat_sag"]))) && (
+                                                            <Col sm={12} className="text-center pl-0">
+                                                                <span >
+                                                                    {Utils.fixed(
+                                                                        Number(dataPromedio?.TRAT_MOLINO) +
+                                                                        ((Number(watchFields["trat_sag"].replace(ONLY_NUMBER, '')) *
+                                                                            Number(dataPromedio?.TRAT_MOLINO)) / 100))
+                                                                    } Ton/día
+                                                                </span>
+                                                            </Col>
+                                                        )}
+                                                </Col>
+
+
+                                            </Col>
+                                            <Col className="d-sm-none d-block">
+                                                <hr />
+                                            </Col>
+                                            <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0"}>
+                                                <Col sm={6}>
+                                                    <Col sm={12}>
+                                                        <strong>Dureza DWI </strong>
+                                                    </Col>
+                                                    <Col sm={12}>
+                                                        <strong>({dataPromedio?.DWI} DWI)</strong>
+                                                    </Col>
+                                                </Col>
+                                                <Col sm={6}>
+                                                    <div className='d-flex align-items-center'>
+                                                        <Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()} />
+                                                        {showLabelPercent && <span className="ml-2">%</span>}
+                                                    </div>
+                                                    {(showLabelPercent && watchFields["dwi"] !== ""
+                                                        && !isNaN(Number(watchFields["dwi"]))) && (
+                                                            <Col sm={12} className="text-center pl-0">
+                                                                <span >
+                                                                    {Utils.fixed(
+                                                                        Number(dataPromedio?.DWI) +
+                                                                        ((Number(watchFields["dwi"].replace(ONLY_NUMBER, '')) *
+                                                                            Number(dataPromedio?.DWI)) / 100))
+                                                                    } DWI
+                                                                </span>
+                                                            </Col>
+                                                        )}
+                                                </Col>
+                                            </Col>
+                                            <Col className="d-sm-none d-block">
+                                                <hr />
+                                            </Col>
+                                            <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0 "}>
+                                                <Col sm={6}>
+                                                    <Col sm={12}>
+                                                        <strong>Carguío Bolas </strong>
+                                                    </Col>
+                                                    <Col sm={12}>
+                                                        <strong>({dataPromedio?.BOLAS_TON} Ton/día)</strong>
+                                                    </Col>
+                                                </Col>
+                                                <Col sm={6}>
+                                                    <div className='d-flex align-items-center'>
+                                                        <Textbox id="bolas_ton" name="bolas_ton" onlyNumber={true} ref={register()} />
+                                                        {showLabelPercent && <span className="ml-2">%</span>}
+                                                    </div>
+                                                    {(showLabelPercent && watchFields["bolas_ton"] !== ""
+                                                        && !isNaN(Number(watchFields["bolas_ton"]))) && (
+                                                            <Col sm={12} className="text-center pl-0">
+                                                                <span >
+                                                                    {Utils.fixed(
+                                                                        Number(dataPromedio?.BOLAS_TON) +
+                                                                        ((Number(watchFields["bolas_ton"].replace(ONLY_NUMBER, '')) *
+                                                                            Number(dataPromedio?.BOLAS_TON)) / 100))
+                                                                    } Ton/día
+                                                                </span>
+                                                            </Col>
+                                                        )}
+                                                </Col>
+                                            </Col>
+                                        </Row>
+                                        {tipoEquipoSelected !== "MOBO" && (<>
+                                            <hr />
+                                            <Row>
+                                                <Col sm={4} className={"d-flex align-items-center "}>
+                                                    <Col sm={6}>
+                                                        <Col sm={12}>
+                                                            <strong>Velocidad</strong>
+                                                        </Col>
+                                                        <Col sm={12}>
+                                                            <strong>({dataPromedio?.VEL_RPM} RPM)</strong>
+                                                        </Col>
+                                                    </Col>
+                                                    <Col sm={6}>
+                                                        <div className='d-flex align-items-center'>
+                                                            <Textbox id="vel_rpm"
+                                                                name="vel_rpm"
+                                                                onlyNumber={true}
+                                                                ref={register()}
+                                                            // readonly={dataPromedio?.VEL_RPM === undefined}
+                                                            />
+                                                            {showLabelPercent && <span className="ml-2">%</span>}
+                                                        </div>
+                                                        {(showLabelPercent && watchFields["vel_rpm"] !== ""
+                                                            && !isNaN(Number(watchFields["vel_rpm"]))) && (
+                                                                <Col sm={12} className="text-center pl-0">
+                                                                    <span >
+                                                                        {Utils.fixed(
+                                                                            Number(dataPromedio?.VEL_RPM) +
+                                                                            ((Number(watchFields["vel_rpm"].replace(ONLY_NUMBER, '')) *
+                                                                                Number(dataPromedio?.VEL_RPM)) / 100))
+                                                                        } RPM
+                                                                    </span>
+                                                                </Col>
+                                                            )}
+                                                    </Col>
+                                                </Col>
+                                            </Row>
+                                            <hr />
+                                            <Row>
+                                                <Col sm={12} className="mt-3"><h4>{title("changes_of_senses")}</h4>
+                                                    <hr />
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col sm={4} xs={12} className={"d-flex align-items-center "}>
+                                                    <Col sm={6}>
+                                                        <Col sm={12}>
+                                                            <strong>Toneladas para cambio</strong>
+                                                        </Col>
+                                                    </Col>
+
+                                                    <Col sm={6}>
+                                                        <Textbox
+                                                            id="tonsForChange" name="tonsForChange"
+                                                            format="NUMBER-SEPARATOR"
+                                                            ref={register()}
+                                                        />
+                                                    </Col>
+                                                </Col>
+                                                <Col sm={8} xs={12} className="mt-sm-0 mt-4">
+                                                    <div className="alert alert-info mb-0" >
+                                                        <i className="fa fa-info mr-2" aria-hidden="true" />
+                                                        Especificar cada cuantas toneladas se desea realizar el cambio de sentido de giro
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </>)}
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        </Row>
+                    )
+                }
+
                 <Row>
                     <Col sm={12} className="d-flex justify-content-end">
-                        <Button type={"submit"} disabled={isSaving} >
+                        <Button type={"submit"} 
+                        disabled={isSaving || (errorMessageModule && errorMessageModule?.length >0)} >
                             {textButtonSubmit}
                         </Button>
                     </Col>
