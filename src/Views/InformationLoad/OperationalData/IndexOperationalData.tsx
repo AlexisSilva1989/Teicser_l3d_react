@@ -338,7 +338,7 @@ export const IndexOperationalData = () => {
 
 		if( fillDatesStart.isValid() && xampleDateEnd.isValid()){
 				setVariables(state => $u(state, {
-					isRandomSampling: { $set: fillDatesStart.isSameOrAfter(xampleDateEnd) ? "false" : "true"},
+					isRandomSampling: { $set: fillDatesStart.isBefore(xampleDateEnd) ? "true" : "false"},
 				}))
 		}
 		
