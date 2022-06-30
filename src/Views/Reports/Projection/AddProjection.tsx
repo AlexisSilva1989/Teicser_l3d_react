@@ -108,8 +108,14 @@ export const AddProjection = () => {
 
 					response.historial_data_render === null
 						? errors.push('No se han encontrado datos operacionales')
-						: updateLastDataSimulate(response.historial_data_render)
-
+						: updateLastDataSimulate(response.historial_data_render);
+					
+					response.historial_data_render && response.historial_data_render.status === "ERROR" && errors.push('Ha ocurrido un error en el último registro de carga de variables operacionales para este componente, por favor realice nuevamente la carga de datos operacionales') 
+						
+					response.historial_data_render && 
+						(response.historial_data_render.status === "PENDIENTE" || response.historial_data_render.status === "EN PROCESO") 
+						&& errors.push('La carga de variables operacionales del componente esta pendiente, por favor espere que termine ')
+					
 					response.data_promedio === null
 						? errors.push('No se ha obtenido la data promedio')
 						: setDataPromedio(response.data_promedio)
@@ -129,6 +135,7 @@ export const AddProjection = () => {
 						: setDatesSampling(( state => $u( state, { 
 							end: { $set: $m(response.dates_sampling.end, 'YYYY-MM-DD').format('DD-MM-YYYY')  }
 						})))
+					
 						
 				})
 				.fail("Error al consultar los datos de simulación", () => {
