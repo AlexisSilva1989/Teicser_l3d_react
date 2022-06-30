@@ -27,6 +27,8 @@ interface IDataGraph {
     status: string
     tipoProyeccion: string
     fechaSimulacion: string
+    equipo: string
+    componente: string
 }
 
 const styleListOperationalVar: React.CSSProperties = { 'display': 'flex', 'justifyContent': 'center' }
@@ -47,7 +49,8 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
     const [dataPromedio, setDataPromedio] = useState<any>({});
     const [statusSimulation, setStatusSimulation] = useState<string>();
     const [typeProjection, setTypeProjection] = useState<string>();
-
+    const [component, setcomponent] = useState<string>()
+    const [equipo, setequipo] = useState<string>()
     /*EFFECTS */
     useEffect(() => {
         async function feat() {
@@ -59,6 +62,8 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
                     setDataSimulacion(response.data.simulacion[0]);
                     setPerfilCritico(response.data.perfilCritico);
                     setPerfilNominal(response.data.perfilNominal);
+                    setcomponent(response.data.componente)
+                    setequipo(response.data.equipo)
                     setFechaSimulacion && setFechaSimulacion(response.data.fechaSimulacion)
 
                     response.data.dataPromedio && setDataPromedio(response.data.dataPromedio);
@@ -120,6 +125,14 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
                     (<p> Simulación realizada con <b>{localize('label:' + typeProjection)}</b></p>)}
             </Row>
             <Row>
+                {equipo && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
+                    <p> Equipo <b>{equipo}</b></p>
+                </Col>}
+
+                {component && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
+                    <p> Componente <b>{component}</b></p>
+                </Col>}
+
                 {dataPromedio?.TRAT_MOLINO && <Col xl='12' className="mb-2" style={styleListOperationalVar}>
                     <p> Tonelaje <b>{dataPromedio.TRAT_MOLINO}</b></p>
                 </Col>}
@@ -184,6 +197,7 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
     }
     /*VALIDACION DE DATA*/
     const ShowModule: JSX.Element = <>
+
         {dataSimulacionSize > 0
             ? (<>
                 <Col xl='12' className="justify-content-center d-md-flex">
