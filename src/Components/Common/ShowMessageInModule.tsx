@@ -15,8 +15,11 @@ export const ShowMessageInModule = ({message,className} : {message:string | stri
     };
 
     return (
-        <Col sm='12' className={`justify-content-center ${className}`} style={{'display': 'flex'}}>
+  
+        <Col className={`alert alert-warning mt-3 text-center ${className}`}>
+            <i className="fa fa-exclamation-triangle fa-4x m-3" aria-hidden="true" />
             <p style={{'textAlign': 'center'}}> {getMessages() } </p>
+
         </Col>
     )
 }
