@@ -40,6 +40,7 @@ interface IProps {
 }
 
 export interface IDatesLastProjection {
+    status?: string
     fecha_start_fill: string
     fecha_end_fill: string
     fecha_start_sampling: string
@@ -262,7 +263,7 @@ const FormProjection = ({
                     {errors.equipoId.message}
                 </small>}
             </Col>
-            <Col sm={3} className='text-left mb-2'>
+            <Col sm={2} className='text-left mb-2'>
                 <label><strong>Periodo:</strong></label>
                 <Controller
                     id="type_projection"
@@ -280,6 +281,33 @@ const FormProjection = ({
                     {errors.type_projection.message}
                 </small>}
             </Col>
+            {(!isLoadingData && dataPromedio !== undefined) && (<>
+            <Col sm={2} className='text-left mb-2'>
+                <label><b>Fecha inicial del periodo:</b></label>
+                <Controller control={control}
+                    name="date_sampling_start"
+                    readonly={true}
+                    defaultValue={datesSampling.start}
+                    rules={{ required: caps('validations:required') }}
+                    as={Datepicker}
+                />
+                <ErrorMessage errors={errors} name="date_sampling_start">
+                    {({ message }) => <small className={'text-danger'}>{message}</small>}
+                </ErrorMessage>
+            </Col>
+            <Col sm={2} className='text-left mb-2'>
+                <label><b>Fecha final del periodo:</b></label>
+                <Controller control={control}
+                    name="date_sampling_end"
+                    readonly={true}
+                    defaultValue={datesSampling.end}
+                    rules={{ required: caps('validations:required') }}
+                    as={Datepicker}
+                />
+                <ErrorMessage errors={errors} name="date_sampling_end">
+                    {({ message }) => <small className={'text-danger'}>{message}</small>}
+                </ErrorMessage>
+            </Col></>)}
         </Row>
         {isLoadingData ? <LoadingSpinner /> : (
             dataPromedio !== undefined && (<>
@@ -297,33 +325,8 @@ const FormProjection = ({
                             {({ message }) => <small className={'text-danger'}>{message}</small>}
                         </ErrorMessage>
                     </Col>
-                    <Col sm={2} className='text-left mb-2'>
-                        <label><b>Fecha inicial del periodo:</b></label>
-                        <Controller control={control}
-                            name="date_sampling_start"
-                            readonly={true}
-                            defaultValue={datesSampling.start}
-                            rules={{ required: caps('validations:required') }}
-                            as={Datepicker}
-                        />
-                        <ErrorMessage errors={errors} name="date_sampling_start">
-                            {({ message }) => <small className={'text-danger'}>{message}</small>}
-                        </ErrorMessage>
-                    </Col>
-                    <Col sm={2} className='text-left mb-2'>
-                        <label><b>Fecha final del periodo:</b></label>
-                        <Controller control={control}
-                            name="date_sampling_end"
-                            readonly={true}
-                            defaultValue={datesSampling.end}
-                            rules={{ required: caps('validations:required') }}
-                            as={Datepicker}
-                        />
-                        <ErrorMessage errors={errors} name="date_sampling_end">
-                            {({ message }) => <small className={'text-danger'}>{message}</small>}
-                        </ErrorMessage>
-                    </Col>
-                    <Col sm={2} className='text-left mb-2'>
+
+                    {/* <Col sm={2} className='text-left mb-2'>
                         <label><b>Fecha inicial de proyección:</b></label>
                         <Controller control={control}
                             name="date_project_start"
@@ -335,7 +338,7 @@ const FormProjection = ({
                         <ErrorMessage errors={errors} name="date_project_start">
                             {({ message }) => <small className={'text-danger'}>{message}</small>}
                         </ErrorMessage>
-                    </Col>
+                    </Col> */}
                     <Col sm={2} className='text-left mb-2'>
                         <label><b>Fecha final de proyección:</b></label>
                         <Controller control={control}
