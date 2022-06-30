@@ -52,6 +52,8 @@ export const AddProjection = () => {
 		data.type_projection = typeProjection;
 		data.date_start_scaling = datesLastProjection?.fecha_start_scaling;
 		data.date_end_scaling = datesLastProjection?.fecha_end_scaling;
+		data.date_start_fill = datesLastProjection?.fecha_start_fill;
+		
 		setDataForm(data);
 
 		if(data.tonsForChange){

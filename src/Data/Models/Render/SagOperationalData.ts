@@ -30,7 +30,8 @@ export interface SagOperationalDataImport {
   AS: number
   VEL_SENTIDO: number
   TON_ACUM_CAMP: number
-  DIAS_ACUM_CAMP: number
+  DIAS_ACUM_CAMP: number,
+	X_0: number
 }
 
 export interface IVariables {

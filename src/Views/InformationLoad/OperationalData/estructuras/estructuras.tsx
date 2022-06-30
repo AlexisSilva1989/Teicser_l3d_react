@@ -27,7 +27,8 @@ export const sag_data_structure = [
   'AS',
   'VEL_SENTIDO',
   'TON_ACUM_CAMP',
-  'DIAS_ACUM_CAMP'
+  'DIAS_ACUM_CAMP',
+  'X_0'
 ]
 
 
@@ -53,5 +54,6 @@ export const mobo_data_structure = [
   'FET',
   'AS',
   'TON_ACUM_CAMP',
-  'DIAS_ACUM_CAMP'
+  'DIAS_ACUM_CAMP',
+  'X_0'
 ]

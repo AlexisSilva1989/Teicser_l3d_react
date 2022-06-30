@@ -182,7 +182,8 @@ export const IndexOperationalData = () => {
 				AS: data.AS,
 				VEL_SENTIDO: data.VEL_SENTIDO,
 				TON_ACUM_CAMP: data.TON_ACUM_CAMP,
-				DIAS_ACUM_CAMP: data.DIAS_ACUM_CAMP
+				DIAS_ACUM_CAMP: data.DIAS_ACUM_CAMP,
+				X_0: data.X_0
 			};
 		} else {
 			data = data as MoboOperationalDataImport
@@ -207,7 +208,8 @@ export const IndexOperationalData = () => {
 				FET: data.FET,
 				AS: data.AS,
 				TON_ACUM_CAMP: data.TON_ACUM_CAMP,
-				DIAS_ACUM_CAMP: data.DIAS_ACUM_CAMP
+				DIAS_ACUM_CAMP: data.DIAS_ACUM_CAMP,
+				X_0: data.X_0
 			};
 		}
 		return initial;
@@ -292,15 +294,33 @@ export const IndexOperationalData = () => {
 		}
 			, "");
 
-		if ($m(fechaMaxima).isValid()) {
+		const fechaMedicion = operationalData.reduce((accumulator, currentValue) => {
+
+			if (accumulator == "") {
+				accumulator = currentValue.TIMESTAMP_NEW
+			}
+
+			if (currentValue.X_0 !== undefined) {
+				accumulator = currentValue.TIMESTAMP_NEW
+			}
+			return accumulator;
+		}
+			, "");
+
+		if (($m(fechaMaxima).isValid()) && ($m(fechaMedicion).isValid())) {
+			const fillDateStart = $m(fechaMaxima).add(1, "day")
+			const fillDateEnd = $m(fechaMedicion).add(30, "days")
+			const xampleDateEnd = $m(fechaMedicion).add(30, "days")
+
 			setVariables(state => $u(state, {
-				fillDatesStart: { $set: $m(fechaMaxima).add(1, "day").format('DD-MM-YYYY') },
-				fillDatesEnd: { $set: $m(fechaMaxima).add(30, "days").format('DD-MM-YYYY') },
-				samplingDatesStart: { $set: $m(fechaMaxima).subtract(30, "days").format('DD-MM-YYYY') },
-				samplingDatesEnd: { $set: $m(fechaMaxima).format('DD-MM-YYYY') },
-				xampleDateStart: { $set: $m(fechaMaxima).format('DD-MM-YYYY') },
-				xampleDateEnd: { $set: $m(fechaMaxima).add(30, "days").format('DD-MM-YYYY') },
-				measurementDate: { $set: $m(fechaMaxima).format('DD-MM-YYYY') }
+				fillDatesStart: { $set: fillDateStart.format('DD-MM-YYYY') },
+				fillDatesEnd: { $set: fillDateEnd.format('DD-MM-YYYY') },
+				samplingDatesStart: { $set: $m(fechaMedicion).subtract(30, "days").format('DD-MM-YYYY') },
+				samplingDatesEnd: { $set: $m(fechaMedicion).format('DD-MM-YYYY') },
+				xampleDateStart: { $set: $m(fechaMedicion).format('DD-MM-YYYY') },
+				xampleDateEnd: { $set: xampleDateEnd.format('DD-MM-YYYY') },
+				measurementDate: { $set: $m(fechaMedicion).format('DD-MM-YYYY') },
+
 			}))
 		}
 	}, [operationalData])
@@ -311,6 +331,19 @@ export const IndexOperationalData = () => {
 		setLoadingData(true);
 		updateComponentes(idEquipoSelected);
 	}, [idEquipoSelected]);
+
+	useEffect(() => {
+		const xampleDateEnd = $m(variable.xampleDateEnd, 'DD-MM-YYYY')
+		const fillDatesStart = $m(variable.fillDatesStart, 'DD-MM-YYYY')
+
+		if( fillDatesStart.isValid() && xampleDateEnd.isValid()){
+				setVariables(state => $u(state, {
+					isRandomSampling: { $set: fillDatesStart.isSameOrAfter(xampleDateEnd) ? "false" : "true"},
+				}))
+		}
+		
+
+	}, [variable.xampleDateEnd]);
 
 	// /*OBTENER ESTATUS DEL SERVICIO */
 	// useEffect(() => {
@@ -351,32 +384,35 @@ export const IndexOperationalData = () => {
 	/*CAMPOS PARA RELLENO DE FECHAS */
 	const fieldsFillDates: JSX.Element = <>
 		<hr />
-		<Row className="mb-3">
-			<Col sm={6}>
-				<Datepicker
-					label='Fecha inicial de relleno'
-					value={variable.fillDatesStart}
-					onChange={value => {
-						setVariables(state => $u(state, {
-							fillDatesStart: { $set: value }
-						}))
-					}}
-				/>
-			</Col>
-			<Col sm={6}>
-				<Datepicker
-					label='Fecha final de relleno'
-					value={variable.fillDatesEnd}
-					onChange={value => {
-						setVariables(state => $u(state, {
-							fillDatesEnd: { $set: value }
-						}))
-					}}
-				/>
-			</Col>
-		</Row>
+		{variable.isRandomSampling === 'true' && (
+			<Row className="mb-3">
+				<Col sm={6}>
+					<Datepicker
+						label='Fecha inicial de relleno'
+						value={variable.fillDatesStart}
+						onChange={value => {
+							setVariables(state => $u(state, {
+								fillDatesStart: { $set: value }
+							}))
+						}}
+						readonly={true}
 
-		{/* ---------------------------- */}
+					/>
+				</Col>
+				<Col sm={6}>
+					<Datepicker
+						label='Fecha final de relleno'
+						value={variable.fillDatesEnd}
+						onChange={value => {
+							setVariables(state => $u(state, {
+								fillDatesEnd: { $set: value }
+							}))
+						}}
+						readonly={true}
+					/>
+				</Col>
+			</Row>
+		)}
 
 		<Row className="mb-3">
 			<Col sm={6}>
@@ -441,6 +477,7 @@ export const IndexOperationalData = () => {
 									xampleDateStart: { $set: value }
 								}))
 							}}
+							readonly={true}
 						/>
 					</Col>
 					<Col sm={6}>
@@ -449,7 +486,8 @@ export const IndexOperationalData = () => {
 							value={variable.xampleDateEnd}
 							onChange={value => {
 								setVariables(state => $u(state, {
-									xampleDateEnd: { $set: value }
+									xampleDateEnd: { $set: value }, 
+									fillDatesEnd: { $set: value }, 
 								}))
 							}}
 						/>
@@ -462,10 +500,7 @@ export const IndexOperationalData = () => {
 
 				</Row>
 
-				{variable.isRandomSampling === 'true' && fieldsFillDates}
-
-				{/* ---------------------------- */}
-				{/* <hr /> */}
+				{fieldsFillDates}
 
 				{/* <Row className="mb-3">
 					<Col sm={6}>

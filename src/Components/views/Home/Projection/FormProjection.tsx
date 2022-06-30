@@ -65,6 +65,7 @@ export interface IdataFormProjection {
     componenteId: string | undefined
     date_start_scaling?: string
     date_end_scaling?: string
+    date_start_fill?: string
 }
 
 export interface IDataPromedio {

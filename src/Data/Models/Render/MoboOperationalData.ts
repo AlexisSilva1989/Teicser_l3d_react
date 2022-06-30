@@ -22,6 +22,7 @@ export interface MoboOperationalDataImport {
   AS: number
   TON_ACUM_CAMP: number
   DIAS_ACUM_CAMP: number
+	X_0: number
 }
 
 export const MoboOperationalColumns: LocalizedColumnsCallback<MoboOperationalDataImport> = () => [
