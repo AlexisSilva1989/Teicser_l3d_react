@@ -67,6 +67,8 @@ export interface IdataFormProjection {
     date_start_scaling?: string
     date_end_scaling?: string
     date_start_fill?: string
+    date_project_start?: string
+    date_last_medition?: string
 }
 
 export interface IDataPromedio {
