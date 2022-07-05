@@ -9,22 +9,21 @@ export interface Projection {
 	fecha_simulacion: string
 	estado: string
 	tipo_proyeccion: string
+  fecha_end_xample: string
+  dias_proyectar: string
 }
 
 export const ProjectionsColumns: (intl: IntlShape) => IDataTableColumn<Projection>[] = (intl) => {
 	const header = Utils.capitalize(intl);
 	return [
-		{ selector: 'id', name: header('columns:id') },
-		{ selector: 'nombre_equipo', name: header('columns:equipo') },
-		{ selector: 'nombre_componente', name: 'Componente' },
-		{
-			selector: 'tipo_proyeccion', name: 'Periodo',
-			format: (x) => x.tipo_proyeccion !== null 
-				? header('label:' + x.tipo_proyeccion) 
-				: header('labels:not_applicable')
-		},
-		{ selector: 'fecha_medicion', name: header('columns:fecha_medicion'), center: true },
-		{ selector: 'fecha_simulacion', name: header('columns:fecha_simulacion'), center: true  },
-		{ selector: 'estado', name: header('columns:estado') }
+		{ selector: 'id', name: header('columns:id'), width: '10%' },
+		{ selector: 'nombre_equipo', name: header('columns:equipo') , width: '16%'},
+		{ selector: 'nombre_componente', name: 'Componente' , width: '16%'},
+		{ selector: 'fecha_medicion', name: header('columns:fecha_medicion'), width: '13%' },
+		{ selector: 'fecha_end_xample', name: 'Fecha a proyectar', width: '13%'  },
+		{ selector: 'dias_proyectar', name: 'Días', width: '7%'  },
+		{ selector: 'fecha_simulacion', name: header('columns:fecha_simulacion'),width: '15%'  },
+		{ selector: 'estado', name: header('columns:estado') , width: '10%'}
 	];
 };
+
