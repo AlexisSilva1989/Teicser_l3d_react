@@ -1802,6 +1802,7 @@
 	"menus:information": "informes",
 	"menus:calibration": "calibración",
 	"menus:operational_data": "datos operacionales",
+	"menus:summary_projection": "Resumen de proyección a 30 días",
 
 	"menus:equipment": "equipos",
 	"menus:site_servers": "servidores",
@@ -1930,9 +1931,9 @@
 	"menus:company":"Perfil de empresa",
 	
 	"titles:measurement": "Medición",
-	"titles:projection_variable": "Proyección de variables operacionales",
+	"titles:projection_variable": "Proyección con cambio de variables operativas",
 	"titles:variable_simulation": "variable de simulación",
-	"titles:simulation_prediction_days": "simulación de desgaste con predicción de variables operacionales a 30 días",
+	"titles:simulation_prediction_days": "Proyección a 30 días",
 
 	"titles:catalogo": "catálogos",
 	"titles:cobranza": "cobranza",
@@ -2330,7 +2331,7 @@
 	"routes:base.site_servers": "servidores",
 	"routes:base.training": "entrenamiento",
 	"routes:base.component": "componentes",
-	
+	"routes:base.summary_projection": "resumen_proyeccion",
 
 	
 

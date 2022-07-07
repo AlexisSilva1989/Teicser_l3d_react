@@ -56,12 +56,13 @@ export const ListSimulacion = () => {
 
 	return <ListaBase<Simulation>
 		title='titles:wear_projections'
-		source={$j('service_render', 'extend', 'list_simulations')}
+		source={$j('service_render', 'list_simulations')}
 		permission='reports'
 		columns={SimulationsColumns}
 		paginationServe={true}
 		paramsFilter={filtersParams}
 		isRemoveAddButon={true}
+    onSelect="details"
 	>
 		<ApiSelect<Equipo>
 			name='equipo_select'

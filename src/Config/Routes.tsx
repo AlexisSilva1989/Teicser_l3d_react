@@ -38,6 +38,8 @@ import { EditEntrenamiento} from "../Views/Masters/Entrenamiento/EditEntrenamien
 import { AddEntrenamiento } from "../Views/Masters/Entrenamiento/AddEntrenamiento";
 import { ListaEntrenamiento } from "../Views/Masters/Entrenamiento/ListaEntrenamiento";
 import { ListSimulacion } from "../Views/Reports/Simulacion/ListSimulacion";
+import ListSimulationSummary from "../Views/Reports/SimulationSummary/ListSimulationSummary";
+import ShowSimulationSummary from "../Views/Reports/SimulationSummary/ShowSimulationSummary";
 
 
 interface Route {
@@ -127,6 +129,7 @@ const routes: RouteGroup[] = [
       { path: "routes:meta.base", component: <ListProjection /> },
       { path: "routes:meta.add", component: <AddProjection /> },
       { path: "routes:meta.modify", component: <ShowProjection /> },
+      { path: "routes:meta.details", component: <ShowProjection /> },
       { path: "/:data_select?", component: <ShowProjection /> },
     ],
   },
@@ -135,6 +138,7 @@ const routes: RouteGroup[] = [
     routes: [
       { path: "routes:meta.base", component: <ListSimulacion /> },
       { path: "routes:meta.modify", component: <SimulacionDias /> },
+      { path: "routes:meta.details", component: <SimulacionDias /> },
       { path: "/:data_select?", component: <SimulacionDias /> },
 
     ],
@@ -199,6 +203,13 @@ const routes: RouteGroup[] = [
       { path: "routes:meta.base", component: <ListaEntrenamiento /> },
       { path: "routes:meta.add", component: <AddEntrenamiento /> },
       { path: "routes:meta.modify", component: <EditEntrenamiento /> },
+    ],
+  },
+  {
+    prefix: "routes:base.summary_projection",
+    routes: [
+      { path: "routes:meta.base", component: <ListSimulationSummary /> },
+      { path: "routes:meta.details", component: <ShowSimulationSummary /> },
     ],
   },
 ];

@@ -59,12 +59,13 @@ export const ListProjection = () => {
 
 	return <ListaBase<Projection>
 		title='titles:wear_projections'
-		source={$j('service_render', 'extend', 'list_projections')}
+		source={$j('service_render', 'list_projections')}
 		permission='gemelo_digital'
 		columns={ProjectionsColumns}
 		labelBotton="nueva proyección"
 		paginationServe={true}
 		paramsFilter={filtersParams}
+    onSelect={"details"}
 	>
 		<ApiSelect<Equipo>
 			name='equipo_select'

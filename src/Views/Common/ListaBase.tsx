@@ -28,6 +28,7 @@ interface Props<T> {
   onSelect?: "details" | "modify";
   links?: ListaBaseLink[];
   customFilter?: (e: T) => boolean;
+  selectableCriteria?: (e: T) => boolean;
   reload?: boolean;
   loading?: boolean;
   innerPath?: string;
@@ -43,7 +44,7 @@ interface Props<T> {
 
   labelBotton?: string
   queryParams?: any
-  isRemoveAddButon?: boolean 
+  isRemoveAddButon?: boolean
 }
 
 interface State {
@@ -64,14 +65,14 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
 
   const isPathCliente = usePath('clientes');
 
-  const listChildren = ()=>{
-    const childrens = props.children && (Array.isArray( props.children) 
-      ? props.children as React.ReactNode[] 
+  const listChildren = () => {
+    const childrens = props.children && (Array.isArray(props.children)
+      ? props.children as React.ReactNode[]
       : [props.children as React.ReactNode]);
     const childrensMaps = childrens && childrens.map((children, index) => {
       let childrenNode = children as React.ReactNode;
       return (
-        <div className={"col-lg-2 col-md-3 col-sm-6 text-left mb-2"} key={'filter-'+index}>
+        <div className={"col-lg-2 col-md-3 col-sm-6 text-left mb-2"} key={'filter-' + index}>
           {children}
         </div>
       );
@@ -81,10 +82,10 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
 
   return (
     <BaseContentView title={props.title}>
-     
+
       {/*BOTON DE VOLVER*/}
-      { mayBack &&  <div className='col-12 mb-4'><Buttons.Back /> </div>}
-     
+      {mayBack && <div className='col-12 mb-4'><Buttons.Back /> </div>}
+
       {/* BOTONERA */}
       <div className='col-12 mb-2'>
         {/*BOTON DE AGREGAR*/}
@@ -92,10 +93,10 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
           <Buttons.Add path={props.innerPath
             ? localize('routes:meta.inner_add', { element: localize(props.innerPath) })
             : localize('routes:meta.add')}
-            className='mr-3 mb-2'  label={props.labelBotton && props.labelBotton}
+            className='mr-3 mb-2' label={props.labelBotton && props.labelBotton}
           />
         }
-        
+
         {/*LINKS RECIBIDOS (BOTONES)*/}
         {props.links && props.links.map((x, i) => {
           return (
@@ -105,7 +106,7 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
             </button>
           );
         })}
-        
+
         {/*boton para descargar listado cliente solo los que tengan permiso de eliminar*/}
         {(canDelete(props.permission) && isPathCliente) &&
           (< Buttons.Common
@@ -118,15 +119,15 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
           />)
         }
       </div>
-      
+
       {/* INPUT DE BUSQUEDA */}
       <div className='col-12 text-right pr-0 pl-0' >
-        {listChildren()} 
-        <div className="col-lg-3 col-md-5 col-sm-6" style={{verticalAlign:'bottom'}}>
+        {listChildren()}
+        <div className="col-lg-3 col-md-5 col-sm-6" style={{ verticalAlign: 'bottom' }}>
           <SearchBar onChange={(e) => setSearch((s) => $u(s, { $set: e }))} />
         </div>
       </div>
-      
+
       {/* TABLA DE DATOS */}
       <div className="col-12">
         {props.loading ? (
@@ -142,15 +143,18 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
             reload={props.reload}
             search={search}
             customFilter={props.customFilter}
-            onSelect={(e) =>
-              props.onSelect == null || props.onSelect === "modify"
-                ? canUpdate(props.permission)
-                  ? gotoModify({ data: e }, props.innerPath)
-                  : undefined
-                : gotoDetails({ data: e })
+            onSelect={(e) => {
+              const isSelectable = props.selectableCriteria ? props.selectableCriteria(e) : true
+              return props.onSelect == null || props.onSelect === "modify"
+                ? canUpdate(props.permission) && isSelectable ? gotoModify({ data: e }, props.innerPath) : undefined
+                : isSelectable ? gotoDetails({ data: e }) : undefined
+            }
+
             }
             paginationServe={props.paginationServe}
             filterServeParams={props.paramsFilter}
+            selectableCriteria={props.selectableCriteria}
+
           />
         )}
       </div>

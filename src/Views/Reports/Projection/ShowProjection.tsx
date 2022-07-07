@@ -42,7 +42,7 @@ const ShowProjection = () => {
 			</Col>
             <Col>
                 {dataId && <SimulacionGrafica 
-                    resourceData={$j('service_render/extend/projection',dataId)} 
+                    resourceData={$j('service_render/projection',dataId)} 
                     setFechaSimulacion = {setFechaSimulacion}
                 />}
             </Col>

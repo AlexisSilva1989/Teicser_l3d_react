@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Col } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import { useApi } from '../../../Common/Hooks/useApi';
 import { useFullLocation } from '../../../Common/Hooks/useFullLocation';
 import { useNavigation } from '../../../Common/Hooks/useNavigation';
-import { $j, $m } from '../../../Common/Utils/Reimports';
-import { ApiSelect } from '../../../Components/Api/ApiSelect';
+import { $j } from '../../../Common/Utils/Reimports';
 import { Buttons } from '../../../Components/Common/Buttons';
-import { ShowMessageInModule } from '../../../Components/Common/ShowMessageInModule';
-import { IDatesLastProjection } from '../../../Components/views/Home/Projection/FormProjection';
 import SimulacionGrafica from '../../../Components/views/Home/simulation/SimulacionGrafica';
-import { Equipo } from '../../../Data/Models/Equipo/Equipo';
 import { BaseContentView } from '../../Common/BaseContentView';
 
 const SimulacionDias = () => {
@@ -49,7 +44,7 @@ const SimulacionDias = () => {
 			</Col>
 			<Col>
 				{dataId && <SimulacionGrafica
-					resourceData={$j('service_render/extend/data_proyeccion', dataId)}
+					resourceData={$j('service_render/data_proyeccion', dataId)}
 					setFechaSimulacion={setFechaSimulacion}
 				/>}
 			</Col>
