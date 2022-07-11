@@ -3,7 +3,7 @@ import { BaseContentView } from '../../Common/BaseContentView';
 import { Col, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Datepicker } from '../../../Components/Forms/Datepicker';
 import { FileInputWithDescription } from './../../../Components/Forms/FileInputWithDescription';
-import { $u, $j, $d, $m } from '../../../Common/Utils/Reimports';
+import { $u, $j, $d } from '../../../Common/Utils/Reimports';
 import { ax } from '../../../Common/Utils/AxiosCustom';
 import { useToasts } from 'react-toast-notifications';
 import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
@@ -50,7 +50,7 @@ const inicialErrosreportePdf = {
 
 export const PdfColumns: LocalizedColumnsCallback<reportePdf> = () => [
   { name: 'Equipo', selector: pdf => pdf.equipo?.nombre , width: '20%'},
-  { name: 'Fecha', selector: pdf => $m(pdf.fecha).format('DD-MM-YYYY'), width: '20%' },
+  { name: 'Fecha', selector: pdf => pdf.fecha, width: '20%' },
   { name: 'Nombre', selector: pdf => pdf.pdf_name , width: '50%'}
 ];
 
