@@ -232,7 +232,6 @@ const FormProjection = ({
     onSubmit(data)
   }
 
-
   useEffect(() => {
     console.log('isDataPercent', getValues('isDataPercent'));
     setShowLabelPercent(getValues('isDataPercent') === "true")
@@ -440,72 +439,68 @@ const FormProjection = ({
                     <Col className="d-sm-none d-block">
                       <hr />
                     </Col>
-                    {tipoEquipoSelected !== "MOBO" ? (
-                      <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0"}>
-                        <Col sm={6}>
-                          <Col sm={12}>
-                            <strong>Dureza DWI </strong>
-                          </Col>
-                          <Col sm={12}>
-                            <strong>({dataPromedio?.DWI} DWI)</strong>
-                          </Col>
+                    <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0"}>
+                      <Col sm={6}>
+                        <Col sm={12}>
+                          <strong>Dureza DWI </strong>
                         </Col>
-                        <Col sm={6}>
-                          <div className='d-flex align-items-center'>
-                            <Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()} />
-                            {showLabelPercent && <span className="ml-2">%</span>}
-                          </div>
-                          {(showLabelPercent && watchFields["dwi"] && watchFields["dwi"] !== ""
-                            && !isNaN(Number(watchFields["dwi"]))) && (
-                              <Col sm={12} className="text-center pl-0">
-                                <span >
-                                  {Utils.fixed(
-                                    Number(dataPromedio?.DWI) +
-                                    ((Number(watchFields["dwi"].replace(ONLY_NUMBER, '')) *
-                                      Number(dataPromedio?.DWI)) / 100))
-                                  } DWI
-                                </span>
-                              </Col>
-                            )}
+                        <Col sm={12}>
+                          <strong>({dataPromedio?.DWI} DWI)</strong>
                         </Col>
                       </Col>
-                    ) : (
-
-                      <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0"}>
-                        <Col sm={6}>
-                          <Col sm={12}>
-                            <strong>Dureza BWI </strong>
-                          </Col>
-                          <Col sm={12}>
-                            <strong>({dataPromedio?.BWI} BWI)</strong>
-                          </Col>
-                        </Col>
-                        <Col sm={6}>
-                          <div className='d-flex align-items-center'>
-                            <Textbox id="bwi" name="bwi" onlyNumber={true} ref={register()} />
-                            {showLabelPercent && <span className="ml-2">%</span>}
-                          </div>
-                          {(showLabelPercent && watchFields["bwi"] && watchFields["bwi"] !== ""
-                            && !isNaN(Number(watchFields["bwi"]))) && (
-                              <Col sm={12} className="text-center pl-0">
-                                <span >
-                                  {Utils.fixed(
-                                    Number(dataPromedio?.BWI) +
-                                    ((Number(watchFields["bwi"].replace(ONLY_NUMBER, '')) *
-                                      Number(dataPromedio?.BWI)) / 100))
-                                  } BWI
-                                </span>
-                              </Col>
-                            )}
-                        </Col>
+                      <Col sm={6}>
+                        <div className='d-flex align-items-center'>
+                          <Textbox id="dwi" name="dwi" onlyNumber={true} ref={register()} />
+                          {showLabelPercent && <span className="ml-2">%</span>}
+                        </div>
+                        {(showLabelPercent && watchFields["dwi"] && watchFields["dwi"] !== ""
+                          && !isNaN(Number(watchFields["dwi"]))) && (
+                            <Col sm={12} className="text-center pl-0">
+                              <span >
+                                {Utils.fixed(
+                                  Number(dataPromedio?.DWI) +
+                                  ((Number(watchFields["dwi"].replace(ONLY_NUMBER, '')) *
+                                    Number(dataPromedio?.DWI)) / 100))
+                                } DWI
+                              </span>
+                            </Col>
+                          )}
                       </Col>
-                    )
-                    }
-
+                    </Col>
                     <Col className="d-sm-none d-block">
                       <hr />
                     </Col>
-
+                    <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0"}>
+                      <Col sm={6}>
+                        <Col sm={12}>
+                          <strong>Dureza BWI </strong>
+                        </Col>
+                        <Col sm={12}>
+                          <strong>({dataPromedio?.BWI} BWI)</strong>
+                        </Col>
+                      </Col>
+                      <Col sm={6}>
+                        <div className='d-flex align-items-center'>
+                          <Textbox id="bwi" name="bwi" onlyNumber={true} ref={register()} />
+                          {showLabelPercent && <span className="ml-2">%</span>}
+                        </div>
+                        {(showLabelPercent && watchFields["bwi"] && watchFields["bwi"] !== ""
+                          && !isNaN(Number(watchFields["bwi"]))) && (
+                            <Col sm={12} className="text-center pl-0">
+                              <span >
+                                {Utils.fixed(
+                                  Number(dataPromedio?.BWI) +
+                                  ((Number(watchFields["bwi"].replace(ONLY_NUMBER, '')) *
+                                    Number(dataPromedio?.BWI)) / 100))
+                                } BWI
+                              </span>
+                            </Col>
+                          )}
+                      </Col>
+                    </Col>
+                  </Row>
+                  <hr />
+                  <Row>
                     <Col sm={4} className={"d-flex align-items-center mt-2 mt-sm-0 "}>
                       <Col sm={6}>
                         <Col sm={12}>
@@ -534,11 +529,9 @@ const FormProjection = ({
                           )}
                       </Col>
                     </Col>
-
-                  </Row>
-                  <hr />
-                  <Row>
-
+                    <Col className="d-sm-none d-block">
+                      <hr />
+                    </Col>
                     <Col sm={4} className={"d-flex align-items-center "}>
                       <Col sm={6}>
                         <Col sm={12}>
@@ -562,7 +555,7 @@ const FormProjection = ({
                                   Number(dataPromedio?.AI) +
                                   ((Number(watchFields["ai"].replace(ONLY_NUMBER, '')) *
                                     Number(dataPromedio?.AI)) / 100))
-                                } Ton/día
+                                }
                               </span>
                             </Col>
                           )}
@@ -595,18 +588,18 @@ const FormProjection = ({
                                   Number(dataPromedio?.PH) +
                                   ((Number(watchFields["ph"].replace(ONLY_NUMBER, '')) *
                                     Number(dataPromedio?.PH)) / 100))
-                                } Ton/día
+                                }
                               </span>
                             </Col>
                           )}
                       </Col>
                     </Col>
+                  </Row>
 
-                    <Col className="d-sm-none d-block">
-                      <hr />
-                    </Col>
+                  {tipoEquipoSelected !== "MOBO" && (<>
+                    <hr />
 
-                    {tipoEquipoSelected !== "MOBO" && (
+                    <Row>
                       <Col sm={4} className={"d-flex align-items-center "}>
                         <Col sm={6}>
                           <Col sm={12}>
@@ -640,14 +633,7 @@ const FormProjection = ({
                             )}
                         </Col>
                       </Col>
-                    )}
-
-                  </Row>
-
-                  <hr />
-
-                  {tipoEquipoSelected !== "MOBO" && (<>
-
+                    </Row>
                     <Row>
                       <Col sm={12} className="mt-3"><h4>{title("changes_of_senses")}</h4>
                         <hr />
