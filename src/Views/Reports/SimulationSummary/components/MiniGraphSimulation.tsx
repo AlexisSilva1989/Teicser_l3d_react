@@ -38,11 +38,11 @@ function MiniGraphSimulation({
     { primary: true, position: "bottom", type: "linear", show: true, showTicks: true },
     {
       position: "left", type: "linear", show: true, stacked: false,
-      hardMin: 0, hardMax: typeEquipment === 'SAG' ? 500 : 200, showTicks: true
+      hardMin: 0, showTicks: true
     },
     {
       position: "right", type: "linear", show: true, stacked: false,
-      hardMin: 0, hardMax: typeEquipment === 'SAG' ? 500 : 200, showTicks: true
+      hardMin: 0, showTicks: true
     },
   ], []
   );
@@ -85,7 +85,7 @@ function MiniGraphSimulation({
   }
 
   return (
-    <Col sm="12" className={"mt-2 mb-2 "}>
+    <Col sm="12" className={"mt-2 mb-2 p-0"}>
       <Col sm="12" className="text-center"><strong>{component}</strong></Col>
       <Col sm="12" style={{ height: '220px' }} >
         <Chart
@@ -94,6 +94,7 @@ function MiniGraphSimulation({
           series={series}
           getSeriesStyle={getSeriesStyle}
           tooltip={tooltip} />
+
       </Col>
 
       {(dataSimulacion !== undefined && Object.keys(dataSimulacion).length > 0) && (
@@ -114,7 +115,13 @@ function MiniGraphSimulation({
           </Form.Label>
         </Form.Group>
       )}
-      <Col sm={12} className="mb-2">
+      {
+        fechaSimulacion && <Col sm="12" className="text-right p-0">
+          <strong>Fecha de simulación: </strong> {fechaSimulacion}
+        </Col>
+      }
+      {/* //comentado momentanemente */}
+      {/* <Col sm={12} className="mb-2">
         <strong>Valores promedios de variables operativas</strong>
       </Col>
       <Table responsive className={'text-left'}>
@@ -160,7 +167,7 @@ function MiniGraphSimulation({
 
           </tr>
         </tbody>
-      </Table>
+      </Table> */}
     </Col>
   )
 }
