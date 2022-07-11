@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, Fragment } from 'react';
 import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { Utils } from '../../Common/Utils/Utils';
 
@@ -95,6 +95,16 @@ export const FileInputWithDescription = (props: Props) => {
 			{ error && 
 				<div className="text-danger"> Formato invalido (validos: {props.accept && props.accept.join(", ").toUpperCase()})</div>
 			}
+      {props.errors && props.errors.length > 0 && 
+        <div>
+			    { props.errors.map((e, i) => {
+				    return <Fragment key={`file-${props.name}-${i}`}>
+					    <small className='text-danger' key={i}> {e} </small> <br />
+			    	</Fragment>;
+			      }
+          )}
+		    </div>
+      }
 		</div>
 	);
 };
