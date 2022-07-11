@@ -96,10 +96,13 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
 
   const axes = useMemo(() => [
     { primary: true, position: "bottom", type: "linear", show: true, showTicks: true },
-    { position: "left", type: "linear", show: true, stacked: false, hardMin: 0, 
-      hardMax: tipoEquipo === 'SAG' ? 500 : 200, showTicks: true },
-    { position: "right", type: "linear", show: true, stacked: false, hardMin: 0,
-      hardMax: tipoEquipo === 'SAG' ? 500 : 200, showTicks: true },
+    {
+      position: "left", type: "linear", show: true, stacked: false, hardMin: 0,showTicks: true
+      // hardMax: tipoEquipo === 'SAG' ? 500 : 200
+    },
+    {
+      position: "right", type: "linear", show: true, stacked: false, hardMin: 0, showTicks: true
+    },
   ], [tipoEquipo]
   );
 
@@ -131,40 +134,57 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
       </Col>
       <Table responsive >
         <tbody>
-
           <tr>
             {
               dataPromedio?.TRAT_MOLINO &&
-              (<td key={"trat-molino"}><strong>Tonelaje: </strong> {dataPromedio.TRAT_MOLINO}</td>)
+              (<td key={"trat-molino"}><strong>Tonelaje: </strong> {dataPromedio.TRAT_MOLINO} Ton/día</td>)
             }
             {
               dataPromedio?.DWI &&
-              (<td key={"DWI"}><strong>Dureza: </strong>{dataPromedio.DWI}</td>)
+              (<td key={"DWI"}><strong>Dureza DWI: </strong>{dataPromedio.DWI}</td>)
             }
             {
               dataPromedio?.BWI &&
-              (<td key={"BWI"}><strong>Dureza: </strong> {dataPromedio.BWI}</td>)
-            }
-            {
-              dataPromedio?.BOLAS_TON &&
-              (<td key={"BOLAS_TON"}><strong>Cargío bolas: </strong> {dataPromedio.BOLAS_TON}</td>)
+              (<td key={"BWI"}><strong>Dureza BWI: </strong> {dataPromedio.BWI}</td>)
             }
           </tr>
           <tr>
+            {
+              dataPromedio?.BOLAS_TON &&
+              (<td key={"BOLAS_TON"}><strong>Cargío bolas: </strong> {dataPromedio.BOLAS_TON} Ton/día</td>)
+            }
             {
               dataPromedio?.AI &&
               (<td key={"AI"}><strong>Índice de abrasividad: </strong>{dataPromedio.AI}</td>)
             }
             {
               dataPromedio?.PH &&
-              (<td key={"PH"}><strong>Dureza: </strong> {dataPromedio.PH}</td>)
+              (<td key={"PH"}><strong>PH: </strong> {dataPromedio.PH}</td>)
             }
 
-            <td key={"VEL_RPM"}>{dataPromedio?.VEL_RPM && <><strong>  Velocidad: </strong> {dataPromedio.VEL_RPM}</>}</td>
-
+          </tr>
+          <tr>
+            {dataPromedio?.VEL_RPM &&
+              (<td key={"PH"} colSpan={3}><strong>Velocidad: </strong> {dataPromedio.VEL_RPM} RPM</td>)
+            }
           </tr>
         </tbody>
       </Table>
+      {(typeProjection !== null && typeProjection !== undefined) &&
+        (<>
+          <Col sm={12} className="mb-2 p-0">
+            <Col className="alert alert-info mb-0" sm={12}>
+              <i className="fa fa-info mr-2" aria-hidden="true" />
+
+              Periodo seleccionado para realizar la proyección de variables es de
+              <strong> {localize('label:' + typeProjection)}</strong>
+
+            </Col>
+
+          </Col>
+        </>
+        )
+      }
       {/* <Row className="mb-3 justify-content-center" style={{ 'display': 'flex' }}>
                 {(typeProjection !== null && typeProjection !== undefined) &&
                     (<p> Simulación realizada con <b>{localize('label:' + typeProjection)}</b></p>)}
@@ -198,7 +218,7 @@ const SimulacionGrafica = ({ resourceData, setFechaSimulacion, showLegend = true
                 <Button variant='outline-info' className='mr-3' onClick={returnFunction}>
                     Cambiar datos de simulación
                 </Button>
-            </Row> */} 
+            </Row> */}
     </Col>
   </>
 
