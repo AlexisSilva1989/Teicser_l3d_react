@@ -309,8 +309,8 @@ export const IndexOperationalData = () => {
 
 		if (($m(fechaMaxima).isValid()) && ($m(fechaMedicion).isValid())) {
 			const fillDateStart = $m(fechaMaxima).add(1, "day")
-			const fillDateEnd = $m(fechaMedicion).add(30, "days")
-			const xampleDateEnd = $m(fechaMedicion).add(30, "days")
+			const fillDateEnd = $m(fechaMedicion).add(31, "days")
+			const xampleDateEnd = $m(fechaMedicion).add(31, "days")
 
 			setVariables(state => $u(state, {
 				fillDatesStart: { $set: fillDateStart.format('DD-MM-YYYY') },
