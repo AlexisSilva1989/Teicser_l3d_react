@@ -179,6 +179,7 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
             as={DualListBox}
             id={"components_selected"}
             name={"components_selected"}
+            className={"react-dual-listbox-medium"}
             options={componentAvailable}
             selected={componentSelected}
             canFilter
@@ -191,6 +192,7 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
             onChange={(data) => {
               setComponentSelected(data[0]);
               return data[0];
+            
             }}
             
             rules={{
