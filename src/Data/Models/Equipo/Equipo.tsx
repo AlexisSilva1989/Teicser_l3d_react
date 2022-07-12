@@ -98,7 +98,7 @@ export const EquipmentWithComponentsColumns: (intl: IntlShape) => IDataTableColu
       format: (equipo) => equipo.equipo_tipo.nombre_corto
     },
     {
-      name: 'componentes',
+      name: 'Componentes',
       center: true,
       cell: equipo => equipo.componentes.length > 0 ? <>
         <OverlayTrigger
