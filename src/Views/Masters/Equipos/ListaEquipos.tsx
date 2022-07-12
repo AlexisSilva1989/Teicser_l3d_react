@@ -40,8 +40,6 @@ export const ListaEquipos = () => {
 					return { label: option.nombre_corto, value: option.id };
 				}}
 				onChange={(data) => {
-					console.log('data: ', data);
-					
 					setFilter((s) => $u(s, { tipo: { $set: data } }));
 				}}
 			/>
