@@ -15,6 +15,7 @@ interface IDataGraph {
   perfilNominal: string[]
   dataPromedio: any
   fechaSimulacion: string
+  componente:string
 }
 
 function SimulationSummaryGraphs({ simulationsComponents , equipo }: IProps) {
@@ -30,7 +31,7 @@ function SimulationSummaryGraphs({ simulationsComponents , equipo }: IProps) {
             perfilNominal={dataComponent.perfilNominal}
             dataSimulacion={dataComponent.simulacion[0]}
             typeEquipment={equipo!.tipo!}
-            component={key}
+            component={dataComponent.componente}
             dataPromedio={dataComponent.dataPromedio}
             fechaSimulacion={dataComponent.fechaSimulacion}
           /> 

@@ -182,13 +182,17 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
             options={componentAvailable}
             selected={componentSelected}
             canFilter
+            alignActions={'top'}
             filterPlaceholder={'Buscar componente...'}
             showHeaderLabels={true}
+            preserveSelectOrder 
+            showOrderButtons={true}
             lang={DualListLang}
             onChange={(data) => {
               setComponentSelected(data[0]);
               return data[0];
             }}
+            
             rules={{
               validate:
               {
@@ -223,6 +227,7 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
             options={serverAvailable}
             selected={serverSelected}
             canFilter
+            alignActions={'top'}
             filterPlaceholder={'Buscar servidor...'}
             showHeaderLabels={true}
             lang={DualListLang}
