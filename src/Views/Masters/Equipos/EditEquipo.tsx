@@ -14,7 +14,6 @@ import { BaseContentView } from '../../Common/BaseContentView';
 export const EditEquipo = ( ) => {
 
     /*CUSTOM HOOKS */
-    const api = useApi();
     const { goBack } = useNavigation();
     const { addToast } = useToasts();
     const { capitalize: caps } = useFullIntl();
