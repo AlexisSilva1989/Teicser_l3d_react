@@ -23,7 +23,7 @@ export const ComponenetesColumns: (intl: IntlShape) => IDataTableColumn<ICompone
 			format: (component) => component.id.toString().padStart(6, '0')
 		},
 		{
-			selector: 'name',
+			selector: 'nombre',
 			name: header('columns:name'),
 			format: (component) => component.nombre
 		},
