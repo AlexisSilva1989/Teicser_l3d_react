@@ -26,7 +26,7 @@ function ListSimulationSummary() {
       onSelect={"details"}
       paginationServe={true}
       selectableCriteria={e => e.componentes.length > 0}
-
+      isRemoveAddButon={true}
     >
       <ApiSelect<{id: number, nombre_corto: string}>
         name='tipo_equipo'
