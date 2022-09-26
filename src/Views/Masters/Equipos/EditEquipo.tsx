@@ -1,7 +1,6 @@
 import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
-import { useApi } from '../../../Common/Hooks/useApi';
 import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
 import { useFullLocation } from '../../../Common/Hooks/useFullLocation';
 import { useNavigation } from '../../../Common/Hooks/useNavigation';

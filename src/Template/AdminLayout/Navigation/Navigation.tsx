@@ -6,7 +6,7 @@ import { IAppState } from '../../../Store/AppStore';
 import { Dispatch, bindActionCreators } from 'redux';
 import { toggleNav, setLayout } from '../../../Store/Template/TemplateActionCreators';
 import { EnhanceNavContent as EnhancedNavContent } from './NavContent';
-import { EnhancedOutsideClick } from './OutsideClick';
+// import { EnhancedOutsideClick } from './OutsideClick';
 
 interface Props {
 	layout: string;
