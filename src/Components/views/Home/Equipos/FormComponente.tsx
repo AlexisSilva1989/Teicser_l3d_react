@@ -27,7 +27,6 @@ const FormComponente = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
   }, [register])
 
   useEffect(() => {
-    console.log('initialData: ', initialData);
     setValue([
       { nombre: initialData?.nombre },
       { status: initialData?.status?.toString() },
