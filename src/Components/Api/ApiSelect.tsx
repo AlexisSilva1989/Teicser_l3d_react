@@ -9,6 +9,7 @@ import './test.css';
 import { FieldError } from 'react-hook-form';
 
 interface Props<T> {
+  id?: string
   name?: string
   label?: string
   span?: number
@@ -189,7 +190,7 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
       </b>
     </label>}
     <Select
-      id='select'
+      id={props.id ?? 'select'}
       name={props.name}
       placeholder={props.placeholder == null ? undefined : caps(props.placeholder)}
       options={options}
