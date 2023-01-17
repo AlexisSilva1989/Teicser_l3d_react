@@ -1,7 +1,9 @@
 import React from 'react';
+import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { useFullLocation } from '../../Common/Hooks/useFullLocation';
+import { useLocalization } from '../../Common/Hooks/useLocalization';
 import { $j } from '../../Common/Utils/Reimports';
 
 interface IPathState {
@@ -16,9 +18,11 @@ interface IButtonProps {
 	path?: IPathState | string
 	type?: 'button' | 'submit' | 'reset'
 	disabled?: boolean
-
 	onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  isLoading?: boolean
+  iconLoading?: string
 }
+
 
 export const Buttons = {
 	Common: (props: IButtonProps) => {
@@ -129,4 +133,28 @@ export const Buttons = {
 			/>
 		);
 	},
+  Form: (
+    props: Pick<
+      IButtonProps,
+      'disabled' | 'className' | 'isLoading' | 'iconLoading' | 'icon'
+    >
+  ) => {
+    const { label } = useLocalization()
+
+    const iconLoading: string =
+      props.iconLoading || 'fas fa-circle-notch fa-spin'
+    const iconSave: string = props.icon || 'fas fa-save'
+
+    return (
+      <Button
+        variant="primary"
+        type="submit"
+        className={'float-right mt-4'}
+        disabled={props.isLoading}
+      >
+        <i className={`mr-3 ${props.isLoading ? iconLoading : iconSave}`} />
+        {props.isLoading ? label('saving') : label('save')}
+      </Button>
+    )
+  },
 };
