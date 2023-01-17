@@ -23,6 +23,8 @@ interface Props {
 	hidden?: boolean 
 	format?: "RUT" | "NUMBER-SEPARATOR"
 	errorForm?: FieldError
+  isLabelRequired?: boolean
+  disabled?: boolean
 }
 
 export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInputElement>) => {
@@ -68,7 +70,14 @@ export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInput
 	return <Fragment>
 	
 		{props.label && <label>
-			<b>{caps(props.label)}:</b>
+			<b>
+        {caps(props.label)}
+        {props.isLabelRequired && (
+          <span className="text-danger"> (*)</span>
+        )}
+        :
+      </b>
+
 		</label>}
 		
 			<input type={props.hidden ? 'hidden' : 'text' } 
@@ -78,7 +87,8 @@ export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInput
 				name={props.name} 
 				value={props.value} 
 				className={'form-control border rounded ' + props.className ?? ''}
-				readOnly={props.readonly} 
+				readOnly={props.readonly}
+        disabled={props.disabled}
 				placeholder={props.placeholder == null ? undefined : caps(props.placeholder)} 
 
 				onKeyUp={(e) => {
