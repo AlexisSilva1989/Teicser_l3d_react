@@ -30,7 +30,7 @@ export const ComponenetesColumns: (intl: IntlShape) => IDataTableColumn<ICompone
 		{
 			selector: 'activo',
 			name: header('columns:active'),
-			format: (component) => header(component.status ? 'labels:yes' : 'labels:no'),
+			format: (component) => header(component.status ? 'labels:common.yes' : 'labels:common.no'),
 			center: true
 		}
 	];

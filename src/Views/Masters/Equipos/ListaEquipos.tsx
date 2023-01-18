@@ -35,7 +35,7 @@ export const ListaEquipos = () => {
 				label='Tipo'
 				source={'service_render/equipos/tipos'}
 				value={filter.tipo}
-				firtsOptions={{ value: '-1', label: caps('labels:all') }}
+				firtsOptions={{ value: '-1', label: caps('labels:common.all') }}
 				selector={(option) => {
 					return { label: option.nombre_corto, value: option.id };
 				}}
@@ -49,15 +49,15 @@ export const ListaEquipos = () => {
 				label='Activo'
 				source={[
 					{
-						label: caps('labels:all'),
+						label: caps('labels:common.all'),
 						value: '-1'
 					},
 					{
-						label: caps('labels:yes'),
+						label: caps('labels:common.yes'),
 						value: '1'
 					},
 					{
-						label: caps('labels:no'),
+						label: caps('labels:common.no'),
 						value: '0'
 					}
 				]}

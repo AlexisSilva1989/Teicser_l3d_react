@@ -688,7 +688,7 @@ export const ValidatedForm = (props: Props) => {
 									disabled={disabledSubmit}
 									onClick={props.buttonType === 'button' ? () => onSubmit(undefined) : undefined}
 									type={props.buttonType}
-									label={props.submitLabel || 'labels:meta.save'}
+									label={props.submitLabel || 'labels:common.save'}
 									icon={props.submitIcon ?? 'fas fa-save'} />
 							}
 						</div>}

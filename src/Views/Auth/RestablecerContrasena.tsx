@@ -56,7 +56,7 @@ export const RestablecerContrasena = () => {
 				{
 					type: TEXTBOX,
 					name: 'email',
-					placeholder: 'validations:placeholders.email_recovery'
+					placeholder: 'labels:placeholders.email_recovery'
 				}
 			]} 
 		/>

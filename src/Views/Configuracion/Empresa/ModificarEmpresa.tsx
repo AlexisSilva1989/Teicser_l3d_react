@@ -159,7 +159,7 @@ export const ModificarEmpresa = () => {
 								label: 'labels:inputs.rut',
 								name: 'rut',
 								value: empresa?.rut,
-								placeholder: 'validations:placeholders.rut',
+								placeholder: 'validations:required',
 								span: 3,
 								isValidateRut:true
 							},
@@ -176,14 +176,14 @@ export const ModificarEmpresa = () => {
 								label: 'labels:inputs.telefono',
 								name: 'telefono',
 								value: empresa?.telefono,
-								placeholder: 'validations:placeholders.mobile_phone',
+								placeholder: 'validations:required',
 								span: 3
 							}, {
 								type: TEXTBOX,
 								label: 'labels:inputs.email',
 								name: 'email',
 								value: empresa?.email,
-								placeholder: 'validations:placeholders.email',
+								placeholder: 'validations:required',
 								span: 3,
 								
 							}, {
@@ -191,7 +191,7 @@ export const ModificarEmpresa = () => {
 								label: 'labels:inputs.web_corporativa',
 								name: 'web',
 								value: empresa?.web,
-								placeholder: 'validations:placeholders.optional',
+								placeholder: 'validations:optional',
 								span: 3
 							},
 							{

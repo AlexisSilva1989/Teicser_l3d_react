@@ -16,7 +16,7 @@ export const tiposEquipos = [
 ];
 
 export const tiposEquiposWithAll: { value: string; label: string; }[] = [{
-  label: 'labels:all',
+  label: 'labels:common.all',
   value: '-1'
 }].concat(tiposEquipos);
 
@@ -74,7 +74,7 @@ export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] 
     {
       selector: 'activo',
       name: header('columns:active'),
-      format: (equipo) => header(equipo.status ? 'labels:yes' : 'labels:no')
+      format: (equipo) => header(equipo.status ? 'labels:common.yes' : 'labels:common.no')
     }
   ];
 };

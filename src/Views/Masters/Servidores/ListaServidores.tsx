@@ -30,15 +30,15 @@ export const ListaServidores = () => {
 				}}
 				options={[
 					{
-						label: 'labels:all',
+						label: 'labels:common.all',
 						value: '-1'
 					},
 					{
-						label: 'labels:yes',
+						label: 'labels:common.yes',
 						value: '1'
 					},
 					{
-						label: 'labels:no',
+						label: 'labels:common.no',
 						value: '0'
 					}
 				]}

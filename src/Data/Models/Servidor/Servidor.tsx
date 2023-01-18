@@ -40,7 +40,7 @@ export const ServidorColumns: (intl: IntlShape) => IDataTableColumn<Servidor>[] 
 		{
 			selector: 'activo',
 			name: header('columns:active'),
-			format: (server) => header(server.status ? 'labels:yes' : 'labels:no'),
+			format: (server) => header(server.status ? 'labels:common.yes' : 'labels:common.no'),
 			center: true
 		}
 	];

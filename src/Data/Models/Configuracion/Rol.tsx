@@ -25,7 +25,7 @@ export const RolColumns: LocalizedColumnsCallback<Rol> = (intl) => {
 		{
 			selector: 'activo',
 			name: caps('columns:active'),
-			format: (x) => caps(x ? 'labels:yes' : 'labels:no')
+			format: (x) => caps(x ? 'labels:common.yes' : 'labels:common.no')
 		}
 	];
 };

@@ -1,7 +1,7 @@
 import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 import { AgregarBase } from '../Common/AgregarBase';
 import React from 'react';
-import { TEXTBOX, SELECT, PASSWORD, SELECT_MODAL } from '../../Components/Forms/ValidatedForm';
+import { TEXTBOX, SELECT, PASSWORD } from '../../Components/Forms/ValidatedForm';
 import { $j } from '../../Common/Utils/Reimports';
 import { Rol } from '../../Data/Models/Configuracion/Rol';
 import md5 from 'md5';
@@ -22,7 +22,7 @@ interface TData {
 }
 
 export const AgregarUsuario = () => {
-	const { intl, capitalize: caps } = useFullIntl();
+	const { capitalize: caps } = useFullIntl();
 
 	function onSerialize(e: TRaw): TData {
 		return {
@@ -127,28 +127,28 @@ export const AgregarUsuario = () => {
 					type: TEXTBOX,
 					label: 'labels:inputs.second_lastname',
 					name: 'segundo_apellido',
-					placeholder: 'validations:placeholders.optional',
+					placeholder: 'validations:optional',
 					span: 4
 				},
 				{
 					type: TEXTBOX,
 					label: 'labels:inputs.email',
 					name: 'email',
-					placeholder: 'validations:placeholders.email',
+					placeholder: 'validations:email',
 					span: 4
 				},
 				{
 					type: TEXTBOX,
 					label: 'labels:inputs.username',
 					name: 'nombre_usuario',
-					placeholder: 'validations:placeholders.username',
+					placeholder: 'validations:required',
 					span: 4
 				},
 				{
 					type: PASSWORD,
 					label: 'labels:inputs.password',
 					name: 'clave',
-					placeholder: 'validations:placeholders.password',
+					placeholder: 'validations:required',
 					span: 4
 				},
 				{

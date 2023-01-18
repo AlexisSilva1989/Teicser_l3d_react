@@ -4,7 +4,6 @@ import {
 	TEXTBOX,
 	SELECT,
 	PASSWORD,
-	SELECT_MODAL,
 	RADIOBOX
 } from '../../Components/Forms/ValidatedForm';
 import { ModificarBaseUsuario } from '../Common/ModificarBaseUsuario';
@@ -34,7 +33,7 @@ interface TData {
 }
 
 export const ModificarUsuario = () => {
-	const { intl, capitalize: caps } = useFullIntl();
+	const { capitalize: caps } = useFullIntl();
 
 	function onSerialize(e: TRaw): TData {
 		return {
@@ -112,7 +111,6 @@ export const ModificarUsuario = () => {
 					type: TEXTBOX,
 					label: 'labels:inputs.username',
 					name: 'nombre_usuario',
-					placeholder: 'validations:placeholders.username',
 					span: 4,
 					select: (x) => x.nombre_usuario,
 					readonly: true,
@@ -121,7 +119,7 @@ export const ModificarUsuario = () => {
 					type: TEXTBOX,
 					label: 'labels:inputs.name',
 					name: 'nombre',
-					placeholder: 'validations:placeholders.username',
+					placeholder: caps('validations:min_length', { count: 3 }),
 					span: 4,
 					select: (x) => x.nombre
 				},
@@ -137,7 +135,7 @@ export const ModificarUsuario = () => {
 					type: TEXTBOX,
 					label: 'labels:inputs.second_lastname',
 					name: 'segundo_apellido',
-					placeholder: 'validations:placeholders.optional',
+					placeholder: 'validations:optional',
 					span: 4,
 					select: (x) => x.segundo_apellido
 				},
@@ -145,7 +143,7 @@ export const ModificarUsuario = () => {
 					type: TEXTBOX,
 					label: 'labels:inputs.email',
 					name: 'email',
-					placeholder: 'validations:placeholders.email',
+					placeholder: 'validations:email',
 					span: 4,
 					select: (x) => x.email
 				},
@@ -153,7 +151,7 @@ export const ModificarUsuario = () => {
 					type: PASSWORD,
 					label: 'labels:inputs.password',
 					name: 'clave',
-					placeholder: 'validations:placeholders.password',
+					placeholder: 'validations:update_password_optional',
 					span: 4
 				},
 				{
@@ -170,7 +168,7 @@ export const ModificarUsuario = () => {
 					type: RADIOBOX,
 					name: 'estatus',
 					options: [{
-						label: "Desactivado",
+						label: "Inactivo",
 						value: "0"
 					},{
 						label: "Activo",

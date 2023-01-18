@@ -16,7 +16,7 @@ export const ParametroColumns : ColumnsPipe<Parametro> = (caps) => [
 	{ 
 		name: 'value', 
 		selector: (parametro) => parametro.tipoDato === "boolean" 
-			? caps(parametro.valor === "true" ? 'labels:yes' : 'labels:no') 
+			? caps(parametro.valor === "true" ? 'labels:common.yes' : 'labels:common.no') 
 			: parametro.valor, 
 		width: '20%' 
 	}

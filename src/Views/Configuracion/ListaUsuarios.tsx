@@ -57,7 +57,7 @@ export const ListaUsuarios = () => {
 							setFilter((s) => $u(s, { tipo: { $set: val } }));
 						}}
 						options={[{
-							label: 'labels:all',
+							label: 'labels:common.all',
 							value: '-1'
 						},
 						{

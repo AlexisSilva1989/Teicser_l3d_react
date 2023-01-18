@@ -111,7 +111,7 @@ export const CambiarContrasena = () => {
                     {
                         type: PASSWORD,
                         name: 'password_new_confirmation',
-                        placeholder: 'validations:placeholders.confirm_password',
+                        placeholder: 'labels:placeholders.confirm_password',
                         reset: true,
                         value: dataInitial.password_new_confirmation
                     }
