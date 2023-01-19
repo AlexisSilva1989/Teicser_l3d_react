@@ -16,6 +16,7 @@ import { ApiSelect } from '../../../Components/Api/ApiSelect';
 import { Equipo } from '../../../Data/Models/Equipo/Equipo';
 import { useSearch } from '../../../Common/Hooks/useSearch';
 import { SearchBar } from '../../../Components/Forms/SearchBar';
+import { OverlayChildren } from 'react-bootstrap/esm/Overlay';
 
 export interface reportePdf {
   equipo?: Equipo
@@ -49,9 +50,9 @@ const inicialErrosreportePdf = {
 }
 
 export const PdfColumns: LocalizedColumnsCallback<reportePdf> = () => [
-  { name: 'Equipo', selector: pdf => pdf.equipo?.nombre , width: '20%'},
-  { name: 'Fecha', selector: pdf => pdf.fecha, width: '20%' },
-  { name: 'Nombre', selector: pdf => pdf.pdf_name , width: '50%'}
+  { name: 'Equipo', selector: pdf => pdf.equipo?.nombre, width: '15%' },
+  { name: 'Fecha', selector: pdf => pdf.fecha, width: '10%'},
+  { name: 'Nombre', selector: pdf => pdf.pdf_name, }
 ];
 
 export const IndexReportsPdf = () => {
@@ -105,39 +106,55 @@ export const IndexReportsPdf = () => {
   }
 
   const colums = PdfColumns(intl)
-
+  const renderTooltip: OverlayChildren = (props: any) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Simple tooltip
+    </Tooltip>
+  );
   colums.push({
     name: 'Opción',
-    center: true,
     width: '10%',
+    center: true,
     cell: pdf => (
       <>
-        <Col sm={6}>
+        <div className="col-6 font-size-18">
           <OverlayTrigger
             placement="top"
             overlay={
-              <Tooltip id={`tooltip-1`}>
-                descargar
-              </Tooltip>
+              <Tooltip id={"tooltip-descargar"}> Descargar </Tooltip>
             }
           >
-            <i className='fas fas fa-file-pdf' style={{ cursor: 'pointer', color: '#09922C' }} onClick={() => pdfDescargar(pdf)} />
+            <i
+              className="fas fa-file-pdf"
+              style={{
+                cursor: "pointer",
+                color: "#09922C",
+              }}
+              onClick={() => {
+                pdfDescargar(pdf)
+              }}
+            />
           </OverlayTrigger>
-        </Col>
-
-        <Col sm={6}>
+        </div>
+        <div className="col-6 font-size-18">
           <OverlayTrigger
             placement="top"
             overlay={
-              <Tooltip id={`tooltip-1`}>
-                Eliminar
-              </Tooltip>
+              <Tooltip id={"tooltip-eliminar"}> Eliminar </Tooltip>
             }
           >
-            <i className='fas fas fa-trash-alt' style={{ cursor: 'pointer', color: '#09922C' }} onClick={() => pdfEliminar(pdf)} />
+            <i
+              className="fas fa-times-circle"
+              style={{
+                cursor: "pointer",
+                color: "#F44D5F",
+              }}
+              onClick={() => {
+                pdfEliminar(pdf)
+              }}
+            />
           </OverlayTrigger>
-        </Col>
-
+        </div>
       </>
     )
   });
