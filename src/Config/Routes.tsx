@@ -40,6 +40,9 @@ import { ListaEntrenamiento } from "../Views/Masters/Entrenamiento/ListaEntrenam
 import { ListSimulacion } from "../Views/Reports/Simulacion/ListSimulacion";
 import ListSimulationSummary from "../Views/Reports/SimulationSummary/ListSimulationSummary";
 import ShowSimulationSummary from "../Views/Reports/SimulationSummary/ShowSimulationSummary";
+import ListaAlarmasEquipos from "../Views/Masters/Alarms/ListaAlarmasEquipos";
+import AddAlarmasEquipo from "../Views/Masters/Alarms/AddAlarmasEquipo";
+import EditAlarmasEquipo from "../Views/Masters/Alarms/EditAlarmasEquipo";
 
 
 interface Route {
@@ -182,11 +185,11 @@ const routes: RouteGroup[] = [
     ],
   },
   {
-    prefix: "routes:base.site_servers",
+    prefix: "routes:base.equipments_alarms",
     routes: [
-      { path: "routes:meta.base", component: <ListaServidores /> },
-      { path: "routes:meta.add", component: <AddServidores /> },
-      { path: "routes:meta.modify", component: <EditServidores /> },
+      { path: "routes:meta.base", component: <ListaAlarmasEquipos /> },
+      { path: "routes:meta.add", component: <AddAlarmasEquipo /> },
+      { path: "routes:meta.modify", component: <EditAlarmasEquipo /> },
     ],
   },
   {
@@ -203,6 +206,14 @@ const routes: RouteGroup[] = [
       { path: "routes:meta.base", component: <ListaEntrenamiento /> },
       { path: "routes:meta.add", component: <AddEntrenamiento /> },
       { path: "routes:meta.modify", component: <EditEntrenamiento /> },
+    ],
+  },
+  {
+    prefix: "routes:base.site_servers",
+    routes: [
+      { path: "routes:meta.base", component: <ListaServidores /> },
+      { path: "routes:meta.add", component: <AddServidores /> },
+      { path: "routes:meta.modify", component: <EditServidores /> },
     ],
   },
   {
