@@ -23,7 +23,7 @@ export const ListaEquipos = () => {
 
 	return (<>
 		<ListaBase<EquipoTipo>
-			title='titles:equipment'
+			title='titles:equipments'
 			source={$j('service_render/equipos')}
 			permission='masters'
 			columns={EquipoColumns}
