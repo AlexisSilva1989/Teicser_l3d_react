@@ -43,6 +43,7 @@ import ShowSimulationSummary from "../Views/Reports/SimulationSummary/ShowSimula
 import ListaAlarmasEquipos from "../Views/Masters/Alarms/ListaAlarmasEquipos";
 import AddAlarmasEquipo from "../Views/Masters/Alarms/AddAlarmasEquipo";
 import EditAlarmasEquipo from "../Views/Masters/Alarms/EditAlarmasEquipo";
+import ListTonelajeRevestimiento from "../Views/Masters/TonelajeRevestimiento/ListTonelajeRevestimiento";
 
 
 interface Route {
@@ -221,6 +222,12 @@ const routes: RouteGroup[] = [
     routes: [
       { path: "routes:meta.base", component: <ListSimulationSummary /> },
       { path: "routes:meta.details", component: <ShowSimulationSummary /> },
+    ],
+  },
+  {
+    prefix: "routes:base.data_tdr",
+    routes: [
+      { path: "routes:meta.base", component: <ListTonelajeRevestimiento /> },
     ],
   },
 ];

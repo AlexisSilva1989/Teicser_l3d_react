@@ -43,6 +43,8 @@
 	"menus:site_servers": "servidores",
 	"menus:component": "Componentes",
 	"menus:training": "Entrenamiento",
+	"menus:data": "Datos",
+	"menus:data_tdr": "Tonelaje por revestimiento",
 
 	"menus:dashboard": "dashboard",
 	"menus:simulation_days": "proyección a 30 días",
@@ -111,6 +113,7 @@
 	"routes:base.measurement": "condición láser",
 	"routes:base.dashboard": "dashboard",
 	"routes:base.simulation_days": "simulacion",
+	"routes:base.data_tdr": "tonelaje_revestimiento",
 
 
   "routes_base":"----------------------------------------------",
@@ -221,6 +224,7 @@
 	"titles:operational_data": "datos operacionales",
 	"titles:import_pdf": "Carga de PDF",
 	"titles:reports_pdf": "Reporte PDF",
+	"titles:tdr": "Tonelajes por revestimientos",
 
   "labels:titles.modalConfirmAction": "Confirmar acción",
 	"labels:titles.INFORMATION_LOAD": "Cargar información",
