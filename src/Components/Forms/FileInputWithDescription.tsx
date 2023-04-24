@@ -50,7 +50,7 @@ export const FileInputWithDescription = (props: Props) => {
                     onClick={ openFileSelect }
                     placeholder={caps('placeholders:file_not_selected')} 
                     style={{ cursor: 'pointer' }} 
-                    defaultValue={ props.display ? props.display : ""} 
+                    value={ props.display ? props.display : ""} 
                     readOnly
                 />
                 <div 
