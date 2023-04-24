@@ -45,6 +45,7 @@
 	"menus:training": "Entrenamiento",
 	"menus:data": "Datos",
 	"menus:data_tdr": "Tonelaje por revestimiento",
+	"menus:data_op": "Datos operacionales",
 
 	"menus:dashboard": "dashboard",
 	"menus:simulation_days": "proyección a 30 días",
@@ -114,6 +115,7 @@
 	"routes:base.dashboard": "dashboard",
 	"routes:base.simulation_days": "simulacion",
 	"routes:base.data_tdr": "tonelaje_revestimiento",
+	"routes:base.data_op": "data_operacional",
 
 
   "routes_base":"----------------------------------------------",
@@ -225,6 +227,7 @@
 	"titles:import_pdf": "Carga de PDF",
 	"titles:reports_pdf": "Reporte PDF",
 	"titles:tdr": "Tonelajes por revestimientos",
+	"titles:data_op": "Datos operacionales",
 
   "labels:titles.modalConfirmAction": "Confirmar acción",
 	"labels:titles.INFORMATION_LOAD": "Cargar información",

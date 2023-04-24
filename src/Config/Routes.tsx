@@ -44,6 +44,7 @@ import ListaAlarmasEquipos from "../Views/Masters/Alarms/ListaAlarmasEquipos";
 import AddAlarmasEquipo from "../Views/Masters/Alarms/AddAlarmasEquipo";
 import EditAlarmasEquipo from "../Views/Masters/Alarms/EditAlarmasEquipo";
 import ListTonelajeRevestimiento from "../Views/Masters/TonelajeRevestimiento/ListTonelajeRevestimiento";
+import DatosOperativos from "../Views/Masters/DatosOperativos/DatosOperativos";
 
 
 interface Route {
@@ -228,6 +229,12 @@ const routes: RouteGroup[] = [
     prefix: "routes:base.data_tdr",
     routes: [
       { path: "routes:meta.base", component: <ListTonelajeRevestimiento /> },
+    ],
+  },
+  {
+    prefix: "routes:base.data_op",
+    routes: [
+      { path: "routes:meta.base", component: <DatosOperativos /> },
     ],
   },
 ];
