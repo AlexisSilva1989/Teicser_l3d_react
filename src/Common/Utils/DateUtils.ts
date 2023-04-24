@@ -15,4 +15,13 @@ export class DateUtils {
 		const dateEndMoment : IMoment  = $m(dateEnd,'DD-MM-YYYY');
 		return dateEndMoment.diff(dateStartMoment, range);
 	}
+  static excelToDate = (dateExcel: any) => {
+    const date = new Date(
+      dateExcel.y, dateExcel.m - 1, dateExcel.d
+    );
+    const year = date.getFullYear().toString().padStart(4, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${day}/${month}/${year}`;
+  }
 }
