@@ -520,3 +520,30 @@ html {
 .msig-textbox .input-group .msig-textbox-input {
   border: #ccc solid 0.5px !important;
 }
+
+.mill-card{
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: scale(1.037);
+    cursor: pointer;
+    
+    & > img {
+      transform: scale(1.1);
+      transition: transform 0.5s;
+    }
+  }
+
+  &:not(:hover) {
+    transform: scale(1);
+    & > img {
+      transform: scale(1);
+      transition: transform 0.5s;
+    }
+  }
+
+}
+
+.overflow-x-scroll {
+  overflow-x: scroll;
+}
