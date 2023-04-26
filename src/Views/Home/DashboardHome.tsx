@@ -1,29 +1,18 @@
 import React from 'react';
 import { BaseContentView } from '../Common/BaseContentView';
-
-
-const initialDataTargets = {
-    cotAbiertas: 0,
-    cotPendienteAprobacion: 0,
-    trabajosProceso: 0,
-    hhPendiente: 0,
-    trabajosFacturar: 0,
-    cobranzasPendientes: 0,
-    comprasPendientes: 0,
-    comprasCamino: 0,
-    consumosNoCotizados: 0,
-    ajustesInventario: 0
-}
+import { Button } from 'react-bootstrap';
+import { useFullLocation } from '../../Common/Hooks/useFullLocation';
+import { $j } from '../../Common/Utils/Reimports';
+import { useFullIntl } from '../../Common/Hooks/useFullIntl';
 
 export const DashboardHome = () => {
+	const { history } = useFullLocation();
+	const { localize } = useFullIntl();
 
-    return <BaseContentView>
-        {/* {isLoad 
-            ? (<BounceLoader css={{ margin: "2.5rem auto" } as any} color="var(--primary)" size={64} />)
-            : (<>
-                <DasboardHomeTargets dataTargets={dataTargets} />
-                <DasboardHomeGraphs dataCharts={dataGraphs} />
-            </>)
-        } */}
-    </BaseContentView>;
+  return <BaseContentView>
+    <Button variant={"primary"} 
+      onClick={()=>history.push($j(localize('routes:base.projections')),{data:{id:1}})}>
+      <i className={"fas fa-plus mr-1"} /> Ver equipo
+    </Button>
+  </BaseContentView>;
 }

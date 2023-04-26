@@ -116,6 +116,7 @@
 	"routes:base.simulation_days": "simulacion",
 	"routes:base.data_tdr": "tonelaje_revestimiento",
 	"routes:base.data_op": "data_operacional",
+	"routes:base.projections": "proyecciones",
 
 
   "routes_base":"----------------------------------------------",
