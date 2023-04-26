@@ -26,12 +26,18 @@ export interface Equipo {
   status: string
 }
 
-export interface EquipoSingle {nombre: string | undefined, tipo: string | undefined}
+export interface EquipoSingle { nombre: string | undefined, tipo: string | undefined }
 export interface EquipoTipo extends Equipo {
   equipo_tipo: {
     id: string
     nombre_corto: string
   }
+}
+
+export interface EquiposPorTipo {
+  id: number
+  nombre_corto: string
+  equipos: (Equipo & { id: number })[]
 }
 
 export interface EquipmentWithComponents extends EquipoTipo {
@@ -116,7 +122,7 @@ export const EquipmentWithComponentsColumns: (intl: IntlShape) => IDataTableColu
           <i style={{ fontSize: "16px", marginLeft: "5px" }} className='fas fa-eye text-primary' />
         </OverlayTrigger>
 
-        </> : 'N/A',
+      </> : 'N/A',
     },
   ];
 };
