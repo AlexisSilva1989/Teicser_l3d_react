@@ -22,89 +22,90 @@ File: style.css
 =================================================================================== */
 
 // React Select Search
-@import "react-select-search";
+@import 'react-select-search';
 
 // Theme Font
-@import "themes/font/theme-font";
+@import 'themes/font/theme-font';
 
 // theme scrollbar
-@import "themes/plugin/perfect-scrollbar";
+@import 'themes/plugin/perfect-scrollbar';
 
 // main framework
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "settings/custom-variables";
-@import "settings/theme-variables";
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import 'settings/custom-variables';
+@import 'settings/theme-variables';
 
 // ng module
-@import "react-module/react-module";
+@import 'react-module/react-module';
 
 // bootstrap
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 
 // icon
-@import "themes/font/next-icon";
-@import "themes/font/feather";
-@import "themes/font/fontawesome";
-@import "themes/font/flaticon";
-@import "themes/font/cryptofont";
+@import 'themes/font/next-icon';
+@import 'themes/font/feather';
+@import 'themes/font/fontawesome';
+@import 'themes/font/flaticon';
+@import 'themes/font/cryptofont';
 
 // bootstrap css
-@import "themes/bootstrap-overlay/card";
-@import "themes/bootstrap-overlay/button";
-@import "themes/bootstrap-overlay/radiobox-checkbox";
-@import "themes/bootstrap-overlay/switches";
-@import "themes/bootstrap-overlay/badge";
+@import 'themes/bootstrap-overlay/card';
+@import 'themes/bootstrap-overlay/button';
+@import 'themes/bootstrap-overlay/radiobox-checkbox';
+@import 'themes/bootstrap-overlay/switches';
+@import 'themes/bootstrap-overlay/badge';
 
-@import "themes/general";
-@import "themes/generic";
-@import "themes/plugin/animate";
+@import 'themes/general';
+@import 'themes/generic';
+@import 'themes/plugin/animate';
 
 // theme layouts
-@import "themes/layouts/menu-lite";
-@import "themes/layouts/menu-react";
-@import "layout-dark";
-@import "layout-rtl";
+@import 'themes/layouts/menu-lite';
+@import 'themes/layouts/menu-react';
+@import 'layout-dark';
+@import 'layout-rtl';
 
 // Dashboard Widgets
-@import "themes/dashboard/widget";
+@import 'themes/dashboard/widget';
 
 // custom plugin
-@import "themes/plugin/sweatalert";
-@import "themes/plugin/lightbox";
-@import "themes/plugin/notification";
-@import "themes/plugin/pnotify";
-@import "themes/plugin/bar-rating";
-@import "themes/plugin/rangeslider";
-@import "themes/plugin/daterange";
-@import "themes/plugin/tags-input";
-@import "themes/plugin/maxlength";
-@import "themes/plugin/wizard";
-@import "themes/plugin/select2";
-@import "themes/plugin/data-tables";
+@import 'themes/plugin/sweatalert';
+@import 'themes/plugin/lightbox';
+@import 'themes/plugin/notification';
+@import 'themes/plugin/pnotify';
+@import 'themes/plugin/bar-rating';
+@import 'themes/plugin/rangeslider';
+@import 'themes/plugin/daterange';
+@import 'themes/plugin/tags-input';
+@import 'themes/plugin/maxlength';
+@import 'themes/plugin/wizard';
+@import 'themes/plugin/select2';
+@import 'themes/plugin/data-tables';
 
 // Charts
-@import "themes/plugin/highcharts";
-@import "themes/plugin/peitychart";
+@import 'themes/plugin/highcharts';
+@import 'themes/plugin/peitychart';
 
 // pages
-@import "themes/pages/authentication";
-@import "themes/pages/maintaince";
-@import "themes/pages/pages";
-@import "themes/pages/help-desk";
-@import "themes/pages/fullcalender";
-@import "themes/pages/icon-lauouts";
-@import "themes/pages/user";
-@import "themes/pages/task-board";
-@import "themes/pages/masonry-gallery";
+@import 'themes/pages/authentication';
+@import 'themes/pages/maintaince';
+@import 'themes/pages/pages';
+@import 'themes/pages/help-desk';
+@import 'themes/pages/fullcalender';
+@import 'themes/pages/icon-lauouts';
+@import 'themes/pages/user';
+@import 'themes/pages/task-board';
+@import 'themes/pages/masonry-gallery';
 
 // custom
-@import "themes/custom";
+@import 'themes/custom';
 
 input.form-control {
   border-radius: 0.25rem !important;
   border: 1px solid #e3eaef !important;
-  padding: 5px !important;
+  padding: 5px;
+  font-size: 1rem !important;
 }
 
 .ListModule .btn {
@@ -117,8 +118,6 @@ input.form-control {
   object-fit: contain;
   max-height: 60px;
 }
-
-
 
 .Timeline-Day .d-flex,
 .Timeline-Segment {
@@ -243,7 +242,8 @@ li:not(.pcoded-hasmenu) .active .text-warning {
     transition: border-color 0.5s;
     transition: background-color 0.3s;
 
-    &:hover, &.disabled {
+    &:hover,
+    &.disabled {
       border-color: rgba($color: #000000, $alpha: 0.75) !important;
       background-color: rgba($color: #000000, $alpha: 0.05) !important;
       transition: border-color 0.5s;
@@ -252,9 +252,9 @@ li:not(.pcoded-hasmenu) .active .text-warning {
 
     &::before {
       // Based on https://fabriceleven.com/design/clever-way-to-change-the-drop-down-selector-arrow-icon/
-      content: ">";
+      content: '>';
       position: absolute;
-      font: 20px "Consolas", monospace;
+      font: 20px 'Consolas', monospace;
       font-weight: bold;
       transform: rotate(90deg);
       top: 0.6rem;
@@ -268,7 +268,7 @@ li:not(.pcoded-hasmenu) .active .text-warning {
     }
   }
 }
-.m-t-7-px{
+.m-t-7-px {
   margin-top: 4px;
 }
 
@@ -288,11 +288,12 @@ li:not(.pcoded-hasmenu) .active .text-warning {
       transition: border-color 0.5s;
       transition: background-color 0.3s;
     }
-    .msig-search-input, 
+    .msig-search-input,
     .msig-search-icon,
     .msig-search-icon > i {
       border: none !important;
       background-color: transparent !important;
+      padding-left: 6px;
     }
 
     .msig-search-icon > i {
@@ -303,10 +304,11 @@ li:not(.pcoded-hasmenu) .active .text-warning {
 
 .msig-datepicker {
   .input-group {
-    border-radius: 0px !important;
-    border-bottom-style: solid;
-    border-width: 0px 0px 1px 0px !important;
-    border-color: rgba($color: #000000, $alpha: 0.25) !important;
+    // border-radius: 0.25rem !important;
+    // border-bottom-style: solid;
+    // border-width: 0px 0px 1px 0px !important;
+    // border-color: rgba($color: #000000, $alpha: 0.25) !important;
+    border-radius: 0 !important;
     transition: border-color 0.5s;
     transition: background-color 0.3s;
     flex-wrap: nowrap !important;
@@ -317,16 +319,22 @@ li:not(.pcoded-hasmenu) .active .text-warning {
       transition: border-color 0.5s;
       transition: background-color 0.3s;
     }
-    .msig-datepicker-input, 
+    .msig-datepicker-input {
+      // border: none !important;
+      background-color: #fff !important;
+      border-radius: 0 0.25rem 0.25rem 0 !important;
+    }
+
     .msig-datepicker-icon,
     .msig-datepicker-icon > i {
       border: none !important;
-      background-color: transparent !important;      
+      background-color: #eee !important;
+      border-radius: 0.25rem 0px 0px 0.25rem;
     }
 
     .msig-datepicker-input.readonly,
     .msig-datepicker-icon.readonly {
-        background-color: rgba($color: #000000, $alpha: 0.05) !important;
+      background-color: rgba($color: #000000, $alpha: 0.05) !important;
     }
 
     .msig-datepicker-icon > i {
@@ -335,7 +343,7 @@ li:not(.pcoded-hasmenu) .active .text-warning {
   }
 }
 
-.react-datepicker-wrapper{
+.react-datepicker-wrapper {
   width: 100%;
 }
 
@@ -421,19 +429,18 @@ li:not(.pcoded-hasmenu) .active .text-warning {
   background-color: #5d8035;
 }
 
-
 .nav {
   z-index: 0 !important;
 }
 
-.dropdown-item.active, .dropdown-item:active {
-  color: #FFF !important;
+.dropdown-item.active,
+.dropdown-item:active {
+  color: #fff !important;
 }
 
 .react-toast-notifications__container {
   top: 8% !important;
 }
-
 
 /*modificado*/
 .badge {
@@ -444,7 +451,7 @@ li:not(.pcoded-hasmenu) .active .text-warning {
   float: right;
 }
 
-.titulo-subcotizacion{
+.titulo-subcotizacion {
   color: #c53c9c !important;
   font-size: 16px;
   text-indent: 18px;
@@ -452,7 +459,7 @@ li:not(.pcoded-hasmenu) .active .text-warning {
   text-transform: uppercase;
 }
 
-.sub-titulo-subcotizacion{
+.sub-titulo-subcotizacion {
   color: black !important;
   font-size: 13px;
   text-indent: 18px;
@@ -461,7 +468,7 @@ li:not(.pcoded-hasmenu) .active .text-warning {
   font-style: italic;
 }
 
-.card-servicio{
+.card-servicio {
   border: #504b4b 1px solid;
   padding: 13px;
   border-radius: 5px;
@@ -477,7 +484,7 @@ li:not(.pcoded-hasmenu) .active .text-warning {
   overflow-y: auto !important;
 }
 
-.td-payment-bill{
+.td-payment-bill {
   padding: 20px;
   font-size: 14px !important;
   font-weight: 600;
@@ -488,18 +495,16 @@ li:not(.pcoded-hasmenu) .active .text-warning {
   margin: auto;
 }
 
-.float-none{
-  float: "none"
+.float-none {
+  float: 'none';
 }
 .title-card-ods {
   font-size: 17px;
 }
 
 .style-blanco {
-  background: #FFF;
+  background: #fff;
 }
-
-
 
 html {
   font-size: 12px;
@@ -510,13 +515,48 @@ html {
   box-sizing: border-box */
 }
 
-.bank, .col, .info, .logoholder, .me, [class*=col-] {
+.bank,
+.col,
+.info,
+.logoholder,
+.me,
+[class*='col-'] {
   vertical-align: top;
   display: inline-block;
   font-size: 1rem;
   min-height: 1px;
 }
 
-.msig-textbox .input-group .msig-textbox-input {
-  border: #ccc solid 0.5px !important;
+.valuesUsageReport {
+  font-size: 20px;
+}
+
+.titleUsageReport {
+  background: #ff5400;
+  color: #002060;
+  font-weight: bold;
+}
+
+.lineUsageReport {
+  border-bottom: solid 1px #c1d5e0;
+}
+
+.bg-company-color {
+  background: #002060;
+  color: #fff;
+  h2 {
+    color: #fff;
+  }
+}
+
+.CheckWithInput { 
+  width: 28px;
+  height: 35px; 
+  position: absolute; 
+  top: 36px;
+  left: 19px;
+ }
+
+.InputWithCheck {
+  padding-left: 40px !important
 }
