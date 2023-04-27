@@ -33,11 +33,7 @@ export const Datepicker = (props: Props) => {
     iconClasses.push('readonly')
   }
 
-  const valueDateInit = props.value
-    ? $m(props.value, 'DD-MM-YYYY').toDate()
-    : undefined
-
-  const [startDate, setStartDate] = useState<Date | undefined>(valueDateInit)
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
   const { capitalize: caps } = useFullIntl()
   const { onChange } = props
 
@@ -50,7 +46,14 @@ export const Datepicker = (props: Props) => {
     },
     [onChange]
   )
-
+  
+  useEffect(()=>{
+    const valueDateInit = props.value
+    ? $m(props.value, 'DD-MM-YYYY').toDate()
+    : undefined
+    
+    setStartDate(valueDateInit)
+  },[props.value])
   return (
     <div className="msig-datepicker">
       {props.label && (
@@ -72,9 +75,7 @@ export const Datepicker = (props: Props) => {
           maxDate={
             props.maxDate ? $m(props.maxDate, 'DD-MM-YYYY').toDate() : undefined
           }
-          selected={
-            props.value ? $m(props.value, 'DD-MM-YYYY').toDate() : startDate
-          }
+          selected={ startDate }
           onChange={(date: Date) => {
             setStartDate(date)
           }}
