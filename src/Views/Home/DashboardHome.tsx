@@ -47,7 +47,8 @@ export const DashboardHome = () => {
         fetch()
     }, [])
 
-    return loadingData ? <LoadingSpinner /> : <BaseContentView >
+    return loadingData ? <LoadingSpinner /> : <BaseContentView asDiv={true}>
+      <div className='h-100 d-flex flex-column justify-content-center'>
         <Row className={`w-100 m-0 d-flex flex-nowrap ${SAGEquipments.length > 3 && "overflow-x-scroll"}`}>
             {
                 SAGEquipments.map(({ nombre: title, id }, index) => (
@@ -77,5 +78,6 @@ export const DashboardHome = () => {
                 ))
             }
         </Row>
+      </div>
     </BaseContentView >;
 };
