@@ -5,6 +5,7 @@ import { $m, $u } from '../../Common/Utils/Reimports';
 import { YAxis } from 'recharts';
 
 interface ILineGraph {
+  title: string
   data: ApexAxisChartSeries
   timestamps: string[]
   dataSelected: {
@@ -14,7 +15,7 @@ interface ILineGraph {
   }
 }
 
-function LineGraph({ data, dataSelected }: ILineGraph) {
+function LineGraph({ data, dataSelected, title }: ILineGraph) {
   const primaryColor = '#2962ff'
   const [dataGraph, setDataGraph] = useState<ApexOptions>({
     chart: {
@@ -104,28 +105,36 @@ function LineGraph({ data, dataSelected }: ILineGraph) {
       }
     },
     annotations: {
+      // xaxis: [
+      //   {
+      //     x: undefined,
+      //     strokeDashArray: 2,
+      //     borderColor: '#fd4761',
+      //   }
+      // ],
       yaxis: [
         {
           y: undefined,
-          borderColor: '#fd4761',
+          borderColor: 'transparent',
           label: {
             offsetX: -8,
-            offsetY: -5,
+            offsetY: -8,
             position: 'right',
             borderColor: 'transparent',
             style: {
               color: '#fd4761',
-              background: 'transparent',
+              background: '#fff',
             },
             text: undefined,
           }
         },
         {
           y: undefined,
-          borderColor: '#fd4761',
+          strokeDashArray: 2,
+          borderColor: 'transparent',
           label: {
             offsetX: -8,
-            offsetY: 20,
+            offsetY: 22,
             position: 'right',
             borderColor: '#fd4761',
             style: {
@@ -134,12 +143,6 @@ function LineGraph({ data, dataSelected }: ILineGraph) {
             },
             text: undefined,
           }
-        }
-      ],
-      xaxis: [
-        {
-          x: undefined,
-          borderColor: '#fd4761',
         }
       ],
       points:
@@ -158,6 +161,15 @@ function LineGraph({ data, dataSelected }: ILineGraph) {
 
     dataLabels: {
       enabled: false
+    },
+    title: {
+      text: undefined,
+      align: 'center',
+      style: {
+        fontSize: '14px',
+        fontWeight: 'bold',
+        color: '#263238'
+      },
     },
     noData: {
       text: 'Sin datos',
@@ -183,31 +195,42 @@ function LineGraph({ data, dataSelected }: ILineGraph) {
   });
 
   useEffect(() => {
-    setDataGraph({ ...dataGraph, series: data })
+    // setDataGraph({ ...dataGraph, series: data })
+    console.log('dataSelected: ', dataSelected);
+
     setDataGraph((s) => $u(s, {
+      title: {
+        text: { $set: title }
+      },
       annotations: {
         points: {
           [0]: {
-            x: { $set: dataSelected.x },
-            y: { $set: dataSelected.y }
+            x: { $set: dataSelected?.x },
+            y: { $set: dataSelected?.y }
           }
         },
-        xaxis:{
+        // xaxis: {
+        //   [0]: {
+        //     x: { $set: dataSelected.x }
+        //   }
+        // },
+        yaxis: {
           [0]: {
-            x: { $set: dataSelected.x }
-          }
-        },
-        yaxis:{
-          [0]: {
-            y: { $set: dataSelected.y },
+            y: { $set: dataSelected?.y },
             label: {
-              text: {$set: `${dataSelected.x} mm - ${dataSelected.y} MTon` }
+              text: {
+                $set: (dataSelected?.y !== undefined && dataSelected?.x !== undefined)
+                  ? `${dataSelected.y} mm - ${dataSelected.x} MTon`
+                  : undefined
+              }
             }
           },
           [1]: {
-            y: { $set: dataSelected.y },
+            y: { $set: dataSelected?.y},
+            borderColor: { $set: dataSelected?.y ? '#fd4761' : 'transparent' },
+
             label: {
-              text: {$set: dataSelected.date }
+              text: { $set: dataSelected?.date}
             }
           }
         },
