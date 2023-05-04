@@ -111,7 +111,7 @@ export const ApiTable = <T extends unknown = any>(props: Props<T>) => {
 		filtered: [],
 		loading: true,
 		page: 1,
-		rowsPerPage: 10,
+		rowsPerPage: 15,
 		totalRows: 0
 	};
 
