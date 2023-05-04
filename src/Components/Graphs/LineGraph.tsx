@@ -52,8 +52,10 @@ function LineGraph({ data, dataSelected, title }: ILineGraph) {
     xaxis: {
       type: 'numeric',
       // tickAmount: 'dataPoints',
+      tickAmount: 6,
       title: {
         text: 'Tonelaje procesado acumulado [MTon]',
+        offsetY: -14,
         style: {
           fontSize: '11px',
           fontWeight: 600,
@@ -70,8 +72,8 @@ function LineGraph({ data, dataSelected, title }: ILineGraph) {
         offsetY: 0
       },
       labels: {
-        minHeight: 50,
-        offsetY: 4,
+        // minHeight: 25,
+        offsetY: 12,
         formatter: function (val) {
           const value = Number(val)
           const valueFormat = value % 1 === 0 ? val : value.toFixed(2)
@@ -196,7 +198,6 @@ function LineGraph({ data, dataSelected, title }: ILineGraph) {
 
   useEffect(() => {
     // setDataGraph({ ...dataGraph, series: data })
-    console.log('dataSelected: ', dataSelected);
 
     setDataGraph((s) => $u(s, {
       title: {
