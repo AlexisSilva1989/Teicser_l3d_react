@@ -657,7 +657,7 @@ export default function DatosOperativos() {
             source={tableDataOp}
             reload={reloadTableDataOp}
             isLoading={loadingDataOp}
-            pagination={false}
+            // pagination={false}
           />
         </Col>
 
