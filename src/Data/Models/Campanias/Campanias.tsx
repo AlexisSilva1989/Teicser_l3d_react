@@ -3,9 +3,9 @@ import { IntlShape } from "react-intl";
 import { $m } from "../../../Common/Utils/Reimports";
 
 export interface ICampania {
-  numero_camp: number
-  fecha_inicio: Date
-  fecha_fin: Date
+  numero_camp: number | undefined
+  fecha_inicio: Date | string | undefined
+  fecha_fin: Date | string | undefined
 }
 
 export const CampaniasColumns: () => IDataTableColumn<ICampania>[] = () => {
@@ -22,7 +22,7 @@ export const CampaniasColumns: () => IDataTableColumn<ICampania>[] = () => {
 		{
 			selector: 'fecha_fin',
 			name: 'Fecha fin',
-      format: (camp) => $m.utc(camp.fecha_fin).format('DD-MM-YYYY')
+      format: (camp) => camp.fecha_fin ? $m.utc(camp.fecha_fin).format('DD-MM-YYYY') : null
 		}
 	];
 };
