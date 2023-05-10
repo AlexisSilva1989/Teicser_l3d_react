@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 import { AxiosError, AxiosResponse } from 'axios';
 import { Alert, Button, Col, Modal, Tab, Tabs } from 'react-bootstrap';
 import { useToasts } from 'react-toast-notifications';
@@ -17,6 +17,8 @@ import { FileInputWithDescription } from '../../../Components/Forms/FileInputWit
 import { useReload } from '../../../Common/Hooks/useReload';
 import { DateUtils } from '../../../Common/Utils/DateUtils';
 import { CampaniasColumns, ICampania } from '../../../Data/Models/Campanias/Campanias';
+import { IDataTableConditionalRowStyles } from 'react-data-table-component';
+import { Datepicker } from '../../../Components/Forms/Datepicker';
 
 interface IColumnsTable {
   key: string
@@ -70,6 +72,13 @@ export default function DatosOperativos() {
   const [headerTableImportDataCampaigns, setHeaderTableImportDataCampaigns] = useState<IColumnsTable[]>([])
   const [headerTableDataOp, setHeaderTableDataOp] = useState<IColumnsTable[]>([])
 
+  const [ErrorEstructuraCampaign, setIsErrorEstructuraCampaign] = useState<string | undefined>(undefined)
+  const [IsOpenCampaign, setIsOpenCampaign] = useState<boolean>(false)
+  const [LastCampaign, setLastCampaign] = useState<ICampania | undefined>({
+    numero_camp: undefined,
+    fecha_fin: undefined,
+    fecha_inicio: undefined
+  })
 
   //HANDLES
 
@@ -211,6 +220,7 @@ export default function DatosOperativos() {
 
     fileCampaigns !== null && formData.append('campains', fileCampaigns);
     idEquipoSelected !== undefined && formData.append('equipoId', idEquipoSelected);
+    idComponentSelected !== undefined && formData.append('componenteId', idComponentSelected);
 
     setLoading(true);
     modalImportCampaigns.hide()
@@ -272,6 +282,7 @@ export default function DatosOperativos() {
   //ONCHANGE ARCHIVO DE CAMPAÑAS
   const handleChangeFileCampaigns = async (file: File | null) => {
     if (!file) {
+      setIsErrorEstructuraCampaign(undefined);
       setTableImportDataCampaigns([])
       setFileCampaigns(null)
       doReloadTableImportDataCampaigns();
@@ -286,18 +297,51 @@ export default function DatosOperativos() {
       const worksheet = workbook.Sheets[sheetName];
       const tableData = $x.utils.sheet_to_json<Array<any>>(worksheet, { header: 1, blankrows: false });
       const headerRow = tableData[0];
-      const columns = headerRow.map((name: string, index: number) => {
-        return {
-          key: name,
-          name,
-          selector: (row: any[]) => name === 'FECHA_INICIO' || name === 'FECHA_FIN'
-            ? DateUtils.excelToDate($x.SSF.parse_date_code(row[index]))
-            : row[index]
-        };
-      });
-      setTableImportDataCampaigns(tableData.slice(1));
-      setHeaderTableImportDataCampaigns(columns);
-      setFileCampaigns(file)
+
+      const expectedKeys = ['CAMPAÑA', 'FECHA_INICIO', 'FECHA_FIN'];
+      const isValidaEstructura = expectedKeys.length === headerRow.length
+        && expectedKeys.every((val, index) => val === headerRow[index].toUpperCase());
+
+      const dataFile = tableData.slice(1);
+
+      if (isValidaEstructura) {
+        const columns = headerRow.map((name: string, index: number) => {
+          return {
+            key: name,
+            name,
+            selector: (row: any[]) => {
+              if (name === 'FECHA_INICIO' || name === 'FECHA_FIN') {
+                const date = row[index] ? DateUtils.excelToDate($x.SSF.parse_date_code(row[index])) : row[index]
+                return date
+              }
+              return row[index]
+            }
+          };
+        });
+
+        const isValidData = dataFile.every((item, index) => {
+          if (index === dataFile.length - 1) {
+            return item.length === 2 || item.length === 3;
+          } else {
+            return item.length === 3;
+          }
+        });
+        setIsErrorEstructuraCampaign(isValidData
+          ? undefined
+          : "Existen registros nulos, recuerde que solo la última campaña puede quedar abierta"
+        );
+        setHeaderTableImportDataCampaigns(columns);
+        setTableImportDataCampaigns(dataFile);
+        setFileCampaigns(file)
+      } else {
+        setIsErrorEstructuraCampaign(
+          "Error en la estructura del archivo cargado, la estructura debe ser [CAMPAÑA, FECHA_INICIO, FECHA_FIN]"
+        );
+        setHeaderTableImportDataCampaigns([]);
+        setTableImportDataCampaigns([])
+        setFileCampaigns(null)
+      }
+
       doReloadTableImportDataCampaigns();
     };
     reader.readAsArrayBuffer(file);
@@ -323,9 +367,9 @@ export default function DatosOperativos() {
       const columns = headerRow.map((name: string, index: number) => {
         return {
           key: name,
-          name,
-          selector: (row: any[]) => name === 'TIMESTAMP'
-            ? DateUtils.excelToDate($x.SSF.parse_date_code(row[index]))
+          name: name === 'TIMESTAMP' || name === 'FECHA' ? name : `${name} (X_${index - 1})`,
+          selector: (row: any[]) => name === 'TIMESTAMP' || name === 'FECHA'
+            ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index])))
             : row[index]
         };
       });
@@ -341,9 +385,30 @@ export default function DatosOperativos() {
   const getCampaignsEquipo = async (selectedTab: string | null) => {
     if (selectedTab === 'viewCampaigns') {
       setLoadingCampainsEquipo(true)
-      await ax.get<ICampania[]>('service_render/campains', { params: { equipoId: idEquipoSelected } })
+      await ax.get<ICampania[]>('service_render/campains', {
+        params: {
+          equipoId: idEquipoSelected,
+          componenteId: idComponentSelected
+        }
+      })
         .then((response) => {
           setCampainsEquipo(response.data);
+          const isOpenCamp = response.data.length > 0 && response.data[0].fecha_fin === null
+          setIsOpenCampaign(isOpenCamp)
+
+          if (response.data.length > 0 ) {
+            const dataLastCampaign = { ...response.data[0] }
+            if (isOpenCamp){
+              dataLastCampaign.fecha_inicio = $m(response.data[0].fecha_inicio).format('DD-MM-YYYY')
+              dataLastCampaign.fecha_fin = $m().format('DD-MM-YYYY')
+            }else{
+              dataLastCampaign.fecha_inicio = undefined
+              dataLastCampaign.fecha_fin = undefined
+            }
+
+            setLastCampaign(dataLastCampaign)
+
+          }
           doReloadTableCampainsEquipo()
         })
         .catch((e: AxiosError) => {
@@ -392,6 +457,28 @@ export default function DatosOperativos() {
       });
   };
 
+  const saveDataCampaign = async () => {
+    setLoadingCampainsEquipo(true)
+    await ax.post<ICampania[]>('service_render/campains/single', {
+      equipoId: idEquipoSelected,
+      componenteId: idComponentSelected,
+      campaign: LastCampaign,
+      update: IsOpenCampaign
+    })
+      .then((response) => {
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast("No se pudo cargar datos de la campaña", {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
+      }).finally(() => {
+        getCampaignsEquipo('viewCampaigns')
+      });
+  }
+
   //EFFECTS
   /*OBTENER DATOS ASOCIADOS A LA PROYECCION */
   useEffect(() => {
@@ -407,15 +494,76 @@ export default function DatosOperativos() {
     getDatosOperacionales()
   }, [idComponentSelected]);
 
+  //* ROWS STYLES
+  const CampaignsRowStyle = useMemo(
+    (): IDataTableConditionalRowStyles[] => [
+      {
+        when: (selected: string[]) => {
+          if (Array.isArray(selected)) {
+            return selected.length < 3
+          } else {
+            const value = selected as { fecha_fin: string | undefined }
+            return value.fecha_fin === null
+          }
+
+        },
+        style: { backgroundColor: "var(--success) !important" },
+      },
+    ],
+    []
+  );
+
   //MODALS
   /*MODAL PARA ACTUALIZAR CAMPAÑAS DEL EQUIPO*/
   const modalImportCampaignsElement: JSX.Element = <>
-    <Modal size='lg' show={modalImportCampaigns.visible} onHide={modalImportCampaigns.hide}>
+    <Modal size='lg' show={modalImportCampaigns.visible}
+      onHide={modalImportCampaigns.hide} onShow={() => getCampaignsEquipo('viewCampaigns')}>
       <Modal.Header closeButton>
-        <b>Campañas de equipo {nombreEquipoSelected}</b>
+        <b>Campañas del componente {nombreComponentSelected} del equipo {nombreEquipoSelected}</b>
       </Modal.Header>
       <Modal.Body>
-        <Tabs id="tabsCampaigns" defaultActiveKey='uploadCampaigns' className='border rounded-top' onSelect={getCampaignsEquipo}>
+        <Tabs id="tabsCampaigns" defaultActiveKey='viewCampaigns' className='border rounded-top'
+          onSelect={getCampaignsEquipo} >
+          <Tab eventKey='viewCampaigns' title={"Campañas actuales"} className='border border-top-0 rounded-bottom'>
+
+            {!loadingCampainsEquipo && (
+              <Col className='py-3 d-flex justify-content-end align-items-end' style={{ columnGap: '14px' }} >
+                {!IsOpenCampaign && (<Datepicker
+                  label='Fecha inicio de campaña'
+                  value={LastCampaign?.fecha_inicio ? LastCampaign.fecha_inicio.toString() : undefined}
+                  maxDate={LastCampaign?.fecha_fin ? LastCampaign.fecha_fin.toString() : undefined}
+                  onChange={value => {
+                    setLastCampaign(state => $u(state, { fecha_inicio: { $set: value } }))
+                  }}
+                />)}
+                <Datepicker
+                  label='Fecha fin de campaña'
+                  value={LastCampaign?.fecha_fin ? LastCampaign.fecha_fin.toString() : undefined}
+                  minDate={LastCampaign?.fecha_inicio ? LastCampaign.fecha_inicio.toString() : undefined}
+                  onChange={value => {
+                    setLastCampaign(state => $u(state, { fecha_fin: { $set: value } }))
+                  }}
+                />
+                <Button style={{ backgroundColor: "var(--success)", borderColor: "var(--success)" }} className='mb-1'
+                  onClick={() => { saveDataCampaign() }}
+                  disabled={IsOpenCampaign ? !LastCampaign?.fecha_fin : !LastCampaign?.fecha_inicio}>
+                  <i className={'mx-2 fas fa-calendar-week fa-lg'} />
+                  <span className='mx-2' >{IsOpenCampaign ? 'Cerrar' : 'Agregar'}</span>
+                </Button>
+              </Col>)
+            }
+
+            <Col className='py-4'>
+              <ApiTable<ICampania>
+                columns={CampaniasColumns()}
+                source={campainsEquipo}
+                reload={reloadTableCampainsEquipo}
+                isLoading={loadingCampainsEquipo}
+                className="my-custom-datatable"
+                rowStyles={CampaignsRowStyle}
+              />
+            </Col>
+          </Tab>
           <Tab eventKey='uploadCampaigns' title={"Actualizar campañas"} className='border border-top-0 rounded-bottom'>
             <Col className='py-4'>
               <Col className='d-flex justify-content-start align-items-center px-0'>
@@ -436,38 +584,37 @@ export default function DatosOperativos() {
                   columns={headerTableImportDataCampaigns}
                   source={tableImportDataCampaigns}
                   reload={reloadTableImportDataCampaigns}
+                  className="my-custom-datatable"
+                  rowStyles={CampaignsRowStyle}
                 />
               </Col>
 
               <Col sm={12} className="mt-3 px-0">
                 <Alert variant="danger">
-                  <Alert.Heading><i className={'mx-2 fas fa-exclamation-triangle fa-lg'} />  Acción irreversible!</Alert.Heading>
+                  <Alert.Heading><i className={'mx-2 fas fa-exclamation-triangle fa-lg'} />Acción irreversible!</Alert.Heading>
                   <hr />
                   <p className="mb-0">
-                    Las campañas del equipo {nombreEquipoSelected} serán sustituidas por los perfiles cargados en el archivo.
+                    Las campañas del componente {nombreComponentSelected} del equipo {nombreEquipoSelected} serán sustituidas por las campañas cargadas en el archivo.
                   </p>
                 </Alert>
               </Col>
 
               <Col className='pt-3 d-flex justify-content-end align-items-center '>
                 <Button className="d-flex justify-content-center align-items-center"
-                  onClick={() => { uploadExcelDataCampaigns() }} disabled={tableImportDataCampaigns.length === 0}>
+                  onClick={() => { uploadExcelDataCampaigns() }}
+                  disabled={tableImportDataCampaigns.length === 0 || !idComponentSelected || ErrorEstructuraCampaign !== undefined}>
                   <i className={'mx-2 fas fa-file-upload fa-lg'} />
                   <span className='mx-2' >Actualizar campañas de {nombreEquipoSelected}</span>
                 </Button>
               </Col>
+              <Col hidden={!ErrorEstructuraCampaign} className='px-0 pt-2 text-right'>
+                <span className='text-danger' key="msg-error-campaign">
+                  {ErrorEstructuraCampaign}
+                </span>
+              </Col>
             </Col>
           </Tab>
-          <Tab eventKey='viewCampaigns' title={"Ver Campañas actuales"} className='border border-top-0 rounded-bottom'>
-            <Col className='py-4'>
-              <ApiTable<ICampania>
-                columns={CampaniasColumns()}
-                source={campainsEquipo}
-                reload={reloadTableCampainsEquipo}
-                isLoading={loadingCampainsEquipo}
-              />
-            </Col>
-          </Tab>
+
         </Tabs>
       </Modal.Body>
     </Modal>
@@ -477,20 +624,20 @@ export default function DatosOperativos() {
   const modalImportProfilesElement: JSX.Element = <>
     <Modal size='xl' show={modalImportProfiles.visible} onHide={modalImportProfiles.hide}>
       <Modal.Header closeButton>
-        <b>Actualizar perfiles de equipo {nombreEquipoSelected}</b>
+        <b>Actualizar perfiles del componente {nombreComponentSelected} del equipo {nombreEquipoSelected}</b>
       </Modal.Header>
       <Modal.Body>
 
         <Col className='d-flex justify-content-start align-items-center '>
           <FileInputWithDescription
-            label='Excel con perfiles'
+            label='Archivo con perfiles'
             id={"inputDataProfiles"}
             onChange={handleChangeFileProfiles}
             onChangeDisplay={(display) => {
               setDisplayFileProfiles(state => $u(state, { $set: display }))
             }}
             display={displayFileProfiles}
-            accept={["xlsx", "xls"]}
+            accept={["xlsx", "xls", "csv"]}
           />
         </Col>
 
@@ -512,7 +659,8 @@ export default function DatosOperativos() {
         </Col>
         <Col className='pt-3 d-flex justify-content-end align-items-center '>
           <Button className="d-flex justify-content-center align-items-center"
-            onClick={() => { uploadExcelDataProfiles() }} disabled={!idComponentSelected || tableImportDataProfiles.length === 0}>
+            onClick={() => { uploadExcelDataProfiles() }}
+            disabled={!idComponentSelected || tableImportDataProfiles.length === 0}>
             <i className={'mx-2 fas fa-file-upload fa-lg'} />
             <span className='mx-2' >Actualizar perfiles de {nombreEquipoSelected}</span>
           </Button>
@@ -616,6 +764,7 @@ export default function DatosOperativos() {
           <Col sm={3} className="pt-2">
             <JumpLabel />
             <Button variant="outline-primary" onClick={() => { modalImportCampaigns.show() }}
+              disabled={!idComponentSelected}
               className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
               <i className={'mx-2 fas fa-calendar-week fa-lg'} />
               <span className='mx-2' >Campañas</span>
@@ -624,7 +773,8 @@ export default function DatosOperativos() {
 
           <Col sm={3} className="pt-2">
             <JumpLabel />
-            <Button variant="outline-primary" onClick={() => { modalImportProfiles.show() }} disabled={!idComponentSelected}
+            <Button variant="outline-primary" onClick={() => { modalImportProfiles.show() }}
+              disabled={!idComponentSelected}
               className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
               <i className={'mx-2 fas fa-ruler fa-lg'} />
               <span className='mx-2' >Perfiles</span>
@@ -643,8 +793,8 @@ export default function DatosOperativos() {
           <Col sm={3} className="pt-2">
             <JumpLabel />
             <Button className="w-100 d-flex justify-content-center align-items-center"
-              onClick={() => { downloadExcel() }} 
-              disabled={loadingData || componentsForTraining.length === 0 || tableDataOp.length === 0 }>
+              onClick={() => { downloadExcel() }}
+              disabled={loadingData || componentsForTraining.length === 0 || tableDataOp.length === 0}>
               <i className={'mx-2 fas fa-file-download fa-lg'} />
               <span className='mx-2' >Descargar</span>
             </Button>
@@ -657,7 +807,8 @@ export default function DatosOperativos() {
             source={tableDataOp}
             reload={reloadTableDataOp}
             isLoading={loadingDataOp}
-            // pagination={false}
+            className="my-custom-datatable"
+          // pagination={false}
           />
         </Col>
 
