@@ -587,3 +587,14 @@ html {
 .overflow-x-scroll {
   overflow-x: scroll;
 }
+
+.my-custom-datatable {
+  .rdt_TableRow {
+    &:nth-of-type(odd) {
+      background-color: #f5f5f5;
+    }
+    &:nth-of-type(even) {
+      background-color: #ffffff;
+    }
+  }
+}
