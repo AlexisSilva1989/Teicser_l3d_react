@@ -395,20 +395,28 @@ export default function DatosOperativos() {
           setCampainsEquipo(response.data);
           const isOpenCamp = response.data.length > 0 && response.data[0].fecha_fin === null
           setIsOpenCampaign(isOpenCamp)
-
+          let dataLastCampaign : ICampania | undefined
           if (response.data.length > 0 ) {
-            const dataLastCampaign = { ...response.data[0] }
+            dataLastCampaign = { ...response.data[0] }
             if (isOpenCamp){
               dataLastCampaign.fecha_inicio = $m(response.data[0].fecha_inicio).format('DD-MM-YYYY')
-              dataLastCampaign.fecha_fin = $m().format('DD-MM-YYYY')
+              dataLastCampaign.fecha_fin = $m(response.data[0].fecha_inicio).format('DD-MM-YYYY')
             }else{
+              dataLastCampaign.numero_camp = undefined
               dataLastCampaign.fecha_inicio = undefined
               dataLastCampaign.fecha_fin = undefined
             }
 
-            setLastCampaign(dataLastCampaign)
 
+          }else{
+            dataLastCampaign = {
+              numero_camp: undefined,
+              fecha_inicio: undefined,
+              fecha_fin: undefined
+            }
           }
+          setLastCampaign(dataLastCampaign)
+
           doReloadTableCampainsEquipo()
         })
         .catch((e: AxiosError) => {
