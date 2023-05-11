@@ -85,7 +85,7 @@ export default function DatosOperativos() {
   //ACTUALIZAR COMPONENTES DE EQUIPO
   const updateComponentes = async (equipoId: string) => {
     setIdComponentSelected(undefined);
-    await ax.get<IComponente[]>('service_render/equipos/componentes_entrenados', { params: { equipo_id: equipoId } })
+    await ax.get<IComponente[]>('service_render/equipos/componentes_asignados', { params: { equipo_id: equipoId } })
       .then((response) => {
         setComponentsForTraining(response.data);
         setIdComponentSelected(response.data.length > 0 ? response.data[0].id : undefined);
