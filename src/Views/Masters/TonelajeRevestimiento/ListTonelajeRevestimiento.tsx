@@ -26,8 +26,27 @@ function ListTonelajeRevestimiento() {
       .then((e: AxiosResponse) => {
         $d(e.data, nombreArchivo, e.headers["content-type"]);
       })
-      .catch(() => {
-        addToast('Error en la descarga', {
+      .catch(async (error: AxiosError) => {
+        let errorMessage: string | Promise<string> = 'Error en la descarga';
+
+        if (error.response && error.response.status === 500 && error.response.data instanceof Blob) {
+          const reader = new FileReader();
+
+          errorMessage = new Promise<string>((resolve, reject) => {
+            reader.onload = () => {
+              try {
+                const jsonResponse = JSON.parse(reader.result as string);
+                resolve(jsonResponse.message);
+              } catch (e) {
+                reject(e);
+              }
+            };
+            reader.onerror = reject;
+            reader.readAsText(error.response?.data);
+          });
+        }
+
+        addToast(await errorMessage, {
           appearance: 'error',
           autoDismiss: true,
         });
