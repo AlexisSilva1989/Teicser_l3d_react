@@ -209,6 +209,7 @@ export default function DatosOperativos() {
         });
       })
       .finally(() => {
+        getDatosOperacionales()
         setLoading(false);
       });
   };
@@ -241,6 +242,7 @@ export default function DatosOperativos() {
         });
       })
       .finally(() => {
+        getDatosOperacionales()
         setLoading(false);
       });
   };
@@ -402,7 +404,6 @@ export default function DatosOperativos() {
               dataLastCampaign.fecha_inicio = $m(response.data[0].fecha_inicio).format('DD-MM-YYYY')
               dataLastCampaign.fecha_fin = $m(response.data[0].fecha_inicio).format('DD-MM-YYYY')
             }else{
-              dataLastCampaign.numero_camp = undefined
               dataLastCampaign.fecha_inicio = undefined
               dataLastCampaign.fecha_fin = undefined
             }
@@ -484,6 +485,7 @@ export default function DatosOperativos() {
         }
       }).finally(() => {
         getCampaignsEquipo('viewCampaigns')
+        getDatosOperacionales()
       });
   }
 
