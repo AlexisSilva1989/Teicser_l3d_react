@@ -17,12 +17,12 @@ export const CampaniasColumns: () => IDataTableColumn<ICampania>[] = () => {
 		{
 			selector: 'fecha_inicio',
 			name: 'Fecha inicio',
-      format: (camp) => $m.utc(camp.fecha_inicio).format('DD-MM-YYYY')
+      format: (camp) => $m.utc(camp.fecha_inicio).format('YYYY-MM-DD')
 		},
 		{
 			selector: 'fecha_fin',
 			name: 'Fecha fin',
-      format: (camp) => camp.fecha_fin ? $m.utc(camp.fecha_fin).format('DD-MM-YYYY') : null
+      format: (camp) => camp.fecha_fin ? $m.utc(camp.fecha_fin).format('YYYY-MM-DD') : null
 		}
 	];
 };
