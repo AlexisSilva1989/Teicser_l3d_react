@@ -304,8 +304,8 @@ const Projections = () => {
             : (DataComponents && (DataComponents.length > 0)
               ? getGraphsComponents()
               : <Col sm={12} className="text-center">
-                <Col className="alert alert-info mb-0" sm={6}>
-                  <i className="fa fa-info mr-2 mt-5" aria-hidden="true" />
+                <Col className="alert alert-info mb-0 mt-5" sm={6}>
+                  <i className="fa fa-info mr-2" aria-hidden="true" />
                   No se encontraron componentes
                 </Col>
               </Col>
