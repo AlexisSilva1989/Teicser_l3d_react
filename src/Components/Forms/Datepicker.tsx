@@ -80,7 +80,7 @@ export const Datepicker = (props: Props) => {
             setStartDate(date)
           }}
           onSelect={setDate}
-          dateFormat="dd-MM-yyyy"
+          dateFormat="yyyy-MM-dd"
           autoComplete="off"
           locale="es"
           className={innerClasses.join(' ')}
