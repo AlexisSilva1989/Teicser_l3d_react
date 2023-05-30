@@ -122,7 +122,7 @@ const Projections = () => {
         : TipoEspesor === 'placa_b' 
           ? mill.data?.placa_b
           : mill.data?.lifter
-          
+
       let existEspesor: boolean = false
       if (espesor && dataEspesores) {
         dataEspesores.some((data, dataPosition) => {
@@ -305,7 +305,7 @@ const Projections = () => {
               ? getGraphsComponents()
               : <Col sm={12} className="text-center">
                 <Col className="alert alert-info mb-0" sm={6}>
-                  <i className="fa fa-info mr-2" aria-hidden="true" />
+                  <i className="fa fa-info mr-2 mt-5" aria-hidden="true" />
                   No se encontraron componentes
                 </Col>
               </Col>
