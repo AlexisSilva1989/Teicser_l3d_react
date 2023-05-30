@@ -313,7 +313,9 @@ export default function DatosOperativos() {
             name,
             selector: (row: any[]) => {
               if (name === 'FECHA_INICIO' || name === 'FECHA_FIN') {
-                const date = row[index] ? DateUtils.excelToDate($x.SSF.parse_date_code(row[index])) : row[index]
+                const date = (row[index] && !isNaN(row[index]))
+                  ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index]))) 
+                  : row[index]
                 return date
               }
               return row[index]
@@ -585,7 +587,7 @@ export default function DatosOperativos() {
                     setDisplayFileCampaigns(state => $u(state, { $set: display }))
                   }}
                   display={displayFileCampaigns}
-                  accept={["xlsx", "xls"]}
+                  accept={["xlsx", "xls", "csv"]}
                 />
               </Col>
 
