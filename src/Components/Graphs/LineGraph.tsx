@@ -20,6 +20,7 @@ function LineGraph({ data, dataSelected, title }: ILineGraph) {
   const [dataGraph, setDataGraph] = useState<ApexOptions>({
     chart: {
       type: "line",
+      height: "100%",
       width: "100%",
       zoom: {
         enabled: false
@@ -55,7 +56,7 @@ function LineGraph({ data, dataSelected, title }: ILineGraph) {
       tickAmount: 6,
       title: {
         text: 'Tonelaje procesado acumulado [MTon]',
-        offsetY: -14,
+        // offsetY: -14,
         style: {
           fontSize: '11px',
           fontWeight: 600,
@@ -72,8 +73,8 @@ function LineGraph({ data, dataSelected, title }: ILineGraph) {
         offsetY: 0
       },
       labels: {
-        // minHeight: 25,
-        offsetY: 12,
+        minHeight: 35,
+        // offsetY: 12,
         formatter: function (val) {
           const value = Number(val)
           const valueFormat = value % 1 === 0 ? val : value.toFixed(2)
