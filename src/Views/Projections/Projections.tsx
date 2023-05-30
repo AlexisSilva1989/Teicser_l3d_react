@@ -46,15 +46,25 @@ const Projections = () => {
     let graphs: (JSX.Element | undefined)[] = []
 
     DataComponents?.forEach((element, index) => {
+      let data: { x: any; y: any; }[] = []
+
+      if(TipoEspesor === 'placa'){
+        data = DataComponents[index].data.placa ?? []
+      }
+
+      if(TipoEspesor === 'placa_b'){
+        data = DataComponents[index].data.placa_b ?? []
+      }
+
+      if(TipoEspesor === 'lifter'){
+        data = DataComponents[index].data.lifter ?? []
+      }
+
       graphs.push(
         <Col sm={4} style={{ height: '36vh' }} className='py-3' key={`graph-component-${index}`}>
           <Col className='h-100 p-0'>
             <LineGraph title={DataComponents[index].nombre}
-              data={[{
-                data: TipoEspesor === 'placa'
-                  ? DataComponents[index].data.placa ?? []
-                  : DataComponents[index].data.lifter ?? []
-              }]}
+              data={[{data}]}
               timestamps={DataComponents[index].timeStamp ?? []}
               dataSelected={FilterCriterioMill[index]}
             />
@@ -71,7 +81,11 @@ const Projections = () => {
     }[] = []
     DataComponents?.forEach((mill) => {
       let existDate: boolean = false
-      const dataEspesores = TipoEspesor === 'placa' ? mill.data?.placa : mill.data?.lifter
+      const dataEspesores = TipoEspesor === 'placa' 
+        ? mill.data?.placa 
+        : TipoEspesor === 'placa_b' 
+          ? mill.data?.placa_b
+          : mill.data?.lifter
 
       if (date && dataEspesores) {
         const dateParse = $m(date, 'DD-MM-YYYY').format('YYYY-MM-DD')
@@ -102,7 +116,13 @@ const Projections = () => {
   const findMillForEspesor = (espesor: string | undefined) => {
     const filterSelect: { x?: string | number | undefined; y?: number | null | undefined; date?: string | undefined }[] = []
     DataComponents?.forEach((mill) => {
-      const dataEspesores = TipoEspesor === 'placa' ? mill.data?.placa : mill.data?.lifter
+
+      const dataEspesores = TipoEspesor === 'placa' 
+        ? mill.data?.placa 
+        : TipoEspesor === 'placa_b' 
+          ? mill.data?.placa_b
+          : mill.data?.lifter
+          
       let existEspesor: boolean = false
       if (espesor && dataEspesores) {
         dataEspesores.some((data, dataPosition) => {
@@ -204,6 +224,7 @@ const Projections = () => {
             value={TipoEspesor}
             source={[
               { label: "PLACA", value: "placa" },
+              { label: "PLACA B", value: "placa_b" },
               { label: "LIFTER", value: "lifter" },
             ]}
             selector={(option) => {
