@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 import { AxiosError, AxiosResponse } from 'axios';
 import { Alert, Button, Col, Modal, Tab, Tabs } from 'react-bootstrap';
-import { useToasts } from 'react-toast-notifications';
+import { AppearanceTypes, useToasts } from 'react-toast-notifications';
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
 import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
 import { ax } from '../../../Common/Utils/AxiosCustom';
@@ -194,10 +194,14 @@ export default function DatosOperativos() {
     modalImportProfiles.hide()
     await ax.post("service_render/data_pi/perfil", formData, headers)
       .then((response) => {
-        addToast(response.data?.message, {
-          appearance: 'success',
-          autoDismiss: true,
+        response.data?.forEach((element: {status:AppearanceTypes , message: string}) => {
+          addToast(element.message, {
+            appearance: element.status,
+            autoDismiss: true,
+          });
+          
         });
+
         setTableImportDataProfiles([])
         setFileProfiles(null)
         setDisplayFileProfiles(undefined)
