@@ -268,9 +268,15 @@ export default function DatosOperativos() {
         return {
           key: name,
           name,
-          selector: (row: any[]) => name === 'TIMESTAMP'
-            ? DateUtils.excelToDate($x.SSF.parse_date_code(row[index]))
-            : row[index]
+          selector: (row: any[]) => {
+            if (name === 'TIMESTAMP') {
+              const date = (row[index] && !isNaN(row[index]))
+                ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index]))) 
+                : row[index]
+              return date
+            }
+            return row[index]
+          }
         };
       });
       setTableImportDataOp(tableData.slice(1));
@@ -372,9 +378,15 @@ export default function DatosOperativos() {
         return {
           key: name,
           name: name === 'TIMESTAMP' || name === 'FECHA' ? name : `${name} (X_${index - 1})`,
-          selector: (row: any[]) => name === 'TIMESTAMP' || name === 'FECHA'
-            ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index])))
-            : row[index]
+          selector: (row: any[]) => {
+              if ( name === 'TIMESTAMP' || name === 'FECHA') {
+                const date = (row[index] && !isNaN(row[index]))
+                  ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index]))) 
+                  : row[index]
+                return date
+              }
+              return row[index]
+            }
         };
       });
       setTableImportDataProfiles(tableData.slice(1));
@@ -468,6 +480,7 @@ export default function DatosOperativos() {
       });
   };
 
+  //GUARDAR CAMPAÑA
   const saveDataCampaign = async () => {
     setLoadingCampainsEquipo(true)
     await ax.post<ICampania[]>('service_render/campains/single', {
@@ -636,13 +649,13 @@ export default function DatosOperativos() {
   const modalImportProfilesElement: JSX.Element = <>
     <Modal size='xl' show={modalImportProfiles.visible} onHide={modalImportProfiles.hide}>
       <Modal.Header closeButton>
-        <b>Actualizar perfiles del componente {nombreComponentSelected} del equipo {nombreEquipoSelected}</b>
+        <b>Actualizar espesores del componente {nombreComponentSelected} del equipo {nombreEquipoSelected}</b>
       </Modal.Header>
       <Modal.Body>
 
         <Col className='d-flex justify-content-start align-items-center '>
           <FileInputWithDescription
-            label='Archivo con perfiles'
+            label='Archivo con espesores'
             id={"inputDataProfiles"}
             onChange={handleChangeFileProfiles}
             onChangeDisplay={(display) => {
@@ -665,7 +678,7 @@ export default function DatosOperativos() {
             <Alert.Heading><i className={'mx-2 fas fa-exclamation-triangle fa-lg'} />  Acción irreversible!</Alert.Heading>
             <hr />
             <p className="mb-0">
-              Los perfiles del equipo {nombreEquipoSelected} serán sustituidos por los perfiles cargados en el archivo.
+              Los espesores del componente {nombreComponentSelected} para el equipo {nombreEquipoSelected} serán sustituidos por los espesores cargados en el archivo.
             </p>
           </Alert>
         </Col>
@@ -674,7 +687,7 @@ export default function DatosOperativos() {
             onClick={() => { uploadExcelDataProfiles() }}
             disabled={!idComponentSelected || tableImportDataProfiles.length === 0}>
             <i className={'mx-2 fas fa-file-upload fa-lg'} />
-            <span className='mx-2' >Actualizar perfiles de {nombreEquipoSelected}</span>
+            <span className='mx-2' >Actualizar espesores</span>
           </Button>
         </Col>
       </Modal.Body>
@@ -698,7 +711,7 @@ export default function DatosOperativos() {
               setDisplayFileOp(state => $u(state, { $set: display }))
             }}
             display={displayFileOp}
-            accept={["xlsx", "xls"]}
+            accept={["xlsx", "xls", "csv"]}
           />
         </Col>
         <Col sm={12} className="mt-3">
@@ -789,7 +802,7 @@ export default function DatosOperativos() {
               disabled={!idComponentSelected}
               className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
               <i className={'mx-2 fas fa-ruler fa-lg'} />
-              <span className='mx-2' >Perfiles</span>
+              <span className='mx-2' >Espesores</span>
             </Button>
           </Col>
 
