@@ -66,7 +66,7 @@ export default function DatosOperativos() {
   const [tableDataOp, setTableDataOp] = useState<Array<Array<any>>>([])
   const [tableImportDataOp, setTableImportDataOp] = useState<Array<Array<any>>>([])
   const [tableImportDataProfiles, setTableImportDataProfiles] = useState<Array<Array<any>>>([])
-  const [tableImportDataCampaigns, setTableImportDataCampaigns] = useState<Array<Array<any>>>([])
+  const [tableImportDataCampaigns, setTableImportDataCampaigns] = useState<any[][]>([])
   const [headerTableImportDataOp, setHeaderTableImportDataOp] = useState<IColumnsTable[]>([])
   const [headerTableImportDataProfiles, setHeaderTableImportDataProfiles] = useState<IColumnsTable[]>([])
   const [headerTableImportDataCampaigns, setHeaderTableImportDataCampaigns] = useState<IColumnsTable[]>([])
@@ -271,7 +271,7 @@ export default function DatosOperativos() {
           selector: (row: any[]) => {
             if (name === 'TIMESTAMP') {
               const date = (row[index] && !isNaN(row[index]))
-                ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index]))) 
+                ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index])))
                 : row[index]
               return date
             }
@@ -306,7 +306,7 @@ export default function DatosOperativos() {
       const tableData = $x.utils.sheet_to_json<Array<any>>(worksheet, { header: 1, blankrows: false });
       const headerRow = tableData[0];
 
-      const expectedKeys = ['CAMPAÑA', 'FECHA_INICIO', 'FECHA_FIN'];
+      const expectedKeys = ['CAMPAÑA', 'FECHA_INICIO', 'FECHA_FIN', 'POL', 'IA'];
       const isValidaEstructura = expectedKeys.length === headerRow.length
         && expectedKeys.every((val, index) => val === headerRow[index].toUpperCase());
 
@@ -320,7 +320,7 @@ export default function DatosOperativos() {
             selector: (row: any[]) => {
               if (name === 'FECHA_INICIO' || name === 'FECHA_FIN') {
                 const date = (row[index] && !isNaN(row[index]))
-                  ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index]))) 
+                  ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index])))
                   : row[index]
                 return date
               }
@@ -329,23 +329,53 @@ export default function DatosOperativos() {
           };
         });
 
-        const isValidData = dataFile.every((item, index) => {
-          if (index === dataFile.length - 1) {
-            return item.length === 2 || item.length === 3;
-          } else {
-            return item.length === 3;
+        //VALIDAR QUE TODOS LOS REGISTROS ESTEN COMPLETOS 
+        const totalColumnsValid = 5
+        const columnFechaFin = 2
+        let isValidData = true;
+        dataFile.forEach((item, index) => {
+          //SI NO TIENE LA MISMA CANTIDAD DE COLUMNAS DE LA ESTRUCTURA
+          if (item.length !== totalColumnsValid) {
+            isValidData = false
+            return
           }
-        });
+
+          const undefinedIndices = []
+          //VERIFICAR SI INCLUYE UN REGISTRO UNDEFINED
+          for (const [index, value] of item.entries()) {
+            if (value === undefined) {
+              undefinedIndices.push(index)
+            }
+          }
+
+          if (index !== dataFile.length - 1) {
+            if (undefinedIndices.length > 0) {
+              isValidData = false
+              return
+            }
+          }else{
+            if (undefinedIndices.length > 1) {
+              isValidData = false
+              return
+            }
+
+            if(undefinedIndices.length === 1 && undefinedIndices[0] !== columnFechaFin ){
+              isValidData = false
+              return
+            }
+          }
+
+       });
         setIsErrorEstructuraCampaign(isValidData
           ? undefined
-          : "Existen registros nulos, recuerde que solo la última campaña puede quedar abierta"
+          : "Error, se han detectados campañas con formato incorrecto, recuerde que solo la última campaña puede quedar abierta"
         );
         setHeaderTableImportDataCampaigns(columns);
         setTableImportDataCampaigns(dataFile);
         setFileCampaigns(file)
       } else {
         setIsErrorEstructuraCampaign(
-          "Error en la estructura del archivo cargado, la estructura debe ser [CAMPAÑA, FECHA_INICIO, FECHA_FIN]"
+          "Error en la estructura del archivo cargado, la estructura debe ser [CAMPAÑA, FECHA_INICIO, FECHA_FIN, POL, IA]"
         );
         setHeaderTableImportDataCampaigns([]);
         setTableImportDataCampaigns([])
@@ -379,14 +409,14 @@ export default function DatosOperativos() {
           key: name,
           name: name === 'TIMESTAMP' || name === 'FECHA' ? name : `${name} (X_${index - 1})`,
           selector: (row: any[]) => {
-              if ( name === 'TIMESTAMP' || name === 'FECHA') {
-                const date = (row[index] && !isNaN(row[index]))
-                  ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index]))) 
-                  : row[index]
-                return date
-              }
-              return row[index]
+            if (name === 'TIMESTAMP' || name === 'FECHA') {
+              const date = (row[index] && !isNaN(row[index]))
+                ? DateUtils.excelToDate($x.SSF.parse_date_code(Math.round(row[index])))
+                : row[index]
+              return date
             }
+            return row[index]
+          }
         };
       });
       setTableImportDataProfiles(tableData.slice(1));
@@ -411,19 +441,19 @@ export default function DatosOperativos() {
           setCampainsEquipo(response.data);
           const isOpenCamp = response.data.length > 0 && response.data[0].fecha_fin === null
           setIsOpenCampaign(isOpenCamp)
-          let dataLastCampaign : ICampania | undefined
-          if (response.data.length > 0 ) {
+          let dataLastCampaign: ICampania | undefined
+          if (response.data.length > 0) {
             dataLastCampaign = { ...response.data[0] }
-            if (isOpenCamp){
+            if (isOpenCamp) {
               dataLastCampaign.fecha_inicio = $m(response.data[0].fecha_inicio).format('DD-MM-YYYY')
               dataLastCampaign.fecha_fin = $m(response.data[0].fecha_inicio).format('DD-MM-YYYY')
-            }else{
+            } else {
               dataLastCampaign.fecha_inicio = undefined
               dataLastCampaign.fecha_fin = undefined
             }
 
 
-          }else{
+          } else {
             dataLastCampaign = {
               numero_camp: undefined,
               fecha_inicio: undefined,
