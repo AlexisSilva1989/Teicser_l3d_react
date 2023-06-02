@@ -19,6 +19,7 @@ import { DateUtils } from '../../../Common/Utils/DateUtils';
 import { CampaniasColumns, ICampania } from '../../../Data/Models/Campanias/Campanias';
 import { IDataTableConditionalRowStyles } from 'react-data-table-component';
 import { Datepicker } from '../../../Components/Forms/Datepicker';
+import { LoadingSpinner } from '../../../Components/Common/LoadingSpinner';
 
 interface IColumnsTable {
   key: string
@@ -79,6 +80,9 @@ export default function DatosOperativos() {
     fecha_fin: undefined,
     fecha_inicio: undefined
   })
+  const [selectedCampaingsFromPol, setSelectedCampaingsFromPol] = useState<number[]>([])
+  const [selectedCampaingsFromIa, setSelectedCampaingsFromIa] = useState<number[]>([])
+  const [isAddFromIaPol, setIsAddFromIaPol] = useState<boolean>(false)
 
   //HANDLES
 
@@ -194,12 +198,12 @@ export default function DatosOperativos() {
     modalImportProfiles.hide()
     await ax.post("service_render/data_pi/perfil", formData, headers)
       .then((response) => {
-        response.data?.forEach((element: {status:AppearanceTypes , message: string}) => {
+        response.data?.forEach((element: { status: AppearanceTypes, message: string }) => {
           addToast(element.message, {
             appearance: element.status,
             autoDismiss: true,
           });
-          
+
         });
 
         setTableImportDataProfiles([])
@@ -357,19 +361,19 @@ export default function DatosOperativos() {
               isValidData = false
               return
             }
-          }else{
+          } else {
             if (undefinedIndices.length > 1) {
               isValidData = false
               return
             }
 
-            if(undefinedIndices.length === 1 && undefinedIndices[0] !== columnFechaFin ){
+            if (undefinedIndices.length === 1 && undefinedIndices[0] !== columnFechaFin) {
               isValidData = false
               return
             }
           }
 
-       });
+        });
         setIsErrorEstructuraCampaign(isValidData
           ? undefined
           : "Error, se han detectados campañas con formato incorrecto, recuerde que solo la última campaña puede quedar abierta"
@@ -455,8 +459,6 @@ export default function DatosOperativos() {
               dataLastCampaign.fecha_inicio = undefined
               dataLastCampaign.fecha_fin = undefined
             }
-
-
           } else {
             dataLastCampaign = {
               numero_camp: undefined,
@@ -465,7 +467,13 @@ export default function DatosOperativos() {
             }
           }
           setLastCampaign(dataLastCampaign)
+          setSelectedCampaingsFromPol(
+            response.data.filter(item => item.pol).map(item => item.numero_camp) as number[]
+          );
 
+          setSelectedCampaingsFromIa(
+            response.data.filter(item => item.ia).map(item => item.numero_camp) as number[]
+          );
           doReloadTableCampainsEquipo()
         })
         .catch((e: AxiosError) => {
@@ -613,14 +621,17 @@ export default function DatosOperativos() {
             }
 
             <Col className='py-4'>
-              <ApiTable<ICampania>
-                columns={CampaniasColumns()}
-                source={campainsEquipo}
-                reload={reloadTableCampainsEquipo}
-                isLoading={loadingCampainsEquipo}
-                className="my-custom-datatable"
-                rowStyles={CampaignsRowStyle}
-              />
+              <Col sm={12} hidden={!isAddFromIaPol} className='px-0'> <LoadingSpinner/> </Col>
+              <Col sm={12} hidden={isAddFromIaPol} className='px-0'>
+                <ApiTable<ICampania>
+                  columns={CampaniasColumns(selectedCampaingsFromPol, selectedCampaingsFromIa, setIsAddFromIaPol)}
+                  source={campainsEquipo}
+                  reload={reloadTableCampainsEquipo}
+                  isLoading={loadingCampainsEquipo}
+                  className="my-custom-datatable"
+                  rowStyles={CampaignsRowStyle}
+                />
+              </Col>
             </Col>
           </Tab>
           <Tab eventKey='uploadCampaigns' title={"Actualizar campañas"} className='border border-top-0 rounded-bottom'>
