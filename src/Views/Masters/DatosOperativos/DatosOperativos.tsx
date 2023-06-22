@@ -181,6 +181,7 @@ export default function DatosOperativos() {
         });
       })
       .finally(() => {
+        getDatosOperacionales()
         setLoading(false);
       });
   };
