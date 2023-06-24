@@ -31,11 +31,14 @@ const Projections = () => {
     type: "FECHA",
     value: $m().format('DD-MM-YYYY')
   })
-  const [FilterCriterioMill, setFilterCriterioMill] = useState<{
+
+  interface IFilterCriterio {
     x?: number | string
     y?: null | number
     date?: string
-  }[]>([])
+    position?: number
+  }
+  const [FilterCriterioMill, setFilterCriterioMill] = useState<IFilterCriterio[]>([])
   const [valueSearch] = useDebounce(CriticalCondition.value, 1500);
   const [TipoEspesor, setTipoEspesor] = useState<string>('placa')
   const [DataComponents, setDataComponents] = useState<ProjectionPolinomio[]>()
@@ -47,38 +50,44 @@ const Projections = () => {
 
     DataComponents?.forEach((element, index) => {
       let data: { x: any; y: any; }[] = []
+      let mediciones: { x: any; y: any; }[] = []
 
       if(TipoEspesor === 'placa'){
         data = DataComponents[index].data.placa ?? []
+        mediciones = DataComponents[index].mediciones.placa ?? []
       }
 
       if(TipoEspesor === 'placa_b'){
         data = DataComponents[index].data.placa_b ?? []
+        mediciones = DataComponents[index].mediciones.placa_b ?? []
       }
 
       if(TipoEspesor === 'lifter'){
         data = DataComponents[index].data.lifter ?? []
+        mediciones = DataComponents[index].mediciones.lifter ?? []
       }
 
       graphs.push(
         <Col sm={4} style={{ height: '36vh' }} className='py-3' key={`graph-component-${index}`}>
           <Col className='h-100 p-0'>
             <LineGraph title={DataComponents[index].nombre}
-              data={[{data}]}
+              dataLine={data}
+              dataMedicion={mediciones}
               timestamps={DataComponents[index].timeStamp ?? []}
               dataSelected={FilterCriterioMill[index]}
+              fecha_medicion={DataComponents[index].crea_date}
+              
             />
           </Col>
         </Col>
       )
+      
     });
     return graphs
   }
 
   const findMillForDate = (date: string | undefined) => {
-    const filterSelect: {
-      x?: string | number | undefined; y?: number | null | undefined; date?: string | undefined
-    }[] = []
+    const filterSelect: IFilterCriterio[] = []
     DataComponents?.forEach((mill) => {
       let existDate: boolean = false
       const dataEspesores = TipoEspesor === 'placa' 
@@ -96,7 +105,8 @@ const Projections = () => {
             filterSelect.push({
               x: dataEspesores[dataPosition].x,
               y: dataEspesores[dataPosition].y,
-              date: timeStamp
+              date: timeStamp,
+              position: dataPosition
             })
             return
           }
@@ -114,7 +124,7 @@ const Projections = () => {
   }
 
   const findMillForEspesor = (espesor: string | undefined) => {
-    const filterSelect: { x?: string | number | undefined; y?: number | null | undefined; date?: string | undefined }[] = []
+    const filterSelect: IFilterCriterio[] = []
     DataComponents?.forEach((mill) => {
 
       const dataEspesores = TipoEspesor === 'placa' 
@@ -131,7 +141,8 @@ const Projections = () => {
             filterSelect.push({
               x: data.x,
               y: data.y,
-              date: mill.timeStamp[dataPosition]
+              date: mill.timeStamp[dataPosition],
+              position: dataPosition
             });
             return true; // stops the iteration
           }
@@ -139,13 +150,21 @@ const Projections = () => {
         });
       }
       if (!existEspesor) {
+        const sizeEspesores = dataEspesores ? dataEspesores?.length : 0
+        const lastRegister =  sizeEspesores > 0 ? dataEspesores![sizeEspesores -1] : undefined
+        const isGreaterThan = espesor && lastRegister?.y > espesor 
+
         filterSelect.push({
-          x: undefined,
-          y: undefined,
-          date: undefined
+          x:  isGreaterThan ? lastRegister?.x : undefined,
+          y:  isGreaterThan ? lastRegister?.y : undefined,
+          date: isGreaterThan ? mill.timeStamp[sizeEspesores-1] : undefined,
+          position: isGreaterThan ? sizeEspesores : undefined,
+
         })
       }
     });
+    
+
     setFilterCriterioMill(state => $u(state, { $set: filterSelect }))
   }
 
