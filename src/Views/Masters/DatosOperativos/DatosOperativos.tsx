@@ -39,9 +39,10 @@ export default function DatosOperativos() {
   const [reloadTableImportDataCampaigns, doReloadTableImportDataCampaigns] = useReload();
   const [reloadTableCampainsEquipo, doReloadTableCampainsEquipo] = useReload();
 
-  const modalImportDataOperational = useShortModal()
-  const modalImportProfiles = useShortModal()
-  const modalImportCampaigns = useShortModal()
+  // const modalImportDataOperational = useShortModal()
+  // const modalImportProfiles = useShortModal()
+  // const modalImportCampaigns = useShortModal()
+  const modalConfigEquipo = useShortModal()
 
   //STATES
   const [loadingData, setLoadingData] = useState(true)
@@ -162,7 +163,7 @@ export default function DatosOperativos() {
     idEquipoSelected !== undefined && formData.append('equipoId', idEquipoSelected);
 
     setLoading(true);
-    modalImportDataOperational.hide()
+    modalConfigEquipo.hide()
     await ax.post("service_render/data_pi/update", formData, headers)
       .then((response) => {
         addToast(response.data?.message, {
@@ -196,7 +197,7 @@ export default function DatosOperativos() {
     idComponentSelected !== undefined && formData.append('componenteId', idComponentSelected);
 
     setLoading(true);
-    modalImportProfiles.hide()
+    modalConfigEquipo.hide()
     await ax.post("service_render/data_pi/perfil", formData, headers)
       .then((response) => {
         response.data?.forEach((element: { status: AppearanceTypes, message: string }) => {
@@ -233,7 +234,7 @@ export default function DatosOperativos() {
     idComponentSelected !== undefined && formData.append('componenteId', idComponentSelected);
 
     setLoading(true);
-    modalImportCampaigns.hide()
+    modalConfigEquipo.hide()
     await ax.post("service_render/campains", formData, headers)
       .then((response) => {
         addToast(response.data?.message, {
@@ -437,7 +438,8 @@ export default function DatosOperativos() {
   }
 
   //BUSCAR CAMPAÑAS DE EQUIPO
-  const getCampaignsEquipo = async (selectedTab: string | null) => {
+  const getDataEquipo = async (selectedTab: string | null) => {
+    console.log('selectedTab: ', selectedTab);
     if (selectedTab === 'viewCampaigns') {
       setLoadingCampainsEquipo(true)
       await ax.get<ICampania[]>('service_render/campains', {
@@ -542,8 +544,33 @@ export default function DatosOperativos() {
           });
         }
       }).finally(() => {
-        getCampaignsEquipo('viewCampaigns')
+        getDataEquipo('viewCampaigns')
         getDatosOperacionales()
+      });
+  }
+
+  //GUARDAR CAMPAÑA
+  const ejecutarProyeccion = async () => {
+    setLoading(true);
+    await ax.post('service_render/proyeccion_pl', {
+      equipoId: idEquipoSelected,
+      componenteId: idComponentSelected
+    })
+      .then((response) => {
+        addToast(response.data?.message, {
+          appearance: 'success',
+          autoDismiss: true,
+        });
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast("Ha ocurrido un error", {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
+      }).finally(()=>{
+        setLoading(false);
       });
   }
 
@@ -581,176 +608,170 @@ export default function DatosOperativos() {
     []
   );
 
-  //MODALS
-  /*MODAL PARA ACTUALIZAR CAMPAÑAS DEL EQUIPO*/
-  const modalImportCampaignsElement: JSX.Element = <>
-    <Modal size='lg' show={modalImportCampaigns.visible}
-      onHide={modalImportCampaigns.hide} onShow={() => getCampaignsEquipo('viewCampaigns')}>
-      <Modal.Header closeButton>
-        <b>Campañas del componente {nombreComponentSelected} del equipo {nombreEquipoSelected}</b>
-      </Modal.Header>
-      <Modal.Body>
-        <Tabs id="tabsCampaigns" defaultActiveKey='viewCampaigns' className='border rounded-top'
-          onSelect={getCampaignsEquipo} >
-          <Tab eventKey='viewCampaigns' title={"Campañas actuales"} className='border border-top-0 rounded-bottom'>
+  //SECCIONES DE LOS TABS DE CONFIG
+  /*SECCION PARA ACTUALIZAR CAMPAÑAS DEL EQUIPO*/
+  const importCampaignsElement: JSX.Element = <>
+    <Col className='pt-4'>
+      <p style={{ fontSize: "14px", fontWeight: 600 }}>Registro de campañas</p>
+    </Col>
+    <Col>
+      <Tabs id="tabsCampaigns" defaultActiveKey='viewCampaigns' className='border rounded-top'
+        onSelect={getDataEquipo} >
+        <Tab eventKey='viewCampaigns' title={"Campañas actuales"} className='border border-top-0 rounded-bottom'>
 
-            {!loadingCampainsEquipo && (
-              <Col className='py-3 d-flex justify-content-end align-items-end' style={{ columnGap: '14px' }} >
-                {!IsOpenCampaign && (<Datepicker
-                  label='Fecha inicio de campaña'
-                  value={LastCampaign?.fecha_inicio ? LastCampaign.fecha_inicio.toString() : undefined}
-                  maxDate={LastCampaign?.fecha_fin ? LastCampaign.fecha_fin.toString() : undefined}
-                  onChange={value => {
-                    setLastCampaign(state => $u(state, { fecha_inicio: { $set: value } }))
-                  }}
-                />)}
-                <Datepicker
-                  label='Fecha fin de campaña'
-                  value={LastCampaign?.fecha_fin ? LastCampaign.fecha_fin.toString() : undefined}
-                  minDate={LastCampaign?.fecha_inicio ? LastCampaign.fecha_inicio.toString() : undefined}
-                  onChange={value => {
-                    setLastCampaign(state => $u(state, { fecha_fin: { $set: value } }))
-                  }}
-                />
-                <Button style={{ backgroundColor: "var(--success)", borderColor: "var(--success)" }} className='mb-1'
-                  onClick={() => { saveDataCampaign() }}
-                  disabled={IsOpenCampaign ? !LastCampaign?.fecha_fin : !LastCampaign?.fecha_inicio}>
-                  <i className={'mx-2 fas fa-calendar-week fa-lg'} />
-                  <span className='mx-2' >{IsOpenCampaign ? 'Cerrar' : 'Agregar'}</span>
-                </Button>
-              </Col>)
-            }
+          {!loadingCampainsEquipo && (
+            <Col className='py-3 d-flex justify-content-end align-items-end' style={{ columnGap: '14px' }} >
+              {!IsOpenCampaign && (<Datepicker
+                label='Fecha inicio de campaña'
+                value={LastCampaign?.fecha_inicio ? LastCampaign.fecha_inicio.toString() : undefined}
+                maxDate={LastCampaign?.fecha_fin ? LastCampaign.fecha_fin.toString() : undefined}
+                onChange={value => {
+                  setLastCampaign(state => $u(state, { fecha_inicio: { $set: value } }))
+                }}
+              />)}
+              <Datepicker
+                label='Fecha fin de campaña'
+                value={LastCampaign?.fecha_fin ? LastCampaign.fecha_fin.toString() : undefined}
+                minDate={LastCampaign?.fecha_inicio ? LastCampaign.fecha_inicio.toString() : undefined}
+                onChange={value => {
+                  setLastCampaign(state => $u(state, { fecha_fin: { $set: value } }))
+                }}
+              />
+              <Button style={{ backgroundColor: "var(--success)", borderColor: "var(--success)" }} className='mb-1'
+                onClick={() => { saveDataCampaign() }}
+                disabled={IsOpenCampaign ? !LastCampaign?.fecha_fin : !LastCampaign?.fecha_inicio}>
+                <i className={'mx-2 fas fa-calendar-week fa-lg'} />
+                <span className='mx-2' >{IsOpenCampaign ? 'Cerrar' : 'Agregar'}</span>
+              </Button>
+            </Col>)
+          }
 
-            <Col className='py-4'>
-              <Col sm={12} hidden={!isAddFromIaPol} className='px-0'> <LoadingSpinner/> </Col>
-              <Col sm={12} hidden={isAddFromIaPol} className='px-0'>
-                <ApiTable<ICampania>
-                  columns={CampaniasColumns(selectedCampaingsFromPol, selectedCampaingsFromIa, setIsAddFromIaPol)}
-                  source={campainsEquipo}
-                  reload={reloadTableCampainsEquipo}
-                  isLoading={loadingCampainsEquipo}
-                  className="my-custom-datatable"
-                  rowStyles={CampaignsRowStyle}
-                />
-              </Col>
+          <Col className='py-4'>
+            <Col sm={12} hidden={!isAddFromIaPol} className='px-0'> <LoadingSpinner /> </Col>
+            <Col sm={12} hidden={isAddFromIaPol} className='px-0'>
+              <ApiTable<ICampania>
+                columns={CampaniasColumns(selectedCampaingsFromPol, selectedCampaingsFromIa, setIsAddFromIaPol)}
+                source={campainsEquipo}
+                reload={reloadTableCampainsEquipo}
+                isLoading={loadingCampainsEquipo}
+                className="my-custom-datatable"
+                rowStyles={CampaignsRowStyle}
+              />
             </Col>
-          </Tab>
-          <Tab eventKey='uploadCampaigns' title={"Actualizar campañas"} className='border border-top-0 rounded-bottom'>
-            <Col className='py-4'>
-              <Col className='d-flex justify-content-start align-items-center px-0'>
-                <FileInputWithDescription
-                  label='Excel con campañas'
-                  id={"inputDataCampigns"}
-                  onChange={handleChangeFileCampaigns}
-                  onChangeDisplay={(display) => {
-                    setDisplayFileCampaigns(state => $u(state, { $set: display }))
-                  }}
-                  display={displayFileCampaigns}
-                  accept={["xlsx", "xls", "csv"]}
-                />
-              </Col>
-
-              <Col sm={12} className="mt-3 px-0">
-                <ApiTable
-                  columns={headerTableImportDataCampaigns}
-                  source={tableImportDataCampaigns}
-                  reload={reloadTableImportDataCampaigns}
-                  className="my-custom-datatable"
-                  rowStyles={CampaignsRowStyle}
-                />
-              </Col>
-
-              <Col sm={12} className="mt-3 px-0">
-                <Alert variant="danger">
-                  <Alert.Heading><i className={'mx-2 fas fa-exclamation-triangle fa-lg'} />Acción irreversible!</Alert.Heading>
-                  <hr />
-                  <p className="mb-0">
-                    Las campañas del componente {nombreComponentSelected} del equipo {nombreEquipoSelected} serán sustituidas por las campañas cargadas en el archivo.
-                  </p>
-                </Alert>
-              </Col>
-
-              <Col className='pt-3 d-flex justify-content-end align-items-center '>
-                <Button className="d-flex justify-content-center align-items-center"
-                  onClick={() => { uploadExcelDataCampaigns() }}
-                  disabled={tableImportDataCampaigns.length === 0 || !idComponentSelected || ErrorEstructuraCampaign !== undefined}>
-                  <i className={'mx-2 fas fa-file-upload fa-lg'} />
-                  <span className='mx-2' >Actualizar campañas de {nombreEquipoSelected}</span>
-                </Button>
-              </Col>
-              <Col hidden={!ErrorEstructuraCampaign} className='px-0 pt-2 text-right'>
-                <span className='text-danger' key="msg-error-campaign">
-                  {ErrorEstructuraCampaign}
-                </span>
-              </Col>
+          </Col>
+        </Tab>
+        <Tab eventKey='uploadCampaigns' title={"Actualizar campañas"} className='border border-top-0 rounded-bottom'>
+          <Col className='py-4'>
+            <Col className='d-flex justify-content-start align-items-center px-0'>
+              <FileInputWithDescription
+                label='Excel con campañas'
+                id={"inputDataCampigns"}
+                onChange={handleChangeFileCampaigns}
+                onChangeDisplay={(display) => {
+                  setDisplayFileCampaigns(state => $u(state, { $set: display }))
+                }}
+                display={displayFileCampaigns}
+                accept={["xlsx", "xls", "csv"]}
+              />
             </Col>
-          </Tab>
 
-        </Tabs>
-      </Modal.Body>
-    </Modal>
+            <Col sm={12} className="mt-3 px-0">
+              <ApiTable
+                columns={headerTableImportDataCampaigns}
+                source={tableImportDataCampaigns}
+                reload={reloadTableImportDataCampaigns}
+                className="my-custom-datatable"
+                rowStyles={CampaignsRowStyle}
+              />
+            </Col>
+
+            <Col sm={12} className="mt-3 px-0">
+              <Alert variant="danger">
+                <Alert.Heading><i className={'mx-2 fas fa-exclamation-triangle fa-lg'} />Acción irreversible!</Alert.Heading>
+                <hr />
+                <p className="mb-0">
+                  Las campañas del componente {nombreComponentSelected} del equipo {nombreEquipoSelected} serán sustituidas por las campañas cargadas en el archivo.
+                </p>
+              </Alert>
+            </Col>
+
+            <Col className='pt-3 d-flex justify-content-end align-items-center '>
+              <Button className="d-flex justify-content-center align-items-center"
+                onClick={() => { uploadExcelDataCampaigns() }}
+                disabled={tableImportDataCampaigns.length === 0 || !idComponentSelected || ErrorEstructuraCampaign !== undefined}>
+                <i className={'mx-2 fas fa-file-upload fa-lg'} />
+                <span className='mx-2' >Actualizar campañas de {nombreEquipoSelected}</span>
+              </Button>
+            </Col>
+            <Col hidden={!ErrorEstructuraCampaign} className='px-0 pt-2 text-right'>
+              <span className='text-danger' key="msg-error-campaign">
+                {ErrorEstructuraCampaign}
+              </span>
+            </Col>
+          </Col>
+        </Tab>
+
+      </Tabs>
+    </Col>
+
   </>
 
-  /*MODAL PARA ACTUALIZAR PERFILES DEL EQUIPO*/
-  const modalImportProfilesElement: JSX.Element = <>
-    <Modal size='xl' show={modalImportProfiles.visible} onHide={modalImportProfiles.hide}>
-      <Modal.Header closeButton>
-        <b>Actualizar espesores del componente {nombreComponentSelected} del equipo {nombreEquipoSelected}</b>
-      </Modal.Header>
-      <Modal.Body>
+  /*ELEMENTO PARA ACTUALIZAR PERFILES DEL EQUIPO*/
+  const importProfilesElement: JSX.Element = <>
+    <Col className='px-0 py-4'>
+      <Col>
+        <p style={{ fontSize: "14px", fontWeight: 600 }}>Actualizar Mediciones</p>
+      </Col>
+      <Col className='d-flex justify-content-start align-items-center '>
+        <FileInputWithDescription
+          label='Archivo con espesores'
+          id={"inputDataProfiles"}
+          onChange={handleChangeFileProfiles}
+          onChangeDisplay={(display) => {
+            setDisplayFileProfiles(state => $u(state, { $set: display }))
+          }}
+          display={displayFileProfiles}
+          accept={["xlsx", "xls", "csv"]}
+        />
+      </Col>
 
-        <Col className='d-flex justify-content-start align-items-center '>
-          <FileInputWithDescription
-            label='Archivo con espesores'
-            id={"inputDataProfiles"}
-            onChange={handleChangeFileProfiles}
-            onChangeDisplay={(display) => {
-              setDisplayFileProfiles(state => $u(state, { $set: display }))
-            }}
-            display={displayFileProfiles}
-            accept={["xlsx", "xls", "csv"]}
-          />
-        </Col>
-
-        <Col sm={12} className="mt-3">
-          <ApiTable
-            columns={headerTableImportDataProfiles}
-            source={tableImportDataProfiles}
-            reload={reloadTableImportDataProfiles}
-          />
-        </Col>
-        <Col sm={12} className="mt-3">
-          <Alert variant="danger">
-            <Alert.Heading><i className={'mx-2 fas fa-exclamation-triangle fa-lg'} />  Acción irreversible!</Alert.Heading>
-            <hr />
-            <p className="mb-0">
-              Los espesores del componente {nombreComponentSelected} para el equipo {nombreEquipoSelected} serán sustituidos por los espesores cargados en el archivo.
-            </p>
-          </Alert>
-        </Col>
-        <Col className='pt-3 d-flex justify-content-end align-items-center '>
-          <Button className="d-flex justify-content-center align-items-center"
-            onClick={() => { uploadExcelDataProfiles() }}
-            disabled={!idComponentSelected || tableImportDataProfiles.length === 0}>
-            <i className={'mx-2 fas fa-file-upload fa-lg'} />
-            <span className='mx-2' >Actualizar espesores</span>
-          </Button>
-        </Col>
-      </Modal.Body>
-    </Modal>
+      <Col sm={12} className="mt-3">
+        <ApiTable
+          columns={headerTableImportDataProfiles}
+          source={tableImportDataProfiles}
+          reload={reloadTableImportDataProfiles}
+        />
+      </Col>
+      <Col sm={12} className="mt-3">
+        <Alert variant="danger">
+          <Alert.Heading><i className={'mx-2 fas fa-exclamation-triangle fa-lg'} />  Acción irreversible!</Alert.Heading>
+          <hr />
+          <p className="mb-0">
+            Los espesores del componente {nombreComponentSelected} para el equipo {nombreEquipoSelected} serán sustituidos por los espesores cargados en el archivo.
+          </p>
+        </Alert>
+      </Col>
+      <Col className='pt-3 d-flex justify-content-end align-items-center '>
+        <Button className="d-flex justify-content-center align-items-center"
+          onClick={() => { uploadExcelDataProfiles() }}
+          disabled={!idComponentSelected || tableImportDataProfiles.length === 0}>
+          <i className={'mx-2 fas fa-file-upload fa-lg'} />
+          <span className='mx-2' >Actualizar espesores</span>
+        </Button>
+      </Col>
+    </Col>
   </>
 
   /*MODAL PARA ACTUALIZAR LOS DATOS OPERACIONALES */
-  const modalImportDataOperationalElement: JSX.Element = <>
-    <Modal size='xl' show={modalImportDataOperational.visible} onHide={modalImportDataOperational.hide}>
-      <Modal.Header closeButton>
-        <b>Actualizar datos operacionales del equipo {nombreEquipoSelected}</b>
-      </Modal.Header>
-      <Modal.Body>
-
+  const importDataOperationalElement: JSX.Element = <>
+    <Col className='px-0 py-4'>
+      <Col>
+        <p style={{ fontSize: "14px", fontWeight: 600 }}>Actualizar datos operacionales del equipo {nombreEquipoSelected}</p>
+      </Col>
+      <Col className='px-0'>
         <Col className='d-flex justify-content-start align-items-center '>
           <FileInputWithDescription
-            label='Excel con variables operacionales'
+            label='Archivo con variables operacionales'
             id={"inputDataOp"}
             onChange={handleChangeFileOp}
             onChangeDisplay={(display) => {
@@ -783,10 +804,48 @@ export default function DatosOperativos() {
             <span className='mx-2' >Actualizar {nombreEquipoSelected}</span>
           </Button>
         </Col>
+      </Col>
+    </Col>
+  </>
+
+
+  /*MODAL PARA ACTUALIZAR LOS DATOS OPERACIONALES */
+  const modalConfigEquipoElement: JSX.Element = <>
+    <Modal size='xl' show={modalConfigEquipo.visible} onHide={modalConfigEquipo.hide} onShow={() => getDataEquipo('viewCampaigns')}>
+      <Modal.Header closeButton>
+        <b> Configuración: {nombreEquipoSelected} / {nombreComponentSelected} </b>
+      </Modal.Header>
+      <Modal.Body>
+        <Tabs id="tabsConfig" defaultActiveKey='viewCampaigns' className='border rounded-top' onSelect={getDataEquipo}>
+
+          <Tab eventKey='viewCampaigns'
+            title={<><i className={'mx-2 fas fa-calendar-week'} /> Campañas </>}
+            className='border border-top-0 rounded-bottom'>
+            {importCampaignsElement}
+          </Tab>
+
+          <Tab eventKey='viewPerfiles'
+            title={<><i className={'mx-2 fas fa-ruler'} /> Mediciones </>}
+            className='border border-top-0 rounded-bottom'>
+            {importProfilesElement}
+          </Tab>
+
+          <Tab eventKey='viewImportar'
+            title={<><i className={'mx-2 fas fa-file-upload'} /> Importar </>}
+            className='border border-top-0 rounded-bottom'>
+            {importDataOperationalElement}
+          </Tab>
+
+          <Tab eventKey='viewReferencias'
+            title={<><i className={'mx-2 fas fa-cog'} /> Referencias </>}
+            className='border border-top-0 rounded-bottom'>
+            <>...</>
+          </Tab>
+
+        </Tabs>
       </Modal.Body>
     </Modal>
   </>
-
   return (
     <>
       <BaseContentView title='titles:data_op'>
@@ -831,33 +890,27 @@ export default function DatosOperativos() {
           />
         </Col>
 
-        <Col xl={6} className="px-0 d-sm-flex justify-content-center align-items-start" >
+        <Col xl={6} className="px-0 d-sm-flex justify-content-end align-items-start" >
+
           <Col sm={3} className="pt-2">
             <JumpLabel />
-            <Button variant="outline-primary" onClick={() => { modalImportCampaigns.show() }}
+            <Button variant="outline-primary"
               disabled={!idComponentSelected}
+              onClick={() => { ejecutarProyeccion() }}
               className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
-              <i className={'mx-2 fas fa-calendar-week fa-lg'} />
-              <span className='mx-2' >Campañas</span>
+              <i className={'mx-2 fas fa-play fa-lg'} />
+              <span className='mx-2' >Proyectar</span>
             </Button>
           </Col>
 
           <Col sm={3} className="pt-2">
             <JumpLabel />
-            <Button variant="outline-primary" onClick={() => { modalImportProfiles.show() }}
+            <Button variant="outline-primary"
               disabled={!idComponentSelected}
+              onClick={() => { modalConfigEquipo.show() }}
               className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
-              <i className={'mx-2 fas fa-ruler fa-lg'} />
-              <span className='mx-2' >Espesores</span>
-            </Button>
-          </Col>
-
-          <Col sm={3} className="pt-2">
-            <JumpLabel />
-            <Button variant="outline-primary" onClick={() => { modalImportDataOperational.show() }}
-              className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
-              <i className={'mx-2 fas fa-file-upload fa-lg'} />
-              <span className='mx-2' >Importar</span>
+              <i className={'mx-2 fas fa-cogs fa-lg'} />
+              <span className='mx-2' >Configuración</span>
             </Button>
           </Col>
 
@@ -883,9 +936,7 @@ export default function DatosOperativos() {
           />
         </Col>
 
-        {modalImportCampaignsElement}
-        {modalImportProfilesElement}
-        {modalImportDataOperationalElement}
+        {modalConfigEquipoElement}
       </BaseContentView>
     </>
 
