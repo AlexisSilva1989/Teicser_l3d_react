@@ -111,7 +111,7 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicio
         // offsetY: 12,
         formatter: function (val) {
           const value = Number(val)
-          const valueFormat = value % 1 === 0 ? val : value.toFixed(2)
+          const valueFormat = value % 1 === 0 ? val : value.toFixed(1)
           return valueFormat.toString()
         }
       },
@@ -274,7 +274,7 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicio
             label: {
               text: {
                 $set: (dataSelected?.y !== undefined && dataSelected?.x !== undefined)
-                  ? `${dataSelected?.date}: (${dataSelected.y} mm - ${dataSelected.x} MMTon)`
+                  ? `${dataSelected?.date}: (${(dataSelected.y)?.toFixed(1)} mm - ${Number(dataSelected.x).toFixed(2)} MMTon)`
                   : undefined
               }
             }
@@ -309,7 +309,6 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicio
   }, [dataLine])
 
   useEffect(() => {
-    console.log('dataMedicion: ', dataMedicion);
     setDataSerie((s) => $u(s, {
       [1]: { data: {$set: dataMedicion as serieData[]}}
     }));
