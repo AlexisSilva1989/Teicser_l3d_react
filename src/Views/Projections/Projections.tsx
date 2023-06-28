@@ -15,6 +15,7 @@ import { AxiosError } from 'axios'
 import { ProjectionPolinomio } from '../../Data/Models/Proyeccion/Polinomio'
 import { useToasts } from 'react-toast-notifications'
 import { LoadingSpinner } from '../../Components/Common/LoadingSpinner'
+import { JSONObject } from '../../Data/Models/Common/general'
 
 const Projections = () => {
   //HOOKS
@@ -43,6 +44,17 @@ const Projections = () => {
   const [TipoEspesor, setTipoEspesor] = useState<string>('placa')
   const [DataComponents, setDataComponents] = useState<ProjectionPolinomio[]>()
   const [IsLoadData, setIsLoadData] = useState<boolean>(true)
+  const [selectUbicacion, setSelectUbicacion] = useState<{ label: string, value: string }[]>([
+    { label: "LIFTER", value: "lifter" },
+    { label: "PLACA", value: "placa" },
+    // { label: "PLACA B", value: "placa_b" },
+  ])
+
+  const labelUbicacion: JSONObject = {
+    "lifter": "LIFTER",
+    "placa": "PLACA",
+    "placa_b": "PLACA B"
+  }
 
   //HANDLES
   const getGraphsComponents = () => {
@@ -217,6 +229,29 @@ const Projections = () => {
     setIsFilter(false)
   }, [valueSearch, TipoEspesor, DataComponents])
 
+  useEffect(() => {
+    if (DataComponents === undefined || DataComponents?.length === 0 ) {
+      return
+    }
+
+    const keys = DataComponents?.reduce((acc: any, obj) => {
+      const dataKeys = Object.keys(obj.data);
+      return [...acc, ...dataKeys];
+    }, []);
+
+    const keysUnique: string[] = Array.from(new Set(keys))
+
+    const transKeyToOptions: { label: string; value: string; }[] = keysUnique.map((key: string) => {
+      return {
+        label: labelUbicacion[key] as string,
+        value: key,
+      };
+    });
+
+    setSelectUbicacion(transKeyToOptions);
+
+  }, [DataComponents])
+
   return (
     <BaseContentView title="Proyecciones">
       <Col sm={12} className='px-0'>
@@ -241,11 +276,7 @@ const Projections = () => {
             name='typo_espesor_select'
             label='Tipo'
             value={TipoEspesor}
-            source={[
-              { label: "PLACA", value: "placa" },
-              { label: "PLACA B", value: "placa_b" },
-              { label: "LIFTER", value: "lifter" },
-            ]}
+            source={selectUbicacion}
             selector={(option) => {
               return { label: option.label, value: option.value };
             }}
