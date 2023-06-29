@@ -36,9 +36,10 @@ export const RadioSelect = (props: Props) => {
 					</label>
 				</div>
 			)}
+      <div>
 			{props.options &&
 				props.options.map((x, i) => (
-					<div className={"mr-2"} style={props.style} key={i}>
+					<div className={"m-2"} style={props.style} key={i}>
 						<label>{caps(x.label)} </label>
 						<input style={{marginLeft: 10}} 
 							type='radio' 
@@ -48,6 +49,8 @@ export const RadioSelect = (props: Props) => {
 							value={x.value} onChange={onChange} />
 					</div>
 				))}
+      </div>
+
 			{props.errors && props.errors.length > 0 && (
 				<div>
 					{props.errors.map((e, i) => {
