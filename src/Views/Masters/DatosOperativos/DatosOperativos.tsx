@@ -20,6 +20,8 @@ import { CampaniasColumns, ICampania } from '../../../Data/Models/Campanias/Camp
 import { IDataTableConditionalRowStyles } from 'react-data-table-component';
 import { Datepicker } from '../../../Components/Forms/Datepicker';
 import { LoadingSpinner } from '../../../Components/Common/LoadingSpinner';
+import { IParametrosReferencias } from '../../../Data/Models/ParametrosReferencias/ParametrosReferencias';
+import FormParametrosReferenciales from '../../../Components/views/Home/Equipos/FormParametrosReferenciales';
 
 interface IColumnsTable {
   key: string
@@ -54,6 +56,7 @@ export default function DatosOperativos() {
   const [componentsForTraining, setComponentsForTraining] = useState<IComponente[]>([])
   const [campainsEquipo, setCampainsEquipo] = useState<ICampania[]>([])
   const [loadingCampainsEquipo, setLoadingCampainsEquipo] = useState<boolean>(false)
+  const [loadingParametrosReferenciales, setLoadingParametrosReferenciales] = useState<boolean>(false)
   const [loadingDataOp, setLoadingDataOp] = useState<boolean>(false)
 
   const [displayFileOp, setDisplayFileOp] = useState<string>()
@@ -84,6 +87,9 @@ export default function DatosOperativos() {
   const [selectedCampaingsFromPol, setSelectedCampaingsFromPol] = useState<number[]>([])
   const [selectedCampaingsFromIa, setSelectedCampaingsFromIa] = useState<number[]>([])
   const [isAddFromIaPol, setIsAddFromIaPol] = useState<boolean>(false)
+  const [equipoParametros, setEquipoParametros] = useState<IParametrosReferencias | undefined>(undefined)
+  const [isSavingParametros, setIsSavingParametros] = useState<boolean>(false)
+
 
   //HANDLES
 
@@ -439,7 +445,7 @@ export default function DatosOperativos() {
 
   //BUSCAR CAMPAÑAS DE EQUIPO
   const getDataEquipo = async (selectedTab: string | null) => {
-    console.log('selectedTab: ', selectedTab);
+
     if (selectedTab === 'viewCampaigns') {
       setLoadingCampainsEquipo(true)
       await ax.get<ICampania[]>('service_render/campains', {
@@ -481,13 +487,36 @@ export default function DatosOperativos() {
         })
         .catch((e: AxiosError) => {
           if (e.response) {
-            addToast("Error al campañas", {
+            addToast("Error al cargar campañas", {
               appearance: 'error',
               autoDismiss: true,
             });
           }
         }).finally(() => {
           setLoadingCampainsEquipo(false)
+        });
+    }
+
+    if (selectedTab === 'viewParametros') {
+      setLoadingParametrosReferenciales(true)
+      await ax.get<IParametrosReferencias>('service_render/parametros_referencia', {
+        params: {
+          equipoId: idEquipoSelected,
+          componenteId: idComponentSelected
+        }
+      })
+        .then((response) => {
+          setEquipoParametros(response?.data)
+        })
+        .catch((e: AxiosError) => {
+          if (e.response) {
+            addToast("Error al cargar parametros", {
+              appearance: 'error',
+              autoDismiss: true,
+            });
+          }
+        }).finally(() => {
+          setLoadingParametrosReferenciales(false)
         });
     }
   };
@@ -549,7 +578,7 @@ export default function DatosOperativos() {
       });
   }
 
-  //GUARDAR CAMPAÑA
+  //EJECUTAR PROYECCION
   const ejecutarProyeccion = async () => {
     setLoading(true);
     await ax.post('service_render/proyeccion_pl', {
@@ -569,10 +598,37 @@ export default function DatosOperativos() {
             autoDismiss: true,
           });
         }
-      }).finally(()=>{
+      }).finally(() => {
         setLoading(false);
       });
   }
+
+  //GUARDAR PARAMETROS
+  const guardarParametrosReferenciales = async (data: IParametrosReferencias) => {
+    setIsSavingParametros(true);
+    await ax.post('service_render/parametros_referencia', data)
+      .then((response) => {
+        modalConfigEquipo.hide()
+
+        addToast(response.data?.message, {
+          appearance: 'success',
+          autoDismiss: true,
+        });
+      })
+      .catch((e: AxiosError) => {
+        modalConfigEquipo.hide()
+        if (e.response) {
+          addToast(e.response.data.errors
+            ? e.response.data.errors[Object.keys(e.response.data.errors)[0]]
+            : "Error al guardar la configuración",
+            { appearance: 'error', autoDismiss: true }
+          );
+        }
+      })
+      .finally(() => {
+        setIsSavingParametros(false)
+      });
+  };
 
   //EFFECTS
   /*OBTENER DATOS ASOCIADOS A LA PROYECCION */
@@ -762,7 +818,7 @@ export default function DatosOperativos() {
     </Col>
   </>
 
-  /*MODAL PARA ACTUALIZAR LOS DATOS OPERACIONALES */
+  /*ELEMENTO ACTUALIZAR LOS DATOS OPERACIONALES */
   const importDataOperationalElement: JSX.Element = <>
     <Col className='px-0 py-4'>
       <Col>
@@ -808,6 +864,26 @@ export default function DatosOperativos() {
     </Col>
   </>
 
+  /*ELEMENTO ACTUALIZAR LOS PARAMETROS REFERENCIALES */
+  const paramsElement: JSX.Element = <>
+    <Col className='px-0 py-4'>
+      <Col>
+        <p style={{ fontSize: "14px", fontWeight: 600 }}>Configuración de parámetros </p>
+      </Col>
+      <Col>
+        {
+          loadingParametrosReferenciales
+            ? <LoadingSpinner />
+            : <FormParametrosReferenciales
+              onSubmit={guardarParametrosReferenciales}
+              isSaving={isSavingParametros}
+              initialData={equipoParametros}
+            />
+        }
+      </Col>
+    </Col>
+  </>
+
 
   /*MODAL PARA ACTUALIZAR LOS DATOS OPERACIONALES */
   const modalConfigEquipoElement: JSX.Element = <>
@@ -836,10 +912,10 @@ export default function DatosOperativos() {
             {importDataOperationalElement}
           </Tab>
 
-          <Tab eventKey='viewReferencias'
-            title={<><i className={'mx-2 fas fa-cog'} /> Referencias </>}
+          <Tab eventKey='viewParametros'
+            title={<><i className={'mx-2 fas fa-cog'} /> Parametros </>}
             className='border border-top-0 rounded-bottom'>
-            <>...</>
+            {paramsElement}
           </Tab>
 
         </Tabs>
