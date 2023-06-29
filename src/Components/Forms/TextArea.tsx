@@ -15,6 +15,7 @@ interface Props {
 	maxLength?: number
 	onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 	errorForm?: FieldError
+  disabled?: boolean
 }
 
 export const TextArea = React.forwardRef((props: Props, ref: React.Ref<HTMLTextAreaElement>) => {
@@ -38,6 +39,7 @@ export const TextArea = React.forwardRef((props: Props, ref: React.Ref<HTMLTextA
 				name={props.name}
 				maxLength={props.maxLength}
 				placeholder={props.placeholder == null ? undefined : caps(props.placeholder)}
+        disabled={props.disabled ?? false}
 
 			/>
 			{props.errors && props.errors.length > 0 && (
