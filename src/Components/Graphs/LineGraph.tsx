@@ -4,13 +4,16 @@ import ReactApexChart from 'react-apexcharts'
 import { $m, $u } from '../../Common/Utils/Reimports';
 import { YAxis } from 'recharts';
 
-interface serieData  {
+interface serieData {
   x: any;
   y: any;
   fillColor?: string | undefined;
   strokeColor?: string | undefined;
   meta?: any;
   goals?: any;
+  usadoEnEntrenamiento?: boolean
+  timestamp?: string
+  camp?: number
 }
 interface ILineGraph {
   title: string
@@ -23,15 +26,16 @@ interface ILineGraph {
     y?: null | number
     date?: string
     position?: number
-  }
+  },
+  showMediciones: boolean
 }
 
 
 
-function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicion }: ILineGraph) {
+function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion, showMediciones }: ILineGraph) {
   const primaryColor = '#0D47A1'
   const selectedColor = '#004D40'
-  const [dataSerie, setDataSerie] = useState<{name?: string, color?: string, type: string, data:serieData[]}[]>(
+  const [dataSerie, setDataSerie] = useState<{ name?: string, color?: string, type: string, data: serieData[] }[]>(
     [
       {
         type: 'line',
@@ -57,6 +61,38 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicio
       toolbar: {
         show: false
       },
+      events: {
+        dataPointSelection: function(event, chartContext, config) {
+          const dataPointIndex = config.dataPointIndex;
+          const dataPointSelected: serieData = (dataMedicion as serieData[])[dataPointIndex];
+          if(!dataPointSelected.usadoEnEntrenamiento)
+            return
+          
+          console.log(dataPointSelected);
+          chartContext.updateOptions({
+            tooltip: {
+              enabled: true,
+              custom: function(e: any) {
+                return (`
+                  <div class="arrow_box p-3">
+                  <b>Fecha:<b> ${dataPointSelected.timestamp}
+                  <br><b>Campaña:<b> ${dataPointSelected.camp}
+                  </div>
+                `);
+              },
+            }
+          });
+        },
+        dataPointMouseLeave: (event, chartContext, config) => {
+        if ( chartContext.w.config.tooltip.enabled) {
+            chartContext.updateOptions({
+              tooltip: {
+                enabled: false,
+              }
+            });
+          }
+        }
+      }
     },
     colors: [primaryColor],
     grid: {
@@ -80,7 +116,7 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicio
       lineCap: 'round',
     },
     xaxis: {
-      
+
       type: 'numeric',
       // tickAmount: 'dataPoints',
       min:0,
@@ -94,6 +130,12 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicio
           fontWeight: 600,
           color: primaryColor
         }
+      },
+      crosshairs: {
+        show: false
+      },
+      tooltip:{
+        enabled: false
       },
       // axisTicks: {
       //   show: true,
@@ -235,16 +277,21 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicio
       }
     },
     tooltip: {
-      enabled: false
+      enabled: false,
+      shared: false,
+      followCursor: true
     },
     legend: {
       show: false
     },
     markers: {
       size: [0, 4],
-      strokeWidth: 0
+      hover: {
+        size: 0
+      },
+      strokeWidth: 0,
     },
-    
+
   });
 
   useEffect(() => {
@@ -294,11 +341,8 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicio
 
 
   useEffect(() => {
-    setDataGraph((s) => $u(s, {
-      xaxis: {max: {$set: (dataLine.length > 0) ? Number((dataLine[dataLine.length-1] as serieData).x) : 100}}
-    }))
     setDataSerie((s) => $u(s, {
-      [0]: {data: {$set: dataLine as serieData[]}},
+      [0]: { data: { $set: dataLine as serieData[] } },
       // [1]: { data: {$set: [
       //   {x: 3, y: 71.22},
       //   {x: 7, y: 71.22}
@@ -309,11 +353,15 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title , fecha_medicio
   }, [dataLine])
 
   useEffect(() => {
+    let mediciones: serieData[] = showMediciones
+      ? dataMedicion as serieData[]
+      : (dataMedicion as serieData[]).filter(medicion => medicion.usadoEnEntrenamiento === false)
+
     setDataSerie((s) => $u(s, {
-      [1]: { data: {$set: dataMedicion as serieData[]}}
+      [1]: { data: { $set: mediciones } }
     }));
-  }, [dataMedicion])
-  
+  }, [dataMedicion, showMediciones])
+
 
   return (
     <>

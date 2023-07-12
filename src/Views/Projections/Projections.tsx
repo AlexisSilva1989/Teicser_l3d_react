@@ -28,6 +28,7 @@ const Projections = () => {
     filterByEquipo: undefined,
   });
   const [IsFilter, setIsFilter] = useState<boolean>(false)
+  const [showMediciones, setShowMediciones] = useState<boolean>(true)
   const [CriticalCondition, setCriticalCondition] = useState<{ type: string, value: string | undefined }>({
     type: "FECHA",
     value: $m().format('DD-MM-YYYY')
@@ -88,7 +89,7 @@ const Projections = () => {
               timestamps={DataComponents[index].timeStamp ?? []}
               dataSelected={FilterCriterioMill[index]}
               fecha_medicion={DataComponents[index].crea_date}
-              
+              showMediciones = {showMediciones}
             />
           </Col>
         </Col>
@@ -255,7 +256,7 @@ const Projections = () => {
   return (
     <BaseContentView title="Proyecciones">
       <Col sm={12} className='px-0'>
-        <Col sm={3}>
+        <Col sm={2}>
           <ApiSelect<Equipo>
             name='equipo_select'
             placeholder='Seleccione'
@@ -338,7 +339,23 @@ const Projections = () => {
           />
         </Col>
 
-        <Col sm={3} style={{ height: '66px' }} hidden={!IsFilter}>
+        <Col sm={2}>
+          <label><b>Mediciones Entrenamiento:</b></label>
+          <div className="d-flex align-items-center justify-content-center" style={{height: "34px"}}>
+            <input type="checkbox"
+              id={'show_mediciones'}
+              name={'show_mediciones'}
+              checked={showMediciones}
+              style={{ width: '20px', height: '20px' }}
+              onChange={() => {
+                const isShowMediciones = !showMediciones
+                setShowMediciones(isShowMediciones);
+              }}
+            />
+          </div>
+        </Col>
+
+        <Col sm={2} style={{ height: '66px' }} hidden={!IsFilter}>
           <Col sm={12} className='p-0 pt-3 h-100 d-flex align-items-center'>
             <BounceLoader color='var(--primary)' size={18} />
             <span className='pl-3' style={{ color: 'var(--primary)' }}>{`Buscando ${CriticalCondition.type.toLowerCase()} ...`}</span>
