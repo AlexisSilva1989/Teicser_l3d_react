@@ -19,6 +19,7 @@ interface ILineGraph {
   title: string
   dataLine: ApexAxisChartSeries | serieData[]
   dataMedicion: ApexAxisChartSeries | serieData[]
+  puntoCritico: number | undefined
   timestamps: string[]
   fecha_medicion: string
   dataSelected: {
@@ -32,7 +33,7 @@ interface ILineGraph {
 
 
 
-function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion, showMediciones }: ILineGraph) {
+function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion, showMediciones, puntoCritico }: ILineGraph) {
   const primaryColor = '#0D47A1'
   const selectedColor = '#004D40'
   const [dataSerie, setDataSerie] = useState<{ name?: string, color?: string, type: string, data: serieData[] }[]>(
@@ -224,7 +225,16 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion
             },
             text: undefined,
           }
-        }
+        },
+        {
+          y: undefined,
+          y2: 0,
+          strokeDashArray: 0,
+          borderWidth: 1,
+          borderColor: 'red',
+          fillColor: 'red',
+          opacity: 0.3,
+        },
       ],
       points:
         [
@@ -339,6 +349,14 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion
     }));
   }, [dataSelected])
 
+
+  useEffect(() => {
+    setDataGraph((s) => $u(s, {
+      annotations: {
+        yaxis: {[2]: { y: { $set: puntoCritico } }},
+      }
+    }));
+  }, [puntoCritico])
 
   useEffect(() => {
     setDataSerie((s) => $u(s, {

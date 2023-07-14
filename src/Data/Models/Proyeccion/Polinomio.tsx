@@ -28,6 +28,11 @@ export interface ProjectionPolinomio {
       y: any
     }[],
   }
+  puntosCriticos: {
+    lifter?: number | undefined,
+    placa?: number | undefined,
+    placa_b?: number | undefined,
+  }
   timeStamp: string[]
   crea_date: string
 }

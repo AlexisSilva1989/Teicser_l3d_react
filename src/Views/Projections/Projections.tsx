@@ -64,20 +64,24 @@ const Projections = () => {
     DataComponents?.forEach((element, index) => {
       let data: { x: any; y: any; }[] = []
       let mediciones: { x: any; y: any; }[] = []
+      let puntoCritico: number | undefined = undefined
 
       if(TipoEspesor === 'placa'){
         data = DataComponents[index].data.placa ?? []
         mediciones = DataComponents[index].mediciones.placa ?? []
+        puntoCritico = DataComponents[index].puntosCriticos?.placa ?? undefined
       }
 
       if(TipoEspesor === 'placa_b'){
         data = DataComponents[index].data.placa_b ?? []
         mediciones = DataComponents[index].mediciones.placa_b ?? []
+        puntoCritico = DataComponents[index].puntosCriticos?.placa ?? undefined
       }
 
       if(TipoEspesor === 'lifter'){
         data = DataComponents[index].data.lifter ?? []
         mediciones = DataComponents[index].mediciones.lifter ?? []
+        puntoCritico = DataComponents[index].puntosCriticos?.placa ?? undefined
       }
 
       graphs.push(
@@ -90,6 +94,7 @@ const Projections = () => {
               dataSelected={FilterCriterioMill[index]}
               fecha_medicion={DataComponents[index].crea_date}
               showMediciones = {showMediciones}
+              puntoCritico={puntoCritico}
             />
           </Col>
         </Col>
