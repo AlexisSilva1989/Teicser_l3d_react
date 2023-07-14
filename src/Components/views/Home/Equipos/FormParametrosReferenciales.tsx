@@ -31,7 +31,6 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
 
 
   useEffect(() => {
-    console.log('initialData: ', initialData);
     setValue([
       { active_ia: initialData?.active_ia ? "1" : "0" },
       { dias_ia: initialData?.dias_ia },
@@ -53,7 +52,7 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
   }, [initialData]);
 
 
-  return (<><form onSubmit={handleSubmit(onSubmit)}>
+  return (<><form onSubmit={handleSubmit(onSubmit)} noValidate>
     <Row>
       <Col sm={12}>
         <Col sm={12} className="px-0 border rounded">
@@ -85,6 +84,8 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
           </Col>
           <Col sm={2} className={"mb-2"}>
             <Textbox
+              type="number"
+              min={1}
               label={`Días con polinomio *`}
               name={"dias_pol"}
               id={"dias_pol"}
@@ -92,7 +93,8 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
               disabled={isPolinomio !== "1"}
               placeholder={"Días a proyectar"}
               ref={register({
-                required: { value: isPolinomio === "1", message: caps('validations:required') }
+                required: { value: isPolinomio === "1", message: caps('validations:required') },
+                min: { value: 1 , message: 'Debe ser mayor a 0' }
               })}
               errorForm={errors.dias_pol}
             />
@@ -106,13 +108,15 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
               disabled={isPolinomio !== "1"}
               placeholder={"Tonelaje procesado"}
               ref={register({
-                required: { value: isPolinomio === "1", message: caps('validations:required') }
+                required: { value: isPolinomio === "1", message: caps('validations:required') },
               })}
               errorForm={errors.tonelaje_diario_componente}
             />
           </Col>
           <Col sm={2} className={"mb-2"}>
             <Textbox
+              type="number"
+              min={1}
               label={`Grado lifter *`}
               name={"grado_pol_lifter"}
               id={"grado_pol_lifter"}
@@ -127,6 +131,8 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
           </Col>
           <Col sm={2} className={"mb-2"}>
             <Textbox
+              type="number"
+              min={1}
               label={`Grado placa *`}
               name={"grado_pol_placa"}
               id={"grado_pol_placa"}
@@ -141,6 +147,8 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
           </Col>
           <Col sm={2} className={"mb-2"}>
             <Textbox
+              type="number"
+              min={1}
               label={`Grado placa b`}
               name={"grado_pol_placa_b"}
               id={"grado_pol_placa_b"}
@@ -184,14 +192,17 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
           </Col>
           <Col sm={2} className={"mb-2"}>
             <Textbox
+              type="number"
+              min={1}
               label={`Días con IA *`}
               name={"dias_ia"}
               id={"dias_ia"}
-              onlyNumber={true}
+              // onlyNumber={true}
               disabled={isIa !== "1"}
               placeholder={"Días a proyectar"}
               ref={register({
-                required: { value: isIa === "1", message: caps('validations:required') }
+                required: { value: isIa === "1", message: caps('validations:required') },
+                min: { value: 1 , message: 'Debe ser mayor a 0' }
               })}
               errorForm={errors.dias_ia}
             />
@@ -229,14 +240,16 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
 
             <Col sm={3} className={"mb-2"}>
               <Textbox
+                type="number"
+                min={1}
                 label={`Entrenamiento (Num. samples) *`}
                 name={"num_samples_train_ia"}
                 id={"num_samples_train_ia"}
-                onlyNumber={true}
                 disabled={isIa !== "1"}
                 placeholder={"Num samples"}
                 ref={register({
-                  required: { value: isIa === "1", message: caps('validations:required') }
+                  required: { value: isIa === "1", message: caps('validations:required') },
+                  min: { value: 100 , message: 'Se recomiendan almenos 100 samples' }
                 })}
                 errorForm={errors.num_samples_train_ia}
               />
@@ -244,15 +257,18 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
 
             <Col sm={3} className={"mb-2"}>
               <Textbox
+                type="number"
+                min={1}
                 label={`Validación (Num. samples) *`}
                 name={"num_samples_val_ia"}
                 id={"num_samples_val_ia"}
-                onlyNumber={true}
                 disabled={isIa !== "1"}
                 placeholder={"Num samples"}
                 ref={register({
-                  required: { value: isIa === "1", message: caps('validations:required') }
+                  required: { value: isIa === "1", message: caps('validations:required') },
+                  min: { value: 100 , message: 'Se recomiendan almenos 100 samples' }
                 })}
+                step={1}
                 errorForm={errors.num_samples_val_ia}
               />
             </Col>

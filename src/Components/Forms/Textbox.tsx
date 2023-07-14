@@ -25,6 +25,9 @@ interface Props {
 	errorForm?: FieldError
   isLabelRequired?: boolean
   disabled?: boolean
+  type?: string
+  step?: string | number
+  min?: number
 }
 
 export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInputElement>) => {
@@ -80,17 +83,19 @@ export const Textbox = React.forwardRef( (props: Props, ref: React.Ref<HTMLInput
 
 		</label>}
 		
-			<input type={props.hidden ? 'hidden' : 'text' } 
+			<input 
+        type={props.type ?? 'text' }
+        step={props.step ?? undefined} 
+        min={props.min ?? undefined} 
 				ref={ref}
 				defaultValue={props.value }
-				id={props.id} 
+				id={props.id}
 				name={props.name} 
 				value={props.value} 
 				className={'form-control border rounded ' + props.className ?? ''}
 				readOnly={props.readonly}
         disabled={props.disabled}
 				placeholder={props.placeholder == null ? undefined : caps(props.placeholder)} 
-
 				onKeyUp={(e) => {
 					if (props.onChange != null) {
 					   let {value} = e.currentTarget;
