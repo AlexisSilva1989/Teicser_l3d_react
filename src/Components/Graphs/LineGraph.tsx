@@ -343,14 +343,26 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion
   useEffect(() => {
     setDataSerie((s) => $u(s, {
       [0]: { data: { $set: dataLine as serieData[] } },
-      // [1]: { data: {$set: [
-      //   {x: 3, y: 71.22},
-      //   {x: 7, y: 71.22}
-      // ]}}
-
     }));
 
   }, [dataLine])
+
+  useEffect(() => {
+    let mediciones: serieData[] = showMediciones
+      ? dataMedicion as serieData[]
+      : (dataMedicion as serieData[]).filter(medicion => medicion.usadoEnEntrenamiento === false)
+
+
+    let maxXMediciones = mediciones.reduce((max, item) => item.x > max ? item.x : max, -Infinity);
+    let maxXData = (dataLine.length > 0) ? Number((dataLine[dataLine.length-1] as serieData).x) : 0;
+    setDataGraph((s) => $u(s, {
+      xaxis: {max: {$set: maxXData > maxXMediciones ? maxXData : maxXMediciones }}
+    }))
+
+    setDataSerie((s) => $u(s, {
+      [1]: { data: { $set: mediciones } }
+    }));
+  }, [dataMedicion, showMediciones])
 
   useEffect(() => {
     let mediciones: serieData[] = showMediciones
@@ -361,7 +373,7 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion
       [1]: { data: { $set: mediciones } }
     }));
   }, [dataMedicion, showMediciones])
-
+  
 
   return (
     <>
