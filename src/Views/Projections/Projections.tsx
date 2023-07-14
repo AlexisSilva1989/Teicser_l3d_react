@@ -25,7 +25,7 @@ const Projections = () => {
 
   //STATES
   const [filtersParams, setFiltersParams] = useState<{ filterByEquipo: string | undefined }>({
-    filterByEquipo: undefined,
+    filterByEquipo: dataStateAs == null ? undefined : '-1',
   });
   const [IsFilter, setIsFilter] = useState<boolean>(false)
   const [showMediciones, setShowMediciones] = useState<boolean>(true)
@@ -208,7 +208,7 @@ const Projections = () => {
 
   //EFFECTS
   useEffect(() => {
-    if (filtersParams.filterByEquipo === undefined)
+    if (filtersParams.filterByEquipo === undefined || filtersParams.filterByEquipo === '-1')
       return
     getData()
   }, [filtersParams.filterByEquipo])
@@ -267,12 +267,14 @@ const Projections = () => {
             placeholder='Seleccione'
             source={'service_render/equipos'}
             label={'Equipo'}
-            value={filtersParams.filterByEquipo == undefined ? '-1' : filtersParams.filterByEquipo}
+            value={filtersParams.filterByEquipo}
             selector={(option) => {
               return { label: option.nombre, value: option.id.toString() };
             }}
             onChange={(data) => {
-              setFiltersParams(state => $u(state, { filterByEquipo: { $set: data != '-1' ? data : undefined } }))
+              setFiltersParams(state => $u(state, { 
+                filterByEquipo: { $set: data } 
+              }))
             }}
           />
         </Col>
