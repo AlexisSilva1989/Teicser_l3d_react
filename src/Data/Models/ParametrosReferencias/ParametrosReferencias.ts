@@ -15,4 +15,8 @@ export interface IParametrosReferencias {
   grado_pol_lifter:number
   grado_pol_placa:number
   grado_pol_placa_b:number
+
+  critico_lifter: number | null
+  critico_placa_a: number | null
+  critico_placa_b: number | null
 }

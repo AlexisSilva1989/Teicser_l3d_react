@@ -38,6 +38,9 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
       { num_samples_val_ia: initialData?.num_samples_val_ia },
       { num_samples_train_ia: initialData?.num_samples_train_ia },
       { ignore_cols_ia: initialData?.ignore_cols_ia },
+      { critico_lifter: initialData?.critico_lifter },
+      { critico_placa_a: initialData?.critico_placa_a },
+      { critico_placa_b: initialData?.critico_placa_b },
 
 
       { active_polinomio: initialData?.active_polinomio ? "1" : "0" },
@@ -54,6 +57,57 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
 
   return (<><form onSubmit={handleSubmit(onSubmit)} noValidate>
     <Row>
+      <Col sm={12}>
+        <Col sm={12} className="px-0 border rounded">
+          <Col className="pt-3">
+            <p className="mb-0" style={{ fontSize: "12px", fontWeight: 600 }}>Valores Críticos</p>
+          </Col>
+          <hr />
+          <Col sm={2} className={"mb-2"}>
+            <Textbox
+              type="number"
+              min={0}
+              label={`Valor crítico lifter *`}
+              name={"critico_lifter"}
+              id={"critico_lifter"}
+              placeholder={"Punto crítico lifter"}
+              ref={register({
+                min: { value: 0, message: 'Debe ser igual o mayor a 0' }
+              })}
+              errorForm={errors.critico_lifter}
+            />
+          </Col>
+          <Col sm={2} className={"mb-2"}>
+            <Textbox
+              type="number"
+              min={0}
+              label={`Valor crítico placa *`}
+              name={"critico_placa_a"}
+              id={"critico_placa_a"}
+              placeholder={"Punto crítico placa"}
+              ref={register({
+                min: { value: 0, message: 'Debe ser igual o mayor a 0' }
+              })}
+              errorForm={errors.critico_placa_a}
+            />
+          </Col>
+          <Col sm={2} className={"mb-2"}>
+            <Textbox
+              type="number"
+              min={0}
+              label={`Valor crítico placa b *`}
+              name={"critico_placa_b"}
+              id={"critico_placa_b"}
+              placeholder={"Punto crítico placa b"}
+              ref={register({
+                min: { value: 0, message: 'Debe ser igual o mayor a 0' }
+              })}
+              errorForm={errors.critico_placa_b}
+            />
+          </Col>
+        </Col>
+      </Col>
+
       <Col sm={12}>
         <Col sm={12} className="px-0 border rounded">
           <Col className="pt-3">
@@ -94,7 +148,7 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
               placeholder={"Días a proyectar"}
               ref={register({
                 required: { value: isPolinomio === "1", message: caps('validations:required') },
-                min: { value: 1 , message: 'Debe ser mayor a 0' }
+                min: { value: 1, message: 'Debe ser mayor a 0' }
               })}
               errorForm={errors.dias_pol}
             />
@@ -202,14 +256,14 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
               placeholder={"Días a proyectar"}
               ref={register({
                 required: { value: isIa === "1", message: caps('validations:required') },
-                min: { value: 1 , message: 'Debe ser mayor a 0' }
+                min: { value: 1, message: 'Debe ser mayor a 0' }
               })}
               errorForm={errors.dias_ia}
             />
           </Col>
 
           <Col className="px-0">
-            <hr className="mt-0"/>
+            <hr className="mt-0" />
             <Col className="pt-1">
               <p className="mb-0" style={{ fontSize: "12px", fontWeight: 600 }}>Configuración de entrenamiento IA</p>
             </Col>
@@ -249,7 +303,7 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
                 placeholder={"Num samples"}
                 ref={register({
                   required: { value: isIa === "1", message: caps('validations:required') },
-                  min: { value: 100 , message: 'Se recomiendan almenos 100 samples' }
+                  min: { value: 100, message: 'Se recomiendan almenos 100 samples' }
                 })}
                 errorForm={errors.num_samples_train_ia}
               />
@@ -266,7 +320,7 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
                 placeholder={"Num samples"}
                 ref={register({
                   required: { value: isIa === "1", message: caps('validations:required') },
-                  min: { value: 100 , message: 'Se recomiendan almenos 100 samples' }
+                  min: { value: 100, message: 'Se recomiendan almenos 100 samples' }
                 })}
                 step={1}
                 errorForm={errors.num_samples_val_ia}
