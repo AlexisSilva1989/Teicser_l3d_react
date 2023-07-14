@@ -155,6 +155,7 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
           </Col>
           <Col sm={2} className={"mb-2"}>
             <Textbox
+              type="number"
               label={`Tonelaje diario *`}
               name={"tonelaje_diario_componente"}
               id={"tonelaje_diario_componente"}
@@ -163,6 +164,7 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
               placeholder={"Tonelaje procesado"}
               ref={register({
                 required: { value: isPolinomio === "1", message: caps('validations:required') },
+                min: { value: 0, message: 'Debe ser igual 0 mayor a 0' }
               })}
               errorForm={errors.tonelaje_diario_componente}
             />
