@@ -88,7 +88,6 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
     setState((s) => $u(s, { init: { $set: true } }));
 
     if (onChange != null) {
-      console.log('state.data: ', state.data);
       if (props.value != undefined) {
         let value = props.value
         if(valueInObject){
