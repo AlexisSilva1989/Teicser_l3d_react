@@ -4,7 +4,7 @@ import ReactApexChart from 'react-apexcharts'
 import { $m, $u } from '../../Common/Utils/Reimports';
 import { YAxis } from 'recharts';
 
-interface serieData {
+export interface serieData {
   x: any;
   y: any;
   fillColor?: string | undefined;
@@ -34,7 +34,7 @@ interface ILineGraph {
 
 
 function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion, showMediciones, puntoCritico }: ILineGraph) {
-  const primaryColor = '#0D47A1'
+  const primaryColor = '#2c542e'
   const selectedColor = '#004D40'
   const [dataSerie, setDataSerie] = useState<{ name?: string, color?: string, type: string, data: serieData[] }[]>(
     [
@@ -98,12 +98,11 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion
     colors: [primaryColor],
     grid: {
       show: false,
-      borderColor: '#90A4AE',
-      strokeDashArray: 4,
+      strokeDashArray: 0,
       position: 'back',
       xaxis: {
         lines: {
-          show: true
+          show: false
         }
       },
       yaxis: {
@@ -122,14 +121,14 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion
       // tickAmount: 'dataPoints',
       min:0,
       max: undefined,
-      tickAmount: 10,
+      tickAmount: 4,
       title: {
         text: 'Tonelaje procesado acumulado [MMTon]',
         offsetY: -4,
         style: {
-          fontSize: '11px',
-          fontWeight: 600,
-          color: primaryColor
+          fontSize: '12px',
+          fontWeight: "normal",
+          // color: primaryColor
         }
       },
       crosshairs: {
@@ -165,9 +164,9 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion
       title: {
         text: 'Espesor [mm]',
         style: {
-          fontSize: '11px',
-          fontWeight: 600,
-          color: primaryColor
+          fontSize: '12px',
+          fontWeight: 'normal',
+          // color: primaryColor
         }
       },
       min: 0,
