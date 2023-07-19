@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { RefObject, useEffect, useRef, useState } from 'react'
 import { BaseContentView } from '../Common/BaseContentView'
-import { Col } from 'react-bootstrap'
+import { Button, Col } from 'react-bootstrap'
 import { ApiSelect } from '../../Components/Api/ApiSelect'
 import { Equipo } from '../../Data/Models/Equipo/Equipo'
 import { $m, $u } from '../../Common/Utils/Reimports'
 import { Datepicker } from '../../Components/Forms/Datepicker'
-import LineGraph from '../../Components/Graphs/LineGraph'
 import { Textbox } from '../../Components/Forms/Textbox'
 import { useDebounce } from 'use-debounce/lib'
 import { useNavigation } from '../../Common/Hooks/useNavigation'
@@ -16,18 +15,30 @@ import { ProjectionPolinomio } from '../../Data/Models/Proyeccion/Polinomio'
 import { useToasts } from 'react-toast-notifications'
 import { LoadingSpinner } from '../../Components/Common/LoadingSpinner'
 import { JSONObject } from '../../Data/Models/Common/general'
+import { JumpLabel } from '../../Components/Common/JumpLabel'
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import ContentLineGraph from '../../Components/Graphs/ContentLineGraph'
+import imageHeaderPdf from '../../Assets/pdf/headerProyecciones.png';
+import logoFooterPdf from '../../Assets/pdf/logoEmpresa.png';
+import { useDashboard } from '../../Common/Hooks/useDashboard'
 
 const Projections = () => {
   //HOOKS
   const { stateAs } = useNavigation();
   const dataStateAs = stateAs<{ data: { id: string } }>();
   const { addToast } = useToasts()
+  const { setLoading } = useDashboard();
 
   //STATES
-  const [filtersParams, setFiltersParams] = useState<{ filterByEquipo: string | undefined }>({
+  const [filtersParams, setFiltersParams] = useState<{
+    filterByEquipo: string | undefined
+    nameSelectedEquipo?: string | undefined
+  }>({
     filterByEquipo: dataStateAs == null ? undefined : '-1',
   });
   const [IsFilter, setIsFilter] = useState<boolean>(false)
+  const [IsDownloadPdf, setIsDownloadPdf] = useState<boolean>(false)
   const [showMediciones, setShowMediciones] = useState<boolean>(true)
   const [CriticalCondition, setCriticalCondition] = useState<{ type: string, value: string | undefined }>({
     type: "FECHA",
@@ -56,6 +67,7 @@ const Projections = () => {
     "placa": "PLACA",
     "placa_b": "PLACA B"
   }
+  const imagesRef = useRef<HTMLDivElement[]>([])
 
   //HANDLES
   const getGraphsComponents = () => {
@@ -66,40 +78,52 @@ const Projections = () => {
       let mediciones: { x: any; y: any; }[] = []
       let puntoCritico: number | undefined = undefined
 
-      if(TipoEspesor === 'placa'){
+      if (TipoEspesor === 'placa') {
         data = DataComponents[index].data.placa ?? []
         mediciones = DataComponents[index].mediciones.placa ?? []
         puntoCritico = DataComponents[index].puntosCriticos?.placa ?? undefined
       }
 
-      if(TipoEspesor === 'placa_b'){
+      if (TipoEspesor === 'placa_b') {
         data = DataComponents[index].data.placa_b ?? []
         mediciones = DataComponents[index].mediciones.placa_b ?? []
         puntoCritico = DataComponents[index].puntosCriticos?.placa ?? undefined
       }
 
-      if(TipoEspesor === 'lifter'){
+      if (TipoEspesor === 'lifter') {
         data = DataComponents[index].data.lifter ?? []
         mediciones = DataComponents[index].mediciones.lifter ?? []
         puntoCritico = DataComponents[index].puntosCriticos?.placa ?? undefined
       }
-
+      // graphs.push(
+      //   <Col sm={4} style={{ height: '36vh' }} ref={imageRef} className='py-3' key={`graph-component-${index}`}>
+      //     <Col className='h-100 p-0'>
+      //       <LineGraph title={DataComponents[index].nombre}
+      //         dataLine={data}
+      //         dataMedicion={mediciones}
+      //         timestamps={DataComponents[index].timeStamp ?? []}
+      //         dataSelected={FilterCriterioMill[index]}
+      //         fecha_medicion={DataComponents[index].crea_date}
+      //         showMediciones={showMediciones}
+      //         puntoCritico={puntoCritico}
+      //       />
+      //     </Col>
+      //   </Col>
+      // )
       graphs.push(
-        <Col sm={4} style={{ height: '36vh' }} className='py-3' key={`graph-component-${index}`}>
-          <Col className='h-100 p-0'>
-            <LineGraph title={DataComponents[index].nombre}
-              dataLine={data}
-              dataMedicion={mediciones}
-              timestamps={DataComponents[index].timeStamp ?? []}
-              dataSelected={FilterCriterioMill[index]}
-              fecha_medicion={DataComponents[index].crea_date}
-              showMediciones = {showMediciones}
-              puntoCritico={puntoCritico}
-            />
-          </Col>
-        </Col>
+        <ContentLineGraph
+          index={index}
+          title={DataComponents[index].nombre}
+          dataLine={data}
+          dataMedicion={mediciones}
+          timestamps={DataComponents[index].timeStamp ?? []}
+          dataSelected={FilterCriterioMill[index]}
+          fecha_medicion={DataComponents[index].crea_date}
+          showMediciones={showMediciones}
+          puntoCritico={puntoCritico}
+          onImageRef={handleImageRef(index)}
+        />
       )
-      
     });
     return graphs
   }
@@ -108,9 +132,9 @@ const Projections = () => {
     const filterSelect: IFilterCriterio[] = []
     DataComponents?.forEach((mill) => {
       let existDate: boolean = false
-      const dataEspesores = TipoEspesor === 'placa' 
-        ? mill.data?.placa 
-        : TipoEspesor === 'placa_b' 
+      const dataEspesores = TipoEspesor === 'placa'
+        ? mill.data?.placa
+        : TipoEspesor === 'placa_b'
           ? mill.data?.placa_b
           : mill.data?.lifter
 
@@ -145,9 +169,9 @@ const Projections = () => {
     const filterSelect: IFilterCriterio[] = []
     DataComponents?.forEach((mill) => {
 
-      const dataEspesores = TipoEspesor === 'placa' 
-        ? mill.data?.placa 
-        : TipoEspesor === 'placa_b' 
+      const dataEspesores = TipoEspesor === 'placa'
+        ? mill.data?.placa
+        : TipoEspesor === 'placa_b'
           ? mill.data?.placa_b
           : mill.data?.lifter
 
@@ -169,19 +193,19 @@ const Projections = () => {
       }
       if (!existEspesor) {
         const sizeEspesores = dataEspesores ? dataEspesores?.length : 0
-        const lastRegister =  sizeEspesores > 0 ? dataEspesores![sizeEspesores -1] : undefined
-        const isGreaterThan = espesor && lastRegister?.y > espesor 
+        const lastRegister = sizeEspesores > 0 ? dataEspesores![sizeEspesores - 1] : undefined
+        const isGreaterThan = espesor && lastRegister?.y > espesor
 
         filterSelect.push({
-          x:  isGreaterThan ? lastRegister?.x : undefined,
-          y:  isGreaterThan ? lastRegister?.y : undefined,
-          date: isGreaterThan ? mill.timeStamp[sizeEspesores-1] : undefined,
+          x: isGreaterThan ? lastRegister?.x : undefined,
+          y: isGreaterThan ? lastRegister?.y : undefined,
+          date: isGreaterThan ? mill.timeStamp[sizeEspesores - 1] : undefined,
           position: isGreaterThan ? sizeEspesores : undefined,
 
         })
       }
     });
-    
+
 
     setFilterCriterioMill(state => $u(state, { $set: filterSelect }))
   }
@@ -207,6 +231,13 @@ const Projections = () => {
   }
 
   //EFFECTS
+  useEffect(() => {
+    if(IsDownloadPdf){
+      setLoading(true)
+      printChart()
+    }
+  }, [IsDownloadPdf])
+
   useEffect(() => {
     if (filtersParams.filterByEquipo === undefined || filtersParams.filterByEquipo === '-1')
       return
@@ -236,7 +267,7 @@ const Projections = () => {
   }, [valueSearch, TipoEspesor, DataComponents])
 
   useEffect(() => {
-    if (DataComponents === undefined || DataComponents?.length === 0 ) {
+    if (DataComponents === undefined || DataComponents?.length === 0) {
       return
     }
 
@@ -258,6 +289,110 @@ const Projections = () => {
 
   }, [DataComponents])
 
+  const handleImageRef = (index: number) => (ref: HTMLDivElement) => {
+    imagesRef.current[index] = ref;
+
+    // imagesRef.current.push(ref)
+
+  };
+
+  const footerPDF = (pdf: jsPDF, bgColor: string, marginX: number) => {
+
+    const pageWidth = pdf.internal.pageSize.width
+    const pageHeight = pdf.internal.pageSize.height
+    const yPos = pageHeight - 16;
+
+    pdf.setFillColor(bgColor)
+    pdf.rect(marginX, yPos, pageWidth - (marginX * 2), 7, "F")
+    pdf.addImage(logoFooterPdf, 'PNG', marginX + 10, yPos + 1, 60, 5);
+
+    const firstFooterText = "©CIA. MINERA DOÑA INÉS DE COLLAHUASI - TEICSER SpA. 2023. All rights reserved - www.collahuasi.com"
+    pdf.setFontSize(8);
+    pdf.setFont("helvetica", "bold");
+    pdf.text(firstFooterText, 129, yPos + 3);
+
+    const secondFooterText = "Reproduction in whole or in part is prohibited without the prior written consent of the copyright owner"
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(8);
+    pdf.text(secondFooterText, 150, yPos + 6);
+  };
+
+  const headerPDf = (pdf: jsPDF, bgColor: string, marginX: number) => {
+    const title = `ANÁLISIS ${filtersParams.nameSelectedEquipo}`
+    const subTitle = `PROYECCIONES REVESTIMIENTOS`
+    const pageWidth = pdf.internal.pageSize.width
+
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(18)
+    pdf.setFillColor(bgColor)
+    pdf.setTextColor("#ffffff")
+
+    pdf.addImage(imageHeaderPdf, 'PNG', 10, 10, pageWidth - (marginX * 2), 18);
+
+    //TITULO
+    pdf.rect(marginX, 29, pageWidth - (marginX * 2), 9, "F")
+    var titleWidth = pdf.getTextWidth(title);
+    pdf.text(title, ((pageWidth - titleWidth) / 2), 36)
+
+    //SUB-TITULO
+    pdf.setFillColor(bgColor)
+    pdf.rect(marginX, 39, pageWidth - (marginX * 2), 8, "F")
+    var subTitleWidth = pdf.getTextWidth(subTitle);
+    pdf.text(subTitle, ((pageWidth - subTitleWidth) / 2), 45)
+  }
+
+  const printChart = () => {
+
+    const pdf = new jsPDF('landscape', 'mm', 'a4');
+
+    const bgColor = '#2c542e'
+    const marginX = 10
+
+    headerPDf(pdf, bgColor, marginX);
+    footerPDF(pdf, bgColor, marginX);
+
+    let isFirstRow = false
+    let positionGraphInRow = 0
+    const sizeHeader = 50
+    const heightGraph = 70
+    const widthGraph = 92
+
+    imagesRef.current.forEach((imageRef, index) => {
+      const input = imageRef
+      if (input) {
+        html2canvas(input).then((canvas) => {
+          //BANDERA CON 1 Y 2 PARA IR ALTERNADO ENTRE PRIMERA Y SEGUNDA FILA
+          positionGraphInRow = positionGraphInRow + 1
+          if (index % 3 === 0) {
+            isFirstRow = !isFirstRow
+            positionGraphInRow = 0
+          }
+
+          const positionGraphY = isFirstRow ? sizeHeader : (sizeHeader + heightGraph)
+          const positionGraphX = (positionGraphInRow * widthGraph) + marginX
+          const imgData = canvas.toDataURL('image/png');
+          pdf.addImage(imgData, 'PNG', positionGraphX, positionGraphY, widthGraph, heightGraph);
+
+          // Descargar el PDF cuando se hayan agregado todas las imágenes
+          if (index === imagesRef.current.length - 1) {
+            setIsDownloadPdf(false)
+            setLoading(false)
+            pdf.save('PROYECCIONES_REVESTIMIENTOS.pdf');
+          }
+
+          console.log('index: ', index);
+          if ((index + 1) % 6 === 0) {
+            pdf.addPage()
+            headerPDf(pdf, bgColor, marginX);
+            footerPDF(pdf, bgColor, marginX);
+            positionGraphInRow = 0
+          }
+        });
+      }
+    })
+  }
+
   return (
     <BaseContentView title="Proyecciones">
       <Col sm={12} className='px-0'>
@@ -271,9 +406,11 @@ const Projections = () => {
             selector={(option) => {
               return { label: option.nombre, value: option.id.toString() };
             }}
+            valueInObject={true}
             onChange={(data) => {
-              setFiltersParams(state => $u(state, { 
-                filterByEquipo: { $set: data } 
+              setFiltersParams(state => $u(state, {
+                filterByEquipo: { $set: data?.value ?? data },
+                nameSelectedEquipo: { $set: data?.label ?? undefined }
               }))
             }}
           />
@@ -282,7 +419,7 @@ const Projections = () => {
         <Col sm={2}>
           <ApiSelect
             name='typo_espesor_select'
-            label='Tipo'
+            label='Ubicación'
             value={TipoEspesor}
             source={selectUbicacion}
             selector={(option) => {
@@ -347,8 +484,8 @@ const Projections = () => {
         </Col>
 
         <Col sm={2}>
-          <label><b>Mediciones Entrenamiento:</b></label>
-          <div className="d-flex align-items-center justify-content-center" style={{height: "34px"}}>
+          <div className="d-flex align-items-center justify-content-start" style={{ height: "68px", gap: "8px" }}>
+            <label className='mb-0'><b>Mostrar Mediciones:</b></label>
             <input type="checkbox"
               id={'show_mediciones'}
               name={'show_mediciones'}
@@ -362,6 +499,19 @@ const Projections = () => {
           </div>
         </Col>
 
+        <Col sm={2}>
+          <JumpLabel />
+          <Button
+            disabled={!(DataComponents && (DataComponents.length > 0)) || IsDownloadPdf}
+            onClick={() => {
+              setIsDownloadPdf(true)
+            }}
+            className='w-100 d-flex justify-content-center align-items-center'>
+            <i className={`mx-2 ${IsDownloadPdf ? 'fas fa-circle-notch fa-spin' : "fas fa-file-pdf fa-lg"}`} />
+            <span className='mx-2' >Descargar</span>
+          </Button>
+        </Col>
+
         <Col sm={2} style={{ height: '66px' }} hidden={!IsFilter}>
           <Col sm={12} className='p-0 pt-3 h-100 d-flex align-items-center'>
             <BounceLoader color='var(--primary)' size={18} />
@@ -371,7 +521,7 @@ const Projections = () => {
 
 
       </Col>
-      <Col sm={12} className='px-0'>
+      <Col sm={12} className='px-0' id='container-charts'>
         {
           IsLoadData
             ? (<LoadingSpinner />)
