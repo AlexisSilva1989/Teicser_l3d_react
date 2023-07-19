@@ -88,8 +88,14 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
     setState((s) => $u(s, { init: { $set: true } }));
 
     if (onChange != null) {
+      console.log('state.data: ', state.data);
       if (props.value != undefined) {
-        onChange(props.value);
+        let value = props.value
+        if(valueInObject){
+          const findValue = state.data.filter(row => selector(row).value == props.value)
+          value = findValue.length > 0 ? selector(findValue[0]) as unknown as string : props.value
+        }
+        onChange(value);
       } else {
         if(props.isSelectFirtsOption && state.data.length > 0){
           onChange(valueInObject ? state.data[0] as string : selector(state.data[0]).value);
