@@ -29,6 +29,7 @@ export const EditEquipo = ( ) => {
       }else{
         setEquipoSelected({
           name:element?.nombre,
+          linea_trabajo: element?.linea_trabajo,
           tipo_equipo:element?.equipo_tipo?.id,
           status: element?.status,
           id: element?.id,
@@ -42,6 +43,7 @@ export const EditEquipo = ( ) => {
 		    const headers = { headers: { "Content-Type": "multipart/form-data" } };
         
         formData.append("nombre", data.name);
+        formData.append("linea_trabajo", data.linea_trabajo!.toString());
         formData.append("tipo_equipo", data.tipo_equipo);
         data?.id && formData.append("id_equipo", data?.id);
         data.server_selected && formData.append("server_selected", JSON.stringify(data.server_selected));

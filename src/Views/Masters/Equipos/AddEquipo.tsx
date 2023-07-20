@@ -26,6 +26,7 @@ export const AddEquipo = ( ) => {
         const formData = new FormData();
 		    const headers = { headers: { "Content-Type": "multipart/form-data" } };
         formData.append("nombre", data.name);
+        formData.append("linea_trabajo", data.linea_trabajo!.toString());
         formData.append("tipo_equipo", data.tipo_equipo);
         formData.append("server_selected", JSON.stringify(data.server_selected));
         formData.append("components_selected", JSON.stringify(data.components_selected));

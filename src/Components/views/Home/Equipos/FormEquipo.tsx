@@ -59,10 +59,12 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
     setValue([
       { name: initialData?.name },
       { tipo_equipo: initialData?.tipo_equipo },
+      { linea_trabajo: initialData?.linea_trabajo },
       { status: initialData?.status?.toString() },
       { id: initialData?.id },
     ]);
 
+    console.log('initialData: ', initialData);
   }, [initialData]);
 
 
@@ -146,6 +148,19 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
             {({ message }) => <small className={'text-danger'}>{message}</small>}
           </ErrorMessage>
         </Col>
+          
+        <Col sm={3} className={"mb-2"}>
+          <Textbox
+            type="number"
+            label="Línea de trabajo"
+            name={"linea_trabajo"}
+            id={"linea_trabajo"}
+            placeholder={"Línea de trabajo"}
+            ref={register()}
+            errorForm={errors.linea_trabajo}
+          />
+        </Col>
+
         {
           isEdit && <Col sm={3}>
             <label><b>Activo *:</b></label>

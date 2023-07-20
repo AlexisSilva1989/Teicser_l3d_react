@@ -24,6 +24,7 @@ export interface Equipo {
   id: string
   nombre: string
   status: string
+  linea_trabajo: number
 }
 
 export interface EquipoSingle { nombre: string | undefined, tipo: string | undefined }
@@ -49,6 +50,7 @@ export interface IDataFormEquipo {
   id?: string
   name: string
   tipo_equipo: string
+  linea_trabajo?: number
   file_scaler?: any
   file_model?: any
   status?: string
@@ -70,12 +72,15 @@ export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] 
     {
       selector: 'nombre',
       name: header('columns:name'),
-      format: (equipo) => equipo.nombre
     },
     {
       selector: 'tipo',
       name: header('columns:type'),
       format: (equipo) => equipo.equipo_tipo.nombre_corto
+    },
+    {
+      selector: 'linea_trabajo',
+      name: 'Línea de trabajo',
     },
     {
       selector: 'activo',
