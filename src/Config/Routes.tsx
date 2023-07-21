@@ -46,6 +46,8 @@ import EditAlarmasEquipo from "../Views/Masters/Alarms/EditAlarmasEquipo";
 import ListTonelajeRevestimiento from "../Views/Masters/TonelajeRevestimiento/ListTonelajeRevestimiento";
 import DatosOperativos from "../Views/Masters/DatosOperativos/DatosOperativos";
 import Projections from "../Views/Projections/Projections";
+import DashboardBinnacle from "../Views/Binnacle/DashboardBinnacle";
+import InsertBinnacle from "../Views/Binnacle/InsertBinnacle";
 
 
 interface Route {
@@ -242,6 +244,18 @@ const routes: RouteGroup[] = [
     prefix: "routes:base.projections",
     routes: [
       { path: "routes:meta.base", component: <Projections /> },
+    ],
+  },
+  {
+    prefix: "routes:base.insert_binnacle",
+    routes: [
+      { path: "routes:meta.base", component: <InsertBinnacle /> },
+    ],
+  },
+  {
+    prefix: "routes:base.time_line_binnacle",
+    routes: [
+      { path: "routes:meta.base", component: <DashboardBinnacle /> },
     ],
   },
 ];
