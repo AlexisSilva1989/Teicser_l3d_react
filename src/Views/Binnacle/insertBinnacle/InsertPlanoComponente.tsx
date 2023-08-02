@@ -15,6 +15,9 @@ import { useShortModal } from '../../../Common/Hooks/useModal';
 import { AxiosError } from 'axios';
 import { JumpLabel } from '../../../Components/Common/JumpLabel';
 import { IPlanosComponentes, IPlanosComponentesColumns } from '../../../Data/Models/Binnacle/PlanosComponentes';
+import { ApiSelect } from '../../../Components/Api/ApiSelect';
+import { IComponente } from '../../../Data/Models/Componentes/Componentes';
+import { Textbox } from '../../../Components/Forms/Textbox';
 
 
 interface IPlanoComponente {
@@ -37,21 +40,63 @@ const InsertPlanoComponente = ({
   const [PdfToDelete, setPdfToDelete] = useState<{ id: string | undefined, name: string | undefined }>(
     { id: undefined, name: undefined }
   );
+  const [idComponentSelected, setIdComponentSelected] = useState<string | undefined>(undefined)
+  const [nombreComponentSelected, setNombreComponentSelected] = useState<string | undefined>(undefined)
+  const [componentsForTraining, setComponentsForTraining] = useState<IComponente[]>([])
+
+  const [idPlanoConjunto, setIdPlanoConjunto] = useState<string>();
   const [display, setDisplay] = useState<string>();
-  const [reportePdf, setPeportePdf] = useState<any>();
+  const [reportePdf, setReportePdf] = useState<any>(null);
   const [filtersParams, setFiltersParams] = useState<{
     filterByEquipo: string | undefined
   }>({
     filterByEquipo: undefined
   })
+  const [pdfData, setPdfData] = useState<any>(null);
+  const [IsLoadingPdf, setIsLoadingPdf] = useState<boolean>(true);
 
   //Effects 
   useEffect(() => {
     setFiltersParams(state => $u(state, { filterByEquipo: { $set: idEquipo } }))
+    if (idEquipo == undefined) { return }
+    updateComponentes(idEquipo);
+    setIsLoadingPdf(true);
+    ax.get<ArrayBuffer>($j('planos_conjunto', "last", idEquipo), { responseType: 'arraybuffer' })
+      .then(response => {
+        let urlPDF = null
+        if (response.data) {
+          const archivoPDF = new Blob([response.data], { type: 'application/pdf' });
+          urlPDF = URL.createObjectURL(archivoPDF);
+        }
+        setPdfData(urlPDF);
+      }).finally(() => {
+        setIsLoadingPdf(false);
+      });
   }, [idEquipo])
 
+  //ACTUALIZAR COMPONENTES DE EQUIPO
+  const updateComponentes = async (equipoId: string) => {
+    setIdComponentSelected(undefined);
+    await ax.get<IComponente[]>('service_render/equipos/componentes_asignados', { params: { equipo_id: equipoId } })
+      .then((response) => {
+        setComponentsForTraining(response.data);
+        setIdComponentSelected(response.data.length > 0 ? response.data[0].id : undefined);
+        setNombreComponentSelected(response.data.length > 0 ? response.data[0].nombre : undefined);
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(caps('errors:base.load', { element: "componentes" }), {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
+      }).finally(() => {
+        // setLoadingData(false);
+      });
+  }
+
   const handleChangeFile = async (fileData: any) => {
-    setPeportePdf(fileData)
+    setReportePdf(fileData)
   }
 
   const handleChangeDisplay = (display: string | undefined) => {
@@ -63,9 +108,17 @@ const InsertPlanoComponente = ({
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
     formData.append("idEquipo", filtersParams.filterByEquipo as string);
     formData.append("file", reportePdf);
+    formData.append("idComponente", idComponentSelected as string);
+    if (idPlanoConjunto !== undefined) {
+      formData.append("idPlanoConjunto", idPlanoConjunto as string);
+    }
+
     setLoading(true);
     await ax.post('planos_componentes', formData, headers)
       .then((response) => {
+        setDisplay(undefined)
+        setIdPlanoConjunto("")
+        setReportePdf(null)
         doReloadTable()
         addToast(caps('success:base.success'), {
           appearance: 'success',
@@ -74,9 +127,9 @@ const InsertPlanoComponente = ({
       })
       .catch((e: AxiosError) => {
         if (e.response) {
-          const msgError = e.response.data.errors 
-          ? e.response.data.errors[Object.keys(e.response.data.errors)[0]] 
-          : caps('errors:base.post', { element: "planos de componentes"})
+          const msgError = e.response.data.errors
+            ? e.response.data.errors[Object.keys(e.response.data.errors)[0]]
+            : caps('errors:base.post', { element: "planos de componentes" })
           addToast(msgError,
             { appearance: 'error', autoDismiss: true }
           );
@@ -110,7 +163,7 @@ const InsertPlanoComponente = ({
     setLoading(true);
     const idPDF = PdfToDelete.id?.toString() as string
     console.log('idPDF: ', idPDF);
-    ax.get($j('planos_componentes', "delete", idPDF) )
+    ax.get($j('planos_componentes', "delete", idPDF))
       .then((response) => {
         doReloadTable()
         addToast('Plano de componente eliminado correctamente', {
@@ -120,9 +173,9 @@ const InsertPlanoComponente = ({
       })
       .catch((e: AxiosError) => {
         if (e.response) {
-          const msgError = e.response.data.errors 
-          ? e.response.data.errors[Object.keys(e.response.data.errors)[0]] 
-          : caps('errors:base.post', { element: "plano de componente"})
+          const msgError = e.response.data.errors
+            ? e.response.data.errors[Object.keys(e.response.data.errors)[0]]
+            : caps('errors:base.post', { element: "plano de componente" })
           addToast(msgError,
             { appearance: 'error', autoDismiss: true }
           );
@@ -134,44 +187,100 @@ const InsertPlanoComponente = ({
   }
 
   return (<>
-    <Col sm={12} className="d-sm-flex justify-content-end align-items-end px-0 py-2">
-      
-      <Col sm={3} xs={12}>
-        <FileInputWithDescription
-          id={"inputFile"}
-          name={"inputFile"}
-          label="Seleccionar Plano de componente"
-          onChange={handleChangeFile}
-          onChangeDisplay={handleChangeDisplay}
-          display={display}
-          accept={["pdf"]}
-        // errors={errorsReportePdf}
-        />
-      </Col>
-      <Col sm={2} md={1} xs={12} >
-        <JumpLabel/>
-        <Button onClick={onClickEnviar}>
-          Guardar
-        </Button>
-      </Col>
-      <div className="col-lg-3 col-md-5 col-sm-6 col-xs-12 " >
-        <SearchBar  outerClassName="mb-0" onChange={doSearch} />
-      </div>
-    </Col>
 
-    <Col sm={12} className=' px-0'>
-      {filtersParams.filterByEquipo === undefined ?
-        <LoadingSpinner /> :
-        <ApiTable<IPlanosComponentes>
-          columns={IPlanosComponentesColumns(intl, { verPDF, deletePdf })}
-          source={"planos_componentes"}
-          paginationServe={true}
-          filterServeParams={filtersParams}
-          search={search}
-          reload={reloadTable}
-        />
-      }
-    </Col>
+    {
+      IsLoadingPdf ?
+        <Col sm={12} className='px-0'> <LoadingSpinner /> </Col>
+        : (
+          <Col sm={12} className='px-0'>
+            <Col sm={12} className="d-sm-flex justify-content-start align-items-end px-0 py-2">
+              <Col sm={3} xs={12}>
+                <ApiSelect<IComponente>
+                  name='componente'
+                  label='Componente'
+                  placeholder='Seleccione componente'
+                  className='mb-0'
+                  source={componentsForTraining}
+                  value={idComponentSelected}
+                  selector={(option: IComponente) => {
+                    return { label: option.nombre, value: option.id.toString() };
+                  }}
+                  valueInObject={true}
+                  onChange={(data) => {
+                    setIdComponentSelected(data.value ?? data)
+                    data.label && setNombreComponentSelected(data.label)
+                  }}
+                // isLoading={loadingData}
+                // isDisabled={loadingData}
+                />
+              </Col>
+              <Col sm={2} xs={12}>
+                <FileInputWithDescription
+                  id={"inputFile"}
+                  name={"inputFile"}
+                  label="Plano"
+                  onChange={handleChangeFile}
+                  onChangeDisplay={handleChangeDisplay}
+                  display={display}
+                  accept={["pdf"]}
+                />
+              </Col>
+
+              <Col sm={2} xs={12} >
+                <Textbox
+                  id='id_plano'
+                  name='id_plano'
+                  label={'Id en plano de conjunto'}
+                  value={idPlanoConjunto}
+                  onChange={
+                    (data) => {
+                      setIdPlanoConjunto(data as string)
+                    }
+                  }
+                />
+              </Col>
+              <Col sm={2} xs={12} >
+                <JumpLabel />
+                <Button onClick={onClickEnviar} disabled={reportePdf === null || idComponentSelected === undefined}>
+                  Guardar
+                </Button>
+              </Col>
+            </Col>
+
+            <Col sm={12} xl={6} className="d-none py-2 d-sm-inline-block" style={{ height: "100vh" }} >
+              <object
+                data={pdfData}
+                type='application/pdf'
+                width="100%"
+                height="100%"
+              />
+            </Col>
+
+            <Col sm={12} xl={6} className="px-0 py-2">
+              <Col sm={12} className="d-sm-flex justify-content-end align-items-end px-0 py-2">
+                <div className="col-lg-6 col-md-8 col-sm-10 col-xs-12 " >
+                  <SearchBar outerClassName="mb-0" onChange={doSearch} />
+                </div>
+              </Col>
+
+              <Col sm={12} className=' px-0'>
+                {filtersParams.filterByEquipo === undefined ?
+                  <LoadingSpinner /> :
+                  <ApiTable<IPlanosComponentes>
+                    columns={IPlanosComponentesColumns(intl, { verPDF, deletePdf })}
+                    source={"planos_componentes"}
+                    paginationServe={true}
+                    filterServeParams={filtersParams}
+                    search={search}
+                    reload={reloadTable}
+                  />
+                }
+              </Col>
+            </Col>
+          </Col>
+        )
+    }
+
     <Modal show={modalConfirmarEliminar.visible} onHide={modalConfirmarEliminar.hide}>
       <Modal.Header closeButton>
         <b>Eliminar plano de componente</b>

@@ -6,6 +6,7 @@ import { EquipoTipo } from '../../Data/Models/Equipo/Equipo';
 import { $u } from '../../Common/Utils/Reimports';
 import { JumpLabel } from '../../Components/Common/JumpLabel';
 import PlanosAntiguos from './PlanosAntiguos';
+import PlanosActuales from './planos/PlanosActuales';
 
 
 const DashboardBinnacle = () => {
@@ -18,7 +19,7 @@ const DashboardBinnacle = () => {
     nombre: undefined
   })
 
-  const [SubModuleSelected, setSubModuleSelected] = useState("planos")
+  const [SubModuleSelected, setSubModuleSelected] = useState("planos_actuales")
 
   return (<>
     <BaseContentView title='Bitácora'>
@@ -41,23 +42,21 @@ const DashboardBinnacle = () => {
           }}
         />
       </Col>
-      <Col sm={2} className="pt-2">
+      {/* <Col sm={2} className="pt-2">
         <JumpLabel />
         <Button variant="outline-primary"
           disabled={SubModuleSelected === "time_line"}
           onClick={() => { setSubModuleSelected("time_line") }}
           className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
-          {/* <i className={'mx-2 fas fa-play fa-lg'} /> */}
           <span className='mx-2' >Time line</span>
         </Button>
-      </Col>
+      </Col> */}
       <Col sm={1} className="pt-2">
         <JumpLabel />
         <Button variant="outline-primary"
-          disabled={SubModuleSelected === "planos"}
-          onClick={() => { setSubModuleSelected("planos") }}
+          disabled={SubModuleSelected === "planos_actuales"}
+          onClick={() => { setSubModuleSelected("planos_actuales") }}
           className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
-          {/* <i className={'mx-2 fas fa-play fa-lg'} /> */}
           <span className='mx-2' >Planos</span>
         </Button>
       </Col>
@@ -67,17 +66,15 @@ const DashboardBinnacle = () => {
           disabled={SubModuleSelected === "planos_antiguos"}
           onClick={() => { setSubModuleSelected("planos_antiguos") }}
           className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
-          {/* <i className={'mx-2 fas fa-play fa-lg'} /> */}
           <span className='mx-2' >Planos antiguos</span>
         </Button>
       </Col>
 
-      <Col sm={12} hidden={SubModuleSelected !== "time_line"}>
+      {/* <Col sm={12} hidden={SubModuleSelected !== "time_line"}>
         "agregar modulo time line"
-      </Col>
-      <Col sm={12} hidden={SubModuleSelected !== "planos"}>
-        "agregar modulo planos"
-      </Col>
+      </Col> */}
+
+      {SubModuleSelected === "planos_actuales" && (<PlanosActuales idEquipo={equipoSelected.id}/>) }
       {SubModuleSelected === "planos_antiguos" && (<PlanosAntiguos idEquipo={equipoSelected.id}/>) }
     </BaseContentView>
   </>)

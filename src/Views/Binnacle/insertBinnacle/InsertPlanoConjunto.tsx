@@ -38,7 +38,7 @@ const InsertPlanoConjunto = ({
     { id: undefined, name: undefined }
   );
   const [display, setDisplay] = useState<string>();
-  const [reportePdf, setPeportePdf] = useState<any>();
+  const [reportePdf, setReportePdf] = useState<any>(null);
   const [filtersParams, setFiltersParams] = useState<{
     filterByEquipo: string | undefined
   }>({
@@ -51,7 +51,7 @@ const InsertPlanoConjunto = ({
   }, [idEquipo])
 
   const handleChangeFile = async (fileData: any) => {
-    setPeportePdf(fileData)
+    setReportePdf(fileData)
   }
 
   const handleChangeDisplay = (display: string | undefined) => {
@@ -66,6 +66,8 @@ const InsertPlanoConjunto = ({
     setLoading(true);
     await ax.post('planos_conjunto', formData, headers)
       .then((response) => {
+        setDisplay("")
+        setReportePdf(null)
         doReloadTable()
         addToast(caps('success:base.success'), {
           appearance: 'success',
@@ -150,7 +152,7 @@ const InsertPlanoConjunto = ({
       </Col>
       <Col sm={2} md={1} xs={12} >
         <JumpLabel/>
-        <Button onClick={onClickEnviar}>
+        <Button onClick={onClickEnviar} disabled={reportePdf === null}>
           Guardar
         </Button>
       </Col>

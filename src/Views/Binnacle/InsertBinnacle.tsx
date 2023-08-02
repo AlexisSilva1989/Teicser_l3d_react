@@ -8,6 +8,7 @@ import { $u } from '../../Common/Utils/Reimports';
 import PlanosAntiguos from './PlanosAntiguos';
 import InsertPlanoConjunto from './insertBinnacle/InsertPlanoConjunto';
 import InsertPlanoComponente from './insertBinnacle/InsertPlanoComponente';
+import TimeLineTest from './timeLine/TimeLineTest';
 
 const InsertBinnacle = () => {
   const [equipoSelected, setEquipoSelected] = useState<{
@@ -43,16 +44,15 @@ const InsertBinnacle = () => {
           }}
         />
       </Col>
-      <Col sm={2} className="pt-2">
+      {/* <Col sm={2} className="pt-2">
         <JumpLabel />
         <Button variant="outline-primary"
           disabled={SubModuleSelected === "time_line"}
           onClick={() => { setSubModuleSelected("time_line") }}
           className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
-          {/* <i className={'mx-2 fas fa-play fa-lg'} /> */}
           <span className='mx-2' >Time line</span>
         </Button>
-      </Col>
+      </Col> */}
       <Col sm={2} className="pt-2">
         <JumpLabel />
         <Button variant="outline-primary"
@@ -72,7 +72,7 @@ const InsertBinnacle = () => {
         </Button>
       </Col>
 
-      {SubModuleSelected === "time_line" && (<Col sm={12} > Registro de linea de tiempo</Col>) }
+      {/* {SubModuleSelected === "time_line" && (<TimeLineTest />) } */}
       {SubModuleSelected === "planos_conjunto" && (<InsertPlanoConjunto idEquipo={equipoSelected.id}/>) }
       {SubModuleSelected === "planos_componentes" && (<InsertPlanoComponente idEquipo={equipoSelected.id}/>) }
     </BaseContentView>
