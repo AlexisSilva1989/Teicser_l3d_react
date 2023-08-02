@@ -186,7 +186,7 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
     }
   });
 
-  return <div className={'ServerSelect form-group ' + (props.span ? 'col-' + props.span : '')}>
+  return <div className={'ServerSelect form-group ' + props.className}>
     {props.label && <label>
       <b>
         {caps(props.label)}
