@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
-import { BaseContentView } from '../Common/BaseContentView';
+import { BaseContentView } from '../../Common/BaseContentView';
 import { Button, Col } from 'react-bootstrap';
-import { ApiSelect } from '../../Components/Api/ApiSelect';
-import { EquipoTipo } from '../../Data/Models/Equipo/Equipo';
-import { JumpLabel } from '../../Components/Common/JumpLabel';
-import { $u } from '../../Common/Utils/Reimports';
-import PlanosAntiguos from './PlanosAntiguos';
-import InsertPlanoConjunto from './insertBinnacle/InsertPlanoConjunto';
-import InsertPlanoComponente from './insertBinnacle/InsertPlanoComponente';
-import TimeLineTest from './timeLine/TimeLineTest';
+import { ApiSelect } from '../../../Components/Api/ApiSelect';
+import { EquipoTipo } from '../../../Data/Models/Equipo/Equipo';
+import { JumpLabel } from '../../../Components/Common/JumpLabel';
+import { $u } from '../../../Common/Utils/Reimports';
+import InsertPlanoConjunto from '../insertBinnacle/InsertPlanoConjunto';
+import InsertPlanoComponente from '../insertBinnacle/InsertPlanoComponente';
+import TimeLineTest from '../timeLine/TimeLineTest';
 
-const InsertBinnacle = () => {
+const InsertPlanos = () => {
   const [equipoSelected, setEquipoSelected] = useState<{
     id: string | undefined
     nombre: string | undefined
@@ -72,11 +71,11 @@ const InsertBinnacle = () => {
         </Button>
       </Col>
 
-      {/* {SubModuleSelected === "time_line" && (<TimeLineTest />) } */}
+      {SubModuleSelected === "time_line" && (<TimeLineTest />) }
       {SubModuleSelected === "planos_conjunto" && (<InsertPlanoConjunto idEquipo={equipoSelected.id}/>) }
       {SubModuleSelected === "planos_componentes" && (<InsertPlanoComponente idEquipo={equipoSelected.id}/>) }
     </BaseContentView>
   )
 }
 
-export default InsertBinnacle
+export default InsertPlanos

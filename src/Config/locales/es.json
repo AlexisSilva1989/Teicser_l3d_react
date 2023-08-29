@@ -47,8 +47,8 @@
 	"menus:data_tdr": "Tonelaje por revestimiento",
 	"menus:data_op": "Datos operacionales",
 	"menus:binnacle": "Bitácora por equipo",
-	"menus:insert_binnacle": "Ingreso de datos",
-	"menus:time_line_binnacle": "Time line",
+	"menus:insert_binnacle": "Ingreso de planos",
+	"menus:time_line_binnacle": "ver planos",
 
 	"menus:dashboard": "dashboard",
 	"menus:simulation_days": "proyección a 30 días",
@@ -121,8 +121,8 @@
 	"routes:base.data_tdr": "tonelaje_revestimiento",
 	"routes:base.data_op": "data_operacional",
 	"routes:base.projections": "proyecciones",
-	"routes:base.insert_binnacle": "ingreso_bitacora",
-	"routes:base.time_line_binnacle": "time_line",
+	"routes:base.insert_binnacle": "ingreso_plano",
+	"routes:base.time_line_binnacle": "ver_planos",
 
 
   "routes_base":"----------------------------------------------",

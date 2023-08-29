@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
-import { BaseContentView } from '../Common/BaseContentView'
+import { BaseContentView } from '../../Common/BaseContentView'
 import { Button, Col } from 'react-bootstrap';
-import { ApiSelect } from '../../Components/Api/ApiSelect';
-import { EquipoTipo } from '../../Data/Models/Equipo/Equipo';
-import { $u } from '../../Common/Utils/Reimports';
-import { JumpLabel } from '../../Components/Common/JumpLabel';
+import { ApiSelect } from '../../../Components/Api/ApiSelect';
+import { EquipoTipo } from '../../../Data/Models/Equipo/Equipo';
+import { $u } from '../../../Common/Utils/Reimports';
+import { JumpLabel } from '../../../Components/Common/JumpLabel';
 import PlanosAntiguos from './PlanosAntiguos';
-import PlanosActuales from './planos/PlanosActuales';
+import PlanosActuales from './PlanosActuales';
 
 
-const DashboardBinnacle = () => {
+const DashboardPlano = () => {
 
   const [equipoSelected, setEquipoSelected] = useState<{
     id: string | undefined
@@ -80,4 +80,4 @@ const DashboardBinnacle = () => {
   </>)
 }
 
-export default DashboardBinnacle
+export default DashboardPlano
