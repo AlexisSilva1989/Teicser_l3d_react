@@ -3,6 +3,8 @@ import { ParamsColumnsCallback } from "../../../Common/Utils/LocalizedColumnsCal
 import { Equipo } from "../Equipo/Equipo";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { IComponente } from "../Componentes/Componentes";
+import { $m } from "../../../Common/Utils/Reimports";
+import { IFabricante } from "../Fabricantes/fabricantes";
 
 export interface IPlanosComponentes {
   fecha_carga: string
@@ -10,6 +12,7 @@ export interface IPlanosComponentes {
   crea_date: Date
   equipo?: Equipo
   componente?: IComponente
+  fabricante?: IFabricante
   ruta: string
   tag_plano_conjunto: string
   id?: string
@@ -17,14 +20,17 @@ export interface IPlanosComponentes {
 
 export const IPlanosComponentesColumns: ParamsColumnsCallback<IPlanosComponentes> = (intl, params) => {
   return [
-    { name: 'Componente', width: '25%',selector: (row) => (row.componente?.nombre as string) },
-    { name: 'Id. Plano Conj.', width: '15%',selector: (row) => (row.tag_plano_conjunto as string) },
-    { name: 'Nombre de archivo', width: '30%', selector: (row) => (row.pdf_name) },
-    { name: 'Fecha de carga', width: '20%', selector: (row) => row.crea_date },
+    { name: 'Fabricante', width: '25%',selector: (row) => (row.fabricante?.name as string) },
+    { name: 'Plano', width: '32%', selector: (row) => (row.pdf_name) },
+    { 
+      name: 'Fecha de carga', 
+      width: '24%', 
+      selector: (row) => $m.utc(row.crea_date).format('YYYY-MM-DD')
+    },
     {
       name: 'Ver',
       center: true,
-      width: '5%',
+      width: '7%',
       cell: plano => (<>
         <div className="col-6 font-size-18 text-center">
           <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-ver"}> Ver en pestaña nueva </Tooltip>}>
@@ -38,7 +44,7 @@ export const IPlanosComponentesColumns: ParamsColumnsCallback<IPlanosComponentes
     {
       name: 'Eliminar',
       center: true,
-      width: '5%',
+      width: '7%',
       cell: plano => (<>
           <div className="col-6 font-size-18 text-center">
             <OverlayTrigger placement="top" overlay={ <Tooltip id={"tooltip-delete"}> Eliminar </Tooltip> }>
@@ -55,14 +61,18 @@ export const IPlanosComponentesColumns: ParamsColumnsCallback<IPlanosComponentes
 
 export const IPlanosComponentesColumnView: ParamsColumnsCallback<IPlanosComponentes> = (intl, params) => {
   return [
-    { name: 'Componente', width: '25%',selector: (row) => (row.componente?.nombre as string) },
-    { name: 'Id. Plano Conj.', width: '15%',selector: (row) => (row.tag_plano_conjunto as string) },
-    { name: 'Nombre de archivo', width: '30%', selector: (row) => (row.pdf_name) },
-    { name: 'Fecha de carga', width: '20%', selector: (row) => row.crea_date },
+    { name: 'Fabricante', width: '25%', selector: (row) => (row.fabricante?.name as string) },
+    { name: 'Plano', width: '32%', selector: (row) => (row.pdf_name) },
+    { 
+      name: 'Última actualización',
+      width: '24%',
+      selector: (row) =>  $m.utc(row.crea_date).format('YYYY-MM-DD'),
+      center: true,
+    },
     {
       name: 'Ver',
       center: true,
-      width: '5%',
+      width: '14%',
       cell: plano => (<>
         <div className="col-6 font-size-18 text-center">
           <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-ver"}> Ver en pestaña nueva </Tooltip>}>

@@ -9,11 +9,11 @@ import { LoadingSpinner } from '../../../Components/Common/LoadingSpinner'
 import { IPlanosComponentes, IPlanosComponentesColumnView } from '../../../Data/Models/Binnacle/PlanosComponentes'
 import { ax } from '../../../Common/Utils/AxiosCustom'
 import { useDashboard } from '../../../Common/Hooks/useDashboard'
-import { ApiSelect } from '../../../Components/Api/ApiSelect'
+// import { ApiSelect } from '../../../Components/Api/ApiSelect'
 import { IComponente } from '../../../Data/Models/Componentes/Componentes'
 import { useToasts } from 'react-toast-notifications'
 import { AxiosError } from 'axios'
-import { JumpLabel } from '../../../Components/Common/JumpLabel'
+// import { JumpLabel } from '../../../Components/Common/JumpLabel'
 
 interface IPlanosAntiguosProps {
   idEquipo: string | undefined
@@ -76,7 +76,7 @@ const PlanosAntiguos = ({
 
   return (<>
     <Col sm={12} className="d-flex justify-content-end align-items-end px-0 pb-4">
-      <Col sm={3} xs={12}>
+      {/* <Col sm={3} xs={12}>
         <ApiSelect<IComponente>
           name='componente'
           label='Componente'
@@ -94,7 +94,7 @@ const PlanosAntiguos = ({
         // isLoading={loadingData}
         // isDisabled={loadingData}
         />
-      </Col>
+      </Col> */}
       <div className="col-lg-3 col-md-5 col-sm-6">
         <SearchBar onChange={doSearch} outerClassName='mb-0'/>
       </div>

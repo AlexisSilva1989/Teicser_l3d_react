@@ -2,6 +2,7 @@ import React from "react";
 import { ParamsColumnsCallback } from "../../../Common/Utils/LocalizedColumnsCallback";
 import { Equipo } from "../Equipo/Equipo";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { $m } from "../../../Common/Utils/Reimports";
 
 export interface IPlanosConjunto {
   fecha_carga: string
@@ -15,8 +16,12 @@ export interface IPlanosConjunto {
 export const IPlanosConjuntosColumns: ParamsColumnsCallback<IPlanosConjunto> = (intl, params) => {
   return [
     { name: 'Equipo', width: '20%',selector: (row) => (row.equipo?.nombre as string).toUpperCase() },
-    { name: 'Nombre de archivo', width: '45%', selector: (row) => (row.pdf_name) },
-    { name: 'Fecha de carga', width: '20%', selector: (row) => row.crea_date },
+    { name: 'Plano', width: '45%', selector: (row) => (row.pdf_name) },
+    { 
+      name: 'Fecha de carga', 
+      width: '20%', 
+      selector: (row) => $m.utc(row.crea_date).format('YYYY-MM-DD') 
+    },
     {
       name: 'Ver',
       center: true,
