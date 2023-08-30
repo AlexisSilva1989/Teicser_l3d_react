@@ -80,7 +80,6 @@ export const FileInputWithDescription = (props: Props) => {
             style={{ height: '30px' }}
             ref={input}
             onChange={(e) => {
-              console.log('e: ', e.target.files);
               const files = e.target.files;
               if (files && files.length !== 0) {
                 //VALIDAR QUE EL ARCHIVO SELECCIONADO ESTA DENTRO DE LOS FORMATOS PERMITIDOS
