@@ -39,21 +39,21 @@ export const ListProjection = () => {
 	const updateComponentes = async (equipoId: string) => {
 		setLoadingData(true);
 
-			await ax.get<IComponente[]>('service_render/componentes/componentes_with_data', 
-				{ params: { equipo_id: equipoId ,  typeData: 'PROJECTED' } })
-				.then((response) => {
-					setComponentsForTraining(response.data);
-				})
-				.catch((e: AxiosError) => {
-					if (e.response) {
-						addToast(caps('errors:base.load', { element: "componentes" }), {
-							appearance: 'error',
-							autoDismiss: true,
-						});
-					}
-				}).finally(() => {
-					setLoadingData(false);
-				});
+		await ax.get<IComponente[]>('service_render/componentes/componentes_with_data',
+			{ params: { equipo_id: equipoId, typeData: 'PROJECTED' } })
+			.then((response) => {
+				setComponentsForTraining(response.data);
+			})
+			.catch((e: AxiosError) => {
+				if (e.response) {
+					addToast(caps('errors:base.load', { element: "componentes" }), {
+						appearance: 'error',
+						autoDismiss: true,
+					});
+				}
+			}).finally(() => {
+				setLoadingData(false);
+			});
 		setFiltersParams(state => $u(state, { filterByComponente: { $set: undefined } }))
 	}
 
@@ -65,7 +65,7 @@ export const ListProjection = () => {
 		labelBotton="nueva proyección"
 		paginationServe={true}
 		paramsFilter={filtersParams}
-    onSelect={"details"}
+		onSelect={"details"}
 	>
 		<ApiSelect<Equipo>
 			name='equipo_select'

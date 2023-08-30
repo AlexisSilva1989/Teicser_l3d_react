@@ -1,16 +1,16 @@
-import { AxiosError } from 'axios';
-import React, { useState } from 'react';
-import { useToasts } from 'react-toast-notifications';
-import { useApi } from '../../../Common/Hooks/useApi';
-import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
-import { useNavigation } from '../../../Common/Hooks/useNavigation';
-import { ax } from '../../../Common/Utils/AxiosCustom';
-import { Buttons } from '../../../Components/Common/Buttons';
-import FormEquipo from '../../../Components/views/Home/Equipos/FormEquipo';
-import { IDataFormEquipo } from '../../../Data/Models/Equipo/Equipo';
+import React, { useState } from 'react'
 import { BaseContentView } from '../../Common/BaseContentView';
+import { Buttons } from '../../../Components/Common/Buttons';
+import FormFabricante from '../../../Components/views/Home/Fabricante/FormFabricante';
+import { useApi } from '../../../Common/Hooks/useApi';
+import { useNavigation } from '../../../Common/Hooks/useNavigation';
+import { useToasts } from 'react-toast-notifications';
+import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
+import { IDataFormFabricante } from '../../../Data/Models/Fabricante/Fabricante';
+import { ax } from '../../../Common/Utils/AxiosCustom';
+import { AxiosError } from 'axios';
 
-export const AddEquipo = () => {
+const AddFabricante = () => {
 
   /*CUSTOM HOOKS */
   const api = useApi();
@@ -22,24 +22,14 @@ export const AddEquipo = () => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   /*HANDLES */
-  const handleSubmit = async (data: IDataFormEquipo) => {
+  const handleSubmit = async (data: IDataFormFabricante) => {
     const formData = new FormData();
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
     formData.append("nombre", data.name);
-    formData.append("linea_trabajo", data.linea_trabajo!.toString());
-    formData.append("tipo_equipo", data.tipo_equipo);
-    formData.append("server_selected", JSON.stringify(data.server_selected));
     formData.append("components_selected", JSON.stringify(data.components_selected));
 
-    // formData.append("file_model", data.file_model);
-    // formData.append("file_scaler", data.file_scaler);
-    // // formData.append("file_checkpoint", data.file_checkpoint);
-    // data.perfil_nominal && formData.append("perfil_nominal", JSON.stringify(data.perfil_nominal) );
-    // data.perfil_critico && formData.append("perfil_critico", JSON.stringify(data.perfil_critico) );
-
-    // 
     setIsSaving(true);
-    await ax.post('service_render/equipos/save', formData, headers)
+    await ax.post('fabricantes', formData, headers)
       .then((response) => {
         goBack();
         addToast(caps('success:base.save'), {
@@ -58,16 +48,18 @@ export const AddEquipo = () => {
       .finally(() => { setIsSaving(false) });
   };
 
-  return (<BaseContentView title="Agregar Equipo">
+  return (<BaseContentView title="Agregar Fabricante">
     <div className="col-12 mb-4">
       <Buttons.Back />
     </div>
     <div className="col-12 mb-3">
-      <FormEquipo
+      <FormFabricante
         onSubmit={handleSubmit}
-        isSaving={isSaving}
+      // isSaving={isSaving} 
       />
     </div>
   </BaseContentView>
   );
-};
+}
+
+export default AddFabricante

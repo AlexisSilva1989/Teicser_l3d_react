@@ -20,6 +20,13 @@ export interface ListaBaseLink {
   className?: string;
 }
 
+export interface ListaBaseModal {
+  action: () => void;
+  label: string;
+  icon?: string;
+  className?: string;
+}
+
 interface Props<T> {
   title?: string;
   source: string | T[];
@@ -27,6 +34,7 @@ interface Props<T> {
   columns: LocalizedColumnsCallback<T>;
   onSelect?: "details" | "modify";
   links?: ListaBaseLink[];
+  modals?: ListaBaseModal[];
   customFilter?: (e: T) => boolean;
   selectableCriteria?: (e: T) => boolean;
   reload?: boolean;
@@ -106,6 +114,13 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
             </button>
           );
         })}
+
+        {props.modals && props.modals.map((x, i) => (
+          <button key={i} onClick={x.action} className={`mr-3 mb-2 btn ${x.className ?? 'btn-outline-primary'}`} >
+            {x.icon && (<i className={`mr-3 ${x.icon}`} />)}
+            {caps(x.label)}
+          </button>
+        ))}
 
         {/*boton para descargar listado cliente solo los que tengan permiso de eliminar*/}
         {(canDelete(props.permission) && isPathCliente) &&

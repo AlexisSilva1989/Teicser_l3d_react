@@ -34,7 +34,7 @@ import { EditServidores } from "../Views/Masters/Servidores/EditServidores";
 import { ListaComponentes } from "../Views/Masters/Componentes/ListaComponentes";
 import { AddComponentes } from "../Views/Masters/Componentes/AddComponentes";
 import { EditComponentes } from "../Views/Masters/Componentes/EditComponentes";
-import { EditEntrenamiento} from "../Views/Masters/Entrenamiento/EditEntrenamiento";
+import { EditEntrenamiento } from "../Views/Masters/Entrenamiento/EditEntrenamiento";
 import { AddEntrenamiento } from "../Views/Masters/Entrenamiento/AddEntrenamiento";
 import { ListaEntrenamiento } from "../Views/Masters/Entrenamiento/ListaEntrenamiento";
 import { ListSimulacion } from "../Views/Reports/Simulacion/ListSimulacion";
@@ -48,6 +48,9 @@ import DatosOperativos from "../Views/Masters/DatosOperativos/DatosOperativos";
 import Projections from "../Views/Projections/Projections";
 import DashboardBinnacle from "../Views/Binnacle/DashboardBinnacle";
 import InsertBinnacle from "../Views/Binnacle/InsertBinnacle";
+import ListaFabricantes from "../Views/Masters/Fabricantes/ListaFabricantes";
+import AddFabricante from "../Views/Masters/Fabricantes/AddFabricante";
+import EditFabricante from "../Views/Masters/Fabricantes/EditFabricante";
 
 
 interface Route {
@@ -187,6 +190,14 @@ const routes: RouteGroup[] = [
       { path: "routes:meta.base", component: <ListaEquipos /> },
       { path: "routes:meta.add", component: <AddEquipo /> },
       { path: "routes:meta.modify", component: <EditEquipo /> },
+    ],
+  },
+  {
+    prefix: "routes:base.manufacturers",
+    routes: [
+      { path: "routes:meta.base", component: <ListaFabricantes /> },
+      { path: "routes:meta.add", component: <AddFabricante /> },
+      { path: "routes:meta.modify", component: <EditFabricante /> },
     ],
   },
   {

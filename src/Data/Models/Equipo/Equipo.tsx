@@ -45,6 +45,10 @@ export interface EquipmentWithComponents extends EquipoTipo {
   componentes: string[]
 }
 
+export interface ItemOrderEquip {
+  id: number | string,
+  name: string
+}
 
 export interface IDataFormEquipo {
   id?: string
@@ -64,11 +68,11 @@ export interface IDataFormEquipo {
 export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] = (intl) => {
   const header = Utils.capitalize(intl);
   return [
-    {
-      selector: 'id',
-      name: header('columns:id'),
-      format: (equipo) => equipo.id.toString().padStart(6, '0')
-    },
+    // {
+    //   selector: 'id',
+    //   name: header('columns:id'),
+    //   format: (equipo) => equipo.id.toString().padStart(6, '0')
+    // },
     {
       selector: 'nombre',
       name: header('columns:name'),

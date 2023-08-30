@@ -10,78 +10,80 @@ import FormEquipo from '../../../Components/views/Home/Equipos/FormEquipo';
 import { EquipoTipo, IDataFormEquipo } from '../../../Data/Models/Equipo/Equipo';
 import { BaseContentView } from '../../Common/BaseContentView';
 
-export const EditEquipo = ( ) => {
+export const EditEquipo = () => {
 
-    /*CUSTOM HOOKS */
-    const { goBack } = useNavigation();
-    const { addToast } = useToasts();
-    const { capitalize: caps } = useFullIntl();
-    const { getState } = useFullLocation();
+  /*CUSTOM HOOKS */
+  const { goBack } = useNavigation();
+  const { addToast } = useToasts();
+  const { capitalize: caps } = useFullIntl();
+  const { getState } = useFullLocation();
 
-    /*STATES */
-    const [isSaving, setIsSaving] = useState<boolean>(false);
-    const { data: element } = getState<{ data: EquipoTipo }>();
-    const [equipoSelected, setEquipoSelected] = useState<IDataFormEquipo>();
-    
-    useEffect(() => {
-      if (element == null || element== undefined) {
+  /*STATES */
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const { data: element } = getState<{ data: EquipoTipo }>();
+  const [equipoSelected, setEquipoSelected] = useState<IDataFormEquipo>();
+
+  console.log({ element })
+
+  useEffect(() => {
+    if (element == null || element == undefined) {
+      goBack();
+    } else {
+      setEquipoSelected({
+        name: element?.nombre,
+        linea_trabajo: element?.linea_trabajo,
+        tipo_equipo: element?.equipo_tipo?.id,
+        status: element?.status,
+        id: element?.id,
+      });
+    }
+  }, []);
+
+  /*HANDLES */
+  const handleSubmit = async (data: IDataFormEquipo) => {
+    const formData = new FormData();
+    const headers = { headers: { "Content-Type": "multipart/form-data" } };
+
+    formData.append("nombre", data.name);
+    formData.append("linea_trabajo", data.linea_trabajo!.toString());
+    formData.append("tipo_equipo", data.tipo_equipo);
+    data?.id && formData.append("id_equipo", data?.id);
+    data.server_selected && formData.append("server_selected", JSON.stringify(data.server_selected));
+    data.components_selected && formData.append("components_selected", JSON.stringify(data.components_selected));
+    data?.status && formData.append("status", data?.status);
+
+    setIsSaving(true);
+    await ax.patch('service_render/equipos/edit', formData, headers)
+      .then((response) => {
         goBack();
-      }else{
-        setEquipoSelected({
-          name:element?.nombre,
-          linea_trabajo: element?.linea_trabajo,
-          tipo_equipo:element?.equipo_tipo?.id,
-          status: element?.status,
-          id: element?.id,
+        addToast(caps('success:base.save'), {
+          appearance: 'success',
+          autoDismiss: true,
         });
-      }
-    },[]);
-
-    /*HANDLES */
-    const handleSubmit = async (data: IDataFormEquipo) => {
-        const formData = new FormData();
-		    const headers = { headers: { "Content-Type": "multipart/form-data" } };
-        
-        formData.append("nombre", data.name);
-        formData.append("linea_trabajo", data.linea_trabajo!.toString());
-        formData.append("tipo_equipo", data.tipo_equipo);
-        data?.id && formData.append("id_equipo", data?.id);
-        data.server_selected && formData.append("server_selected", JSON.stringify(data.server_selected));
-        data.components_selected && formData.append("components_selected", JSON.stringify(data.components_selected));
-        data?.status && formData.append("status", data?.status);
-        
-        setIsSaving(true);
-        await ax.patch('service_render/equipos/edit', formData, headers)
-          .then((response) => {
-            goBack();
-            addToast(caps('success:base.save'), {
-              appearance: 'success',
-              autoDismiss: true,
-            });
-          })
-          .catch((e: AxiosError) => {
-            if (e.response) {
-              addToast(caps('errors:base.post', { element: "equipo"}), {
-                appearance: 'error',
-                autoDismiss: true,
-              });
-            }
-          })
-          .finally(() => { setIsSaving(false) });
-    };
-
-    return (<BaseContentView title="Modificar Equipo">
-        <div className="col-12 mb-4">
-          <Buttons.Back />
-        </div>
-        <div className="col-12 mb-3">
-            <FormEquipo 
-                onSubmit={handleSubmit}
-                isSaving={isSaving}
-                initialData={equipoSelected}
-                isEdit={true} 
-            />
-        </div>
-      </BaseContentView>
-    );
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(caps('errors:base.post', { element: "equipo" }), {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
+      })
+      .finally(() => { setIsSaving(false) });
   };
+
+  return (<BaseContentView title="Modificar Equipo">
+    <div className="col-12 mb-4">
+      <Buttons.Back />
+    </div>
+    <div className="col-12 mb-3">
+      <FormEquipo
+        onSubmit={handleSubmit}
+        isSaving={isSaving}
+        initialData={equipoSelected}
+        isEdit={true}
+      />
+    </div>
+  </BaseContentView>
+  );
+};

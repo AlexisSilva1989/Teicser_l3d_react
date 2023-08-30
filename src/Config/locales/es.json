@@ -123,6 +123,7 @@
 	"routes:base.projections": "proyecciones",
 	"routes:base.insert_binnacle": "ingreso_bitacora",
 	"routes:base.time_line_binnacle": "time_line",
+	"routes:base.manufacturers": "fabricantes",
 
 
   "routes_base":"----------------------------------------------",
@@ -235,6 +236,7 @@
 	"titles:reports_pdf": "Reporte PDF",
 	"titles:tdr": "Tonelajes por revestimientos",
 	"titles:data_op": "Datos operacionales",
+	"titles:manufacturers": "Fabricantes",
 
   "labels:titles.modalConfirmAction": "Confirmar acción",
 	"labels:titles.INFORMATION_LOAD": "Cargar información",
