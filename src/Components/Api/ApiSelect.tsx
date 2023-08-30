@@ -34,6 +34,7 @@ interface Props<T> {
   isSelectFirtsOption?: boolean
   isLabelRequired?: boolean
   errorForm?: FieldError
+  onFinishLoad?: (optionsSize: number) => void
 }
 
 interface State<T> {
@@ -128,6 +129,7 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
                 }
                 // onChange(valueInObject ? selector(d[0]) :  selector(d[0]).value );
               }
+              props.onFinishLoad && props.onFinishLoad(d.length)
             }
           })
           .catch(() => pushError('errors.enumLoad'));
