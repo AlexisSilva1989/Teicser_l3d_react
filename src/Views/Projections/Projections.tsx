@@ -87,13 +87,13 @@ const Projections = () => {
       if (TipoEspesor === 'placa_b') {
         data = DataComponents[index].data.placa_b ?? []
         mediciones = DataComponents[index].mediciones.placa_b ?? []
-        puntoCritico = DataComponents[index].puntosCriticos?.placa ?? undefined
+        puntoCritico = DataComponents[index].puntosCriticos?.placa_b ?? undefined
       }
 
       if (TipoEspesor === 'lifter') {
         data = DataComponents[index].data.lifter ?? []
         mediciones = DataComponents[index].mediciones.lifter ?? []
-        puntoCritico = DataComponents[index].puntosCriticos?.placa ?? undefined
+        puntoCritico = DataComponents[index].puntosCriticos?.lifter ?? undefined
       }
       // graphs.push(
       //   <Col sm={4} style={{ height: '36vh' }} ref={imageRef} className='py-3' key={`graph-component-${index}`}>

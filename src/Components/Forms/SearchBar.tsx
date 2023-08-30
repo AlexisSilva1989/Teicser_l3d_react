@@ -31,9 +31,6 @@ export const SearchBar = (props: Props) => {
 	}
 
 	return <div className={['form-group msig-search', props.outerClassName].join(' ')}>
-		{!props.noLabel && <label>
-			{/* <b>{caps('labels:search')}:</b> */}
-		</label>}
 		<div className={['input-group', props.className].join(' ')}>
 			<div className='input-group-prepend btn btn-primary'>
 				<i className='fas fa-search m-t-7-px' />

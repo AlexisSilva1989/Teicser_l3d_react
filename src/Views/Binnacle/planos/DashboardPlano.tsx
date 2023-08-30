@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
-import { BaseContentView } from '../Common/BaseContentView';
+import { BaseContentView } from '../../Common/BaseContentView'
 import { Button, Col } from 'react-bootstrap';
-import { ApiSelect } from '../../Components/Api/ApiSelect';
-import { EquipoTipo } from '../../Data/Models/Equipo/Equipo';
-import { JumpLabel } from '../../Components/Common/JumpLabel';
-import { $u } from '../../Common/Utils/Reimports';
+import { ApiSelect } from '../../../Components/Api/ApiSelect';
+import { EquipoTipo } from '../../../Data/Models/Equipo/Equipo';
+import { $u } from '../../../Common/Utils/Reimports';
+import { JumpLabel } from '../../../Components/Common/JumpLabel';
 import PlanosAntiguos from './PlanosAntiguos';
-import InsertPlanoConjunto from './insertBinnacle/InsertPlanoConjunto';
-import InsertPlanoComponente from './insertBinnacle/InsertPlanoComponente';
-import TimeLineTest from './timeLine/TimeLineTest';
+import PlanosActuales from './PlanosActuales';
 
-const InsertBinnacle = () => {
+
+const DashboardPlano = () => {
+
   const [equipoSelected, setEquipoSelected] = useState<{
     id: string | undefined
     nombre: string | undefined
@@ -19,12 +19,10 @@ const InsertBinnacle = () => {
     nombre: undefined
   })
 
-  const [SubModuleSelected, setSubModuleSelected] = useState("time_line")
+  const [SubModuleSelected, setSubModuleSelected] = useState("planos_actuales")
 
-
-  return (
-    <BaseContentView title='Ingresar datos de bitácora'>
-      
+  return (<>
+    <BaseContentView title='Bitácora'>
       <Col md={3}>
         <ApiSelect<EquipoTipo>
           label='Equipo'
@@ -53,30 +51,33 @@ const InsertBinnacle = () => {
           <span className='mx-2' >Time line</span>
         </Button>
       </Col> */}
-      <Col sm={2} className="pt-2">
+      <Col sm={1} className="pt-2">
         <JumpLabel />
         <Button variant="outline-primary"
-          disabled={SubModuleSelected === "planos_conjunto"}
-          onClick={() => { setSubModuleSelected("planos_conjunto") }}
+          disabled={SubModuleSelected === "planos_actuales"}
+          onClick={() => { setSubModuleSelected("planos_actuales") }}
           className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
-          <span className='mx-2' >Planos de conjunto</span>
+          <span className='mx-2' >Planos</span>
         </Button>
       </Col>
       <Col sm={2} className="pt-2">
         <JumpLabel />
         <Button variant="outline-primary"
-          disabled={SubModuleSelected === "planos_componentes"}
-          onClick={() => { setSubModuleSelected("planos_componentes") }}
+          disabled={SubModuleSelected === "planos_antiguos"}
+          onClick={() => { setSubModuleSelected("planos_antiguos") }}
           className='btn-outline-primary w-100 d-flex justify-content-center align-items-center'>
-          <span className='mx-2' >Planos de componentes</span>
+          <span className='mx-2' >Planos antiguos</span>
         </Button>
       </Col>
 
-      {/* {SubModuleSelected === "time_line" && (<TimeLineTest />) } */}
-      {SubModuleSelected === "planos_conjunto" && (<InsertPlanoConjunto idEquipo={equipoSelected.id}/>) }
-      {SubModuleSelected === "planos_componentes" && (<InsertPlanoComponente idEquipo={equipoSelected.id}/>) }
+      {/* <Col sm={12} hidden={SubModuleSelected !== "time_line"}>
+        "agregar modulo time line"
+      </Col> */}
+
+      {SubModuleSelected === "planos_actuales" && (<PlanosActuales idEquipo={equipoSelected.id}/>) }
+      {SubModuleSelected === "planos_antiguos" && (<PlanosAntiguos idEquipo={equipoSelected.id}/>) }
     </BaseContentView>
-  )
+  </>)
 }
 
-export default InsertBinnacle
+export default DashboardPlano

@@ -46,11 +46,11 @@ import EditAlarmasEquipo from "../Views/Masters/Alarms/EditAlarmasEquipo";
 import ListTonelajeRevestimiento from "../Views/Masters/TonelajeRevestimiento/ListTonelajeRevestimiento";
 import DatosOperativos from "../Views/Masters/DatosOperativos/DatosOperativos";
 import Projections from "../Views/Projections/Projections";
-import DashboardBinnacle from "../Views/Binnacle/DashboardBinnacle";
-import InsertBinnacle from "../Views/Binnacle/InsertBinnacle";
 import ListaFabricantes from "../Views/Masters/Fabricantes/ListaFabricantes";
 import AddFabricante from "../Views/Masters/Fabricantes/AddFabricante";
 import EditFabricante from "../Views/Masters/Fabricantes/EditFabricante";
+import DashboardPlano from "../Views/Binnacle/planos/DashboardPlano";
+import InsertPlanos from "../Views/Binnacle/planos/InsertPlanos";
 
 
 interface Route {
@@ -260,13 +260,13 @@ const routes: RouteGroup[] = [
   {
     prefix: "routes:base.insert_binnacle",
     routes: [
-      { path: "routes:meta.base", component: <InsertBinnacle /> },
+      { path: "routes:meta.base", component: <InsertPlanos /> },
     ],
   },
   {
     prefix: "routes:base.time_line_binnacle",
     routes: [
-      { path: "routes:meta.base", component: <DashboardBinnacle /> },
+      { path: "routes:meta.base", component: <DashboardPlano /> },
     ],
   },
 ];
