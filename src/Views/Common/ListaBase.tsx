@@ -33,6 +33,7 @@ interface Props<T> {
   permission: UserPermission;
   columns: LocalizedColumnsCallback<T>;
   onSelect?: "details" | "modify";
+  onSelectWithModal?: (data?: any) => void
   links?: ListaBaseLink[];
   modals?: ListaBaseModal[];
   customFilter?: (e: T) => boolean;
@@ -161,7 +162,7 @@ export const ListaBase = <T extends unknown>(props: PropsWithChildren<Props<T>>)
             onSelect={(e) => {
               const isSelectable = props.selectableCriteria ? props.selectableCriteria(e) : true
               return props.onSelect == null || props.onSelect === "modify"
-                ? canUpdate(props.permission) && isSelectable ? gotoModify({ data: e }, props.innerPath) : undefined
+                ? canUpdate(props.permission) && isSelectable ? props.onSelectWithModal ? props.onSelectWithModal(e) : gotoModify({ data: e }, props.innerPath) : undefined
                 : isSelectable ? gotoDetails({ data: e }) : undefined
             }
 

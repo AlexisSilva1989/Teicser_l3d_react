@@ -84,7 +84,7 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
   return (<>
     <form onSubmit={handleSubmit(onSubmit)}>
       <Row>
-        <Col sm={3} className={"mb-2"}>
+        <Col sm={12} className={"mb-2"}>
           <Textbox
             label={`Nombre *`}
             name={"name"}
@@ -102,7 +102,7 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
         </Col>
 
         {
-          isEdit && <Col sm={3}>
+          isEdit && <Col sm={12}>
             <label><b>Activo *:</b></label>
             <Controller control={control}
               name={"status"}
@@ -177,10 +177,13 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
         <Col sm={12} className={"text-right mt-3"}>
           <Button variant={"primary"} type="submit" disabled={isSaving}>
             {isSaving
-              ? (<i className="fas fa-circle-notch fa-spin"></i>)
+              ? (<i className="fas fa-circle-notch fa-spin mr-3"></i>)
               : isEdit
-                ? (<> <i className="fas fa-save mr-3" /> {'Guardar'} </>)
-                : (<> <i className="fas fa-plus mr-3" /> {'Agregar'} </>)
+                ? (<i className="fas fa-save mr-3" />)
+                : (<i className="fas fa-plus mr-3" />)
+            }
+            {
+              isEdit ? "Guardar" : "Agregar"
             }
           </Button>
         </Col>

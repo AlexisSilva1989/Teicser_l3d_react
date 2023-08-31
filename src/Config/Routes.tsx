@@ -47,8 +47,6 @@ import ListTonelajeRevestimiento from "../Views/Masters/TonelajeRevestimiento/Li
 import DatosOperativos from "../Views/Masters/DatosOperativos/DatosOperativos";
 import Projections from "../Views/Projections/Projections";
 import ListaFabricantes from "../Views/Masters/Fabricantes/ListaFabricantes";
-import AddFabricante from "../Views/Masters/Fabricantes/AddFabricante";
-import EditFabricante from "../Views/Masters/Fabricantes/EditFabricante";
 import DashboardPlano from "../Views/Binnacle/planos/DashboardPlano";
 import InsertPlanos from "../Views/Binnacle/planos/InsertPlanos";
 
@@ -196,8 +194,8 @@ const routes: RouteGroup[] = [
     prefix: "routes:base.manufacturers",
     routes: [
       { path: "routes:meta.base", component: <ListaFabricantes /> },
-      { path: "routes:meta.add", component: <AddFabricante /> },
-      { path: "routes:meta.modify", component: <EditFabricante /> },
+      // { path: "routes:meta.add", component: <AddFabricante /> },
+      // { path: "routes:meta.modify", component: <EditFabricante /> },
     ],
   },
   {
