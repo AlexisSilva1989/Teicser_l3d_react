@@ -49,6 +49,7 @@
 	"menus:binnacle": "Bitácora por equipo",
 	"menus:insert_binnacle": "Ingreso de planos",
 	"menus:time_line_binnacle": "ver planos",
+	"menus:manufacturers": "Fabricantes",
 
 	"menus:dashboard": "dashboard",
 	"menus:simulation_days": "proyección a 30 días",
