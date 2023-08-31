@@ -10,7 +10,6 @@ import { ApiSelect } from "../../../Api/ApiSelect";
 import { ax } from "../../../../Common/Utils/AxiosCustom";
 import { AxiosError } from "axios";
 import { IDataFormPlanos } from "../../../../Data/Models/Binnacle/planos";
-import { LoadingSpinner } from "../../../Common/LoadingSpinner";
 
 interface IProps {
   initialData?: IDataFormPlanos
@@ -29,6 +28,7 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
   //states
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isLoadingEquipo, setIsLoadingEquipo] = useState<boolean>(false);
+  const [isLoadingComponente, setIsLoadingComponente] = useState<boolean>(false);
   const [isLoadingFabricante, setIsLoadingFabricante] = useState<boolean>(false);
   const [display, setDisplay] = useState<string>();
 
@@ -45,6 +45,7 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
   useEffect(() => {
     setIsLoadingEquipo(true)
     setIsLoadingFabricante(true)
+    setIsLoadingComponente(true)
   }, [])
 
   //HANDLES
@@ -59,6 +60,7 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
     let pathPlano = 'planos_conjunto'
     if (data.tipo_plano === "planos_componentes") {
       formData.append("idFabricante", data.fabricante as string);
+      formData.append("idComponente", data.componente as string);
       pathPlano = 'planos_componentes'
     }
 
@@ -170,6 +172,30 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
           </ErrorMessage>
         </Col>
       </Row>
+      
+      <Row hidden={watchFields['tipo_plano'] === 'planos_conjunto'}>
+        <Col className="mb-3">
+          <Controller control={control}
+            name="componente"
+            label="Componente *"
+            rules={{ required: caps('validations:required') }}
+            source={'componentes_planos/select'}
+            placeholder={"Seleccione componente ..."}
+            selector={(option: any) => {
+              return { label: option.nombre, value: option.id };
+            }}
+            as={ApiSelect}
+            onFinishLoad={
+              () => {
+                setIsLoadingComponente(false)
+              }
+            }
+          />
+          <ErrorMessage errors={errors} name="componente">
+            {({ message }) => <small className={'text-danger'}>{message}</small>}
+          </ErrorMessage>
+        </Col>
+      </Row>
 
       <Row>
         <Col className="mb-3">
@@ -194,7 +220,8 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
 
       <Row>
         <Col sm={12} className={"text-right mt-3"}>
-          <Button variant={"primary"} type="submit" disabled={isSaving || isLoadingEquipo || isLoadingFabricante}>
+          <Button variant={"primary"} type="submit" 
+            disabled={isSaving || isLoadingEquipo || isLoadingFabricante || isLoadingComponente}>
             {isSaving
               ? (<i className="fas fa-circle-notch fa-spin"></i>)
               : (<> <i className="fas fa-save mr-3" /> {'Guardar'} </>)

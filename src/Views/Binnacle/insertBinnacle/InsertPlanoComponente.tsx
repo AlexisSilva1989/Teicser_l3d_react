@@ -142,7 +142,7 @@ const InsertPlanoComponente = ({
         <Col sm={12} className='px-0'> <LoadingSpinner /> </Col>
         : (
           <Col sm={12} className='px-0'>
-            <Col sm={12} xl={6} className="d-none d-sm-inline-block" style={{ height: "100vh" }} >
+            <Col sm={12} xl={6} className="d-none d-sm-inline-block" style={{ height: "73vh" }} >
               <object
                 data={pdfData}
                 type='application/pdf'

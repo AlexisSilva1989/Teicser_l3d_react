@@ -20,11 +20,12 @@ export interface IPlanosComponentes {
 
 export const IPlanosComponentesColumns: ParamsColumnsCallback<IPlanosComponentes> = (intl, params) => {
   return [
-    { name: 'Fabricante', width: '25%',selector: (row) => (row.fabricante?.name as string) },
-    { name: 'Plano', width: '32%', selector: (row) => (row.pdf_name) },
+    { name: 'Componente', width: '20%', selector: (row) => (row.componente?.nombre as string) },
+    { name: 'Fabricante', width: '20%',selector: (row) => (row.fabricante?.name as string) },
+    { name: 'Plano', width: '26%', selector: (row) => (row.pdf_name) },
     { 
       name: 'Fecha de carga', 
-      width: '24%', 
+      width: '20%', 
       selector: (row) => $m.utc(row.crea_date).format('YYYY-MM-DD')
     },
     {
@@ -61,18 +62,19 @@ export const IPlanosComponentesColumns: ParamsColumnsCallback<IPlanosComponentes
 
 export const IPlanosComponentesColumnView: ParamsColumnsCallback<IPlanosComponentes> = (intl, params) => {
   return [
-    { name: 'Fabricante', width: '25%', selector: (row) => (row.fabricante?.name as string) },
-    { name: 'Plano', width: '32%', selector: (row) => (row.pdf_name) },
+    { name: 'Componente', width: '20%', selector: (row) => (row.componente?.nombre as string) },
+    { name: 'Fabricante', width: '20%', selector: (row) => (row.fabricante?.name as string) },
+    { name: 'Plano', width: '30%', selector: (row) => (row.pdf_name) },
     { 
       name: 'Última actualización',
-      width: '24%',
+      width: '20%',
       selector: (row) =>  $m.utc(row.crea_date).format('YYYY-MM-DD'),
       center: true,
     },
     {
       name: 'Ver',
       center: true,
-      width: '14%',
+      width: '10%',
       cell: plano => (<>
         <div className="col-6 font-size-18 text-center">
           <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-ver"}> Ver en pestaña nueva </Tooltip>}>
