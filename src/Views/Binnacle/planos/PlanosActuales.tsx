@@ -69,21 +69,25 @@ const PlanosActuales = ({
       IsLoadingPdf ?
         <Col sm={12} className='px-0'> <LoadingSpinner /> </Col>
         : (<>
-          <Col sm={7} className="d-flex justify-content-center" style={{ height: "70vh" }} >
-            <object
-              data={pdfData}
-              type='application/pdf'
-              width="100%"
-              height="100%"
-            />
-          </Col>
-          <Col sm={5} className="px-0">
-            <ApiTable<IPlanosComponentes>
-              columns={IPlanosComponentesColumnView(intl, { verPDF })}
-              source={"planos_componentes/actuales"}
-              paginationServe={true}
-              filterServeParams={filtersParams}
-            />
+          <Col sm={12} className='px-0'>
+
+            <Col sm={12} xl={6} className="d-none d-sm-inline-block" style={{ height: "73vh" }} >
+
+              <object
+                data={pdfData}
+                type='application/pdf'
+                width="100%"
+                height="100%"
+              />
+            </Col>
+            <Col sm={12} xl={6} className="px-0">
+              <ApiTable<IPlanosComponentes>
+                columns={IPlanosComponentesColumnView(intl, { verPDF })}
+                source={"planos_componentes/actuales"}
+                paginationServe={true}
+                filterServeParams={filtersParams}
+              />
+            </Col>
           </Col>
         </>)
     }
