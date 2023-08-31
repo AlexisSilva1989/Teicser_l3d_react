@@ -165,14 +165,14 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
           <ErrorMessage errors={errors} name="components_selected">
             {({ message }) => <small className='text-danger'>{message}</small>}
           </ErrorMessage>
-          {
+          {/* {
             isEdit && (
               <Col className="alert alert-warning mt-3">
                 <i className="fa fa-exclamation-triangle mr-2" aria-hidden="true" />
-                Remover un componente seleccionado para el equipo, elimina los datos de entrenamiento existente para el mismo
+                Remover un componente seleccionado para el fabricante, elimina los datos de entrenamiento existente para el mismo
                 <strong> ¡Esta acción es irreversible!</strong> .
               </Col>
-            )}
+            )} */}
 
         </Col>
       </Row>
