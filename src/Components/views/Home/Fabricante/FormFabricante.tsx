@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Controller, ErrorMessage, useForm } from "react-hook-form";
 import { Row, Col, Button } from "react-bootstrap";
-import DualListBox, { Option } from 'react-dual-listbox';
-import { AxiosError } from "axios";
-import { useToasts } from "react-toast-notifications";
 import { Textbox } from "../../../Forms/Textbox";
-import { IDataFormEquipo } from "../../../../Data/Models/Equipo/Equipo";
 import { useFullIntl } from "../../../../Common/Hooks/useFullIntl";
-import { $u, $x } from "../../../../Common/Utils/Reimports";
-import { FileInputWithDescription } from "../../../Forms/FileInputWithDescription";
 import { RadioSelect } from "../../../Forms/RadioSelect";
-import { FileUtils } from "../../../../Common/Utils/FileUtils";
-import 'react-dual-listbox/lib/react-dual-listbox.css';
-import DualListLang from "../../../../Data/Models/Common/DualListLang";
-import { ax } from "../../../../Common/Utils/AxiosCustom";
-import { ApiSelect } from "../../../Api/ApiSelect";
 import { IDataFormFabricante } from "../../../../Data/Models/Fabricante/Fabricante";
+// import DualListBox, { Option } from 'react-dual-listbox';
+// import { AxiosError } from "axios";
+// import { useToasts } from "react-toast-notifications";
+// import { IDataFormEquipo } from "../../../../Data/Models/Equipo/Equipo";
+// import { $u, $x } from "../../../../Common/Utils/Reimports";
+// import { FileInputWithDescription } from "../../../Forms/FileInputWithDescription";
+// import { FileUtils } from "../../../../Common/Utils/FileUtils";
+// import 'react-dual-listbox/lib/react-dual-listbox.css';
+// import DualListLang from "../../../../Data/Models/Common/DualListLang";
+// import { ax } from "../../../../Common/Utils/AxiosCustom";
+// import { ApiSelect } from "../../../Api/ApiSelect";
 interface IProps {
   onSubmit: (data: IDataFormFabricante) => void
   isSaving?: boolean
@@ -27,18 +27,15 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
 
   //hooks
   const { capitalize: caps } = useFullIntl();
-  const { addToast } = useToasts();
-  const { handleSubmit, control, errors, setValue, register, setError, clearError } = useForm<IDataFormFabricante>({
+  // const { addToast } = useToasts();
+  const { handleSubmit, control, errors, setValue, register } = useForm<IDataFormFabricante>({
     mode: "onSubmit",
     submitFocusError: true
   });
 
   //states
-  const [serverSelected, setServerSelected] = useState<string[] | undefined>([]);
-  const [serverAvailable, setServerAvailable] = useState<Option<string>[]>([]);
-
-  const [componentSelected, setComponentSelected] = useState<string[] | undefined>([]);
-  const [componentAvailable, setComponentAvailable] = useState<Option<string>[]>([]);
+  // const [componentSelected, setComponentSelected] = useState<string[] | undefined>([]);
+  // const [componentAvailable, setComponentAvailable] = useState<Option<string>[]>([]);
 
   //effects
   useEffect(() => {
@@ -47,13 +44,13 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
 
   useEffect(() => {
 
-    if (!isEdit) {
-      getComponentesFabricante(undefined)
-    } else {
-      if (initialData?.id !== undefined) {
-        getComponentesFabricante(initialData.id)
-      }
-    }
+    // if (!isEdit) {
+    //   getComponentesFabricante(undefined)
+    // } else {
+    //   if (initialData?.id !== undefined) {
+    //     getComponentesFabricante(initialData.id)
+    //   }
+    // }
 
     setValue([
       { name: initialData?.name },
@@ -65,24 +62,24 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
   }, [initialData]);
 
   /*OBTENER COMPONENTES REGISTRADOS Y SELECCIONADOS */
-  const getComponentesFabricante = async (fabricanteId: string | undefined) => {
-    await ax.get<{ componentsSelected: string[], componentsAvailable: Option<string>[] }>('fabricantes/componentes', { params: { id_fabricante: fabricanteId } })
-      .then((response) => {
-        setComponentSelected(response.data.componentsSelected);
-        setComponentAvailable(response.data.componentsAvailable);
-        setValue([
-          { components_selected: response.data.componentsSelected }
-        ]);
-      })
-      .catch((e: AxiosError) => {
-        if (e.response) {
-          addToast(caps('errors:base.load', { element: "componentes" }), {
-            appearance: 'error',
-            autoDismiss: true,
-          });
-        }
-      });
-  }
+  // const getComponentesFabricante = async (fabricanteId: string | undefined) => {
+  //   await ax.get<{ componentsSelected: string[], componentsAvailable: Option<string>[] }>('fabricantes/componentes', { params: { id_fabricante: fabricanteId } })
+  //     .then((response) => {
+  //       setComponentSelected(response.data.componentsSelected);
+  //       setComponentAvailable(response.data.componentsAvailable);
+  //       setValue([
+  //         { components_selected: response.data.componentsSelected }
+  //       ]);
+  //     })
+  //     .catch((e: AxiosError) => {
+  //       if (e.response) {
+  //         addToast(caps('errors:base.load', { element: "componentes" }), {
+  //           appearance: 'error',
+  //           autoDismiss: true,
+  //         });
+  //       }
+  //     });
+  // }
 
   return (<>
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -130,7 +127,7 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
         }
       </Row>
 
-      <Row>
+      {/* <Row>
         <Col sm={12}>
           <label><b>Componentes:</b></label>
           <Controller control={control}
@@ -165,17 +162,17 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
           <ErrorMessage errors={errors} name="components_selected">
             {({ message }) => <small className='text-danger'>{message}</small>}
           </ErrorMessage>
-          {/* {
+          { {
             isEdit && (
               <Col className="alert alert-warning mt-3">
                 <i className="fa fa-exclamation-triangle mr-2" aria-hidden="true" />
                 Remover un componente seleccionado para el fabricante, elimina los datos de entrenamiento existente para el mismo
                 <strong> ¡Esta acción es irreversible!</strong> .
               </Col>
-            )} */}
+            )} 
 
         </Col>
-      </Row>
+      </Row> */}
       <Row>
         <Col sm={12} className={"text-right mt-3"}>
           <Button variant={"primary"} type="submit" disabled={isSaving}>
