@@ -125,6 +125,7 @@
 	"routes:base.data_op": "data_operacional",
 	"routes:base.projections": "proyecciones",
 	"routes:base.manufacturers": "fabricantes",
+	"routes:base.plans_components": "planos_componentes",
 	"routes:base.insert_binnacle": "ingreso_plano",
 	"routes:base.time_line_binnacle": "ver_planos",
 
@@ -240,6 +241,7 @@
 	"titles:tdr": "Tonelajes por revestimientos",
 	"titles:data_op": "Datos operacionales",
 	"titles:manufacturers": "Fabricantes",
+	"titles:plans_components": "Componentes de Planos",
 
   "labels:titles.modalConfirmAction": "Confirmar acción",
 	"labels:titles.INFORMATION_LOAD": "Cargar información",

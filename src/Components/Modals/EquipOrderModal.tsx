@@ -58,6 +58,9 @@ const EquipOrderModal = <T extends unknown>({ show, size = "sm", hide, title = '
     <Modal show={show} size={size} onHide={hide} centered >
       <Modal.Header className='bg-dark text-white font-weight-bold' >
         {title}
+        <div onClick={() => hide()} style={{ cursor: "pointer" }}>
+          <i className='fas fa-times text-white' />
+        </div>
       </Modal.Header>
       <Modal.Body style={{ minHeight: '256px', maxHeight: '480px', overflowY: 'scroll' }} >
         {isLoading ? <LoadingSpinner /> : (

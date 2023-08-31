@@ -5,6 +5,7 @@ import { ax } from '../../Common/Utils/AxiosCustom';
 import { $u, $v } from '../../Common/Utils/Reimports';
 
 import CreatableSelect from "react-select/creatable";
+import { useReload } from '../../Common/Hooks/useReload';
 
 interface Props<T> {
 	name?: string
@@ -24,9 +25,12 @@ interface Props<T> {
 	onChangeMultiple?: (value: string[]) => void
 	selector: (data: T) => ValueDisplay
 	isDisabled?: boolean
-  placeholderAddElement?: string 
-  onCreateOption?: (inputValue: string) => void
+	placeholderAddElement?: string
+	onCreateOption?: (inputValue: string) => void
 	isLoading?: boolean
+	onFinishLoad?: (optionsSize: number) => void
+	onStartLoad?: () => void
+	reload?: boolean;
 }
 
 interface State<T> {
@@ -41,8 +45,8 @@ export interface ValueDisplay {
 }
 
 type OptionType = {
-  value: string;
-  label: string;
+	value: string;
+	label: string;
 };
 
 export const SelectAdd = <T extends unknown>(props: Props<T>) => {
@@ -50,8 +54,8 @@ export const SelectAdd = <T extends unknown>(props: Props<T>) => {
 	const { onChange, selector, filter } = props;
 	const { pushError } = usePushError();
 	const [value, setValue] = useState<string>();
-  const [isLoading , setIsLoading] = useState(false);
-  const formatCreateLabel = (inputValue: string) => `${props.placeholderAddElement ?? `Crear item`}  ${inputValue}`;
+	const [isLoading, setIsLoading] = useState(false);
+	const formatCreateLabel = (inputValue: string) => `${props.placeholderAddElement ?? `Crear item`}  ${inputValue}`;
 
 	const initial: State<T> = {
 		data: [],
@@ -63,9 +67,9 @@ export const SelectAdd = <T extends unknown>(props: Props<T>) => {
 	const setLoading = useCallback((loading: boolean) => {
 		setState((s) => $u(s, { $merge: { loading } }));
 	}, []);
-    
 
-    const [valueOptionProps, setValueOptionProps] = useState<OptionType>();
+
+	const [valueOptionProps, setValueOptionProps] = useState<OptionType>();
 
 
 	useEffect(() => {
@@ -75,7 +79,7 @@ export const SelectAdd = <T extends unknown>(props: Props<T>) => {
 		setState((s) => $u(s, { init: { $set: true } }));
 
 		if (onChange != null) {
-			if (props.value != null) { 
+			if (props.value != null) {
 				onChange(props.value);
 			} else {
 				onChange(selector(state.data[0]).value);
@@ -84,16 +88,17 @@ export const SelectAdd = <T extends unknown>(props: Props<T>) => {
 	}, [state.data, onChange, selector, state.init, props.value]);
 
 	const mappingSourceArray = () => {
-		if ( Array.isArray( props.source ) ) {
+		if (Array.isArray(props.source)) {
 			const d = filter == null ? props.source : props.source.filter((x) => filter(selector(x)));
 			setState((s) => $u(s, { $merge: { data: d ?? [] } }));
 		}
 
 	}
 
-	useEffect(() => {
-		async function fetch() {
-			setLoading(true);
+	const fetch = useCallback(
+		async () => {
+			setIsLoading(true);
+			props.onStartLoad && props.onStartLoad();
 			if (typeof props.source === 'string') {
 				const result = await ax
 					.get<T[]>(props.source, { params: props.queryParams })
@@ -103,37 +108,45 @@ export const SelectAdd = <T extends unknown>(props: Props<T>) => {
 				} else {
 					const d = filter == null ? result.data : result.data.filter((x) => filter(selector(x)));
 					setState((s) => $u(s, { $merge: { data: d ?? [] } }));
-					if(d.length > 0 && onChange != null && props.value == null) {
+					if (d.length > 0 && onChange != null && props.value == null) {
+						console.log({ d })
 						onChange(selector(d[0]).value);
 					}
+
+					props.onFinishLoad && props.onFinishLoad(d.length)
 				}
 			} else {
 				mappingSourceArray();
 			}
-			setLoading(false);
-		}
+			setIsLoading(false);
+		},
+		[props.source, props.queryParams, filter, selector, onChange, props.value, setLoading, pushError],
+	)
+
+
+	useEffect(() => {
 		if (state.init) {
 			return;
 		}
 		fetch();
-	}, [props.source, setLoading, pushError, props.queryParams, state.init, filter, selector, onChange, props.value]);
+	}, [state.init]);
 
 
-	useEffect( () => {
+	useEffect(() => {
 		mappingSourceArray();
 	}, [props.source])
 
-	useEffect( () => {
+	useEffect(() => {
 		setValue(props.value);
 	}, [props.value])
 
-	function handleChange(e: any ) {
-	    const value = e;
-		setValueOptionProps(value); 
+	function handleChange(e: any) {
+		const value = e;
+		setValueOptionProps(value);
 		setValue(e.value)
 
 		if (props.onChange != null) {
-		   props.onChange(e.value);
+			props.onChange(e.value);
 		}
 	}
 
@@ -144,37 +157,44 @@ export const SelectAdd = <T extends unknown>(props: Props<T>) => {
 			label: $v.titleCase(val.display)
 		}
 	});
-	
-	const optionsValue = options?.filter((o , i) => o.value == value);
 
-  const onCreateOption = async (inputValue: string) => {
-    if (props.onCreateOption) {
-      await props.onCreateOption(inputValue);
-    }
-  }
+	const optionsValue = options?.filter((o, i) => o.value == value);
+
+	const onCreateOption = async (inputValue: string) => {
+		if (props.onCreateOption) {
+			await props.onCreateOption(inputValue);
+		}
+	}
+
+	useEffect(() => {
+		if (props.reload) {
+			fetch();
+		}
+	}, [props.reload])
+
 
 	return <div className={'ServerSelect form-group ' + (props.span ? 'col-' + props.span : '')}>
 		{props.label && <label>
 			<b>{caps(props.label)}:</b>
 		</label>}
-		
+
 		<CreatableSelect
-      isLoading={props.isLoading}
-      onCreateOption={onCreateOption}
-      formatCreateLabel={formatCreateLabel}
-			id='select' 
+			isLoading={isLoading}
+			onCreateOption={onCreateOption}
+			formatCreateLabel={formatCreateLabel}
+			id='select'
 			name={props.name}
 			placeholder={props.placeholder == null ? undefined : caps(props.placeholder)}
-			options={options} 
-			getOptionLabel = {({ label }) => label}
-			getOptionValue = {({ value }) => value}
+			options={options}
+			getOptionLabel={({ label }) => label}
+			getOptionValue={({ value }) => value}
 			menuPortalTarget={document.parentElement}
 			onChange={handleChange}
-			value={optionsValue}  
+			value={optionsValue}
 			isDisabled={props.isDisabled}
 		/>
 
-		
+
 		{props.errors && <div>
 			{props.errors.map((e, i) => {
 				return <Fragment key={i}>

@@ -49,6 +49,7 @@ import Projections from "../Views/Projections/Projections";
 import ListaFabricantes from "../Views/Masters/Fabricantes/ListaFabricantes";
 import DashboardPlano from "../Views/Binnacle/planos/DashboardPlano";
 import InsertPlanos from "../Views/Binnacle/planos/InsertPlanos";
+import ListaPlanosComponentes from "../Views/Masters/PlanosComponentes/ListaPlanosComponentes";
 
 
 interface Route {
@@ -194,8 +195,12 @@ const routes: RouteGroup[] = [
     prefix: "routes:base.manufacturers",
     routes: [
       { path: "routes:meta.base", component: <ListaFabricantes /> },
-      // { path: "routes:meta.add", component: <AddFabricante /> },
-      // { path: "routes:meta.modify", component: <EditFabricante /> },
+    ],
+  },
+  {
+    prefix: "routes:base.plans_components",
+    routes: [
+      { path: "routes:meta.base", component: <ListaPlanosComponentes /> },
     ],
   },
   {

@@ -10,6 +10,14 @@ import { ApiSelect } from "../../../Api/ApiSelect";
 import { ax } from "../../../../Common/Utils/AxiosCustom";
 import { AxiosError } from "axios";
 import { IDataFormPlanos } from "../../../../Data/Models/Binnacle/planos";
+import { SelectAdd, ValueDisplay } from "../../../Forms/SelectAdd";
+import { useShortModal } from "../../../../Common/Hooks/useModal";
+import { IFabricante } from "../../../../Data/Models/Fabricantes/fabricantes";
+import FabricanteFormModal from "../../../Modals/FabricanteFormModal";
+import { IDataFormComponentesPlano } from "../../../../Data/Models/ComponentesPlano/componentes_plano";
+import { IDataFormFabricante } from "../../../../Data/Models/Fabricante/Fabricante";
+import { useReload } from "../../../../Common/Hooks/useReload";
+import ComponentesPlanoFormModal from "../../../Modals/ComponentesPlanoFormModal";
 
 interface IProps {
   initialData?: IDataFormPlanos
@@ -24,6 +32,11 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
     mode: "onSubmit",
     submitFocusError: true
   });
+  const [reloadManufacturersList, doReloadManufacturersList] = useReload();
+  const [reloadPlansComponents, doReloadPlansComponents] = useReload();
+  const manufacturersModal = useShortModal();
+  const plansComponentsModal = useShortModal();
+
 
   //states
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -31,6 +44,8 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
   const [isLoadingComponente, setIsLoadingComponente] = useState<boolean>(false);
   const [isLoadingFabricante, setIsLoadingFabricante] = useState<boolean>(false);
   const [display, setDisplay] = useState<string>();
+  const [manufacturerAux, setManufacturerAux] = useState<IDataFormFabricante | undefined>()
+  const [componenteAux, setComponenteAux] = useState<IDataFormComponentesPlano | undefined>()
 
   //EFFECTS
   useEffect(() => {
@@ -89,6 +104,62 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
         onFinishSaving && onFinishSaving()
       });
   }
+
+  const onSubmitAddManufacturer = async (data: IDataFormFabricante) => {
+    const formData = new FormData();
+    const headers = { headers: { "Content-Type": "multipart/form-data" } };
+    formData.append("nombre", data.name);
+    // formData.append("components_selected", JSON.stringify(data.components_selected));
+
+    setIsSaving(true);
+    await ax.post('fabricantes', formData, headers)
+      .then((response) => {
+        manufacturersModal.hide();
+        doReloadManufacturersList();
+        setValue('fabricante', response.data.element)
+        addToast(caps('success:base.save'), {
+          appearance: 'success',
+          autoDismiss: true,
+        });
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(caps('errors:base.post', { element: "fabricante" }), {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
+      })
+      .finally(() => { setIsSaving(false) });
+  };
+
+  const onSubmitAddPlansComponents = async (data: IDataFormComponentesPlano) => {
+    const formData = new FormData();
+    const headers = { headers: { "Content-Type": "multipart/form-data" } };
+    formData.append("nombre", data.nombre);
+
+    setIsSaving(true);
+    await ax.post('componentes_planos', formData, headers)
+      .then((response) => {
+        plansComponentsModal.hide();
+        doReloadPlansComponents();
+        setValue('componente', response.data.element)
+        addToast(caps('success:base.save'), {
+          appearance: 'success',
+          autoDismiss: true,
+        });
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(caps('errors:base.post', { element: "componentes del plano" }), {
+            appearance: 'error',
+            autoDismiss: true,
+          });
+        }
+      })
+      .finally(() => { setIsSaving(false) });
+  };
+
   const watchFields = watch(["tipo_plano"]);
 
 
@@ -157,22 +228,35 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
             rules={{ required: caps('validations:required') }}
             source={'fabricantes/select'}
             placeholder={"Seleccione fabricante ..."}
-            selector={(option: any) => {
-              return { label: option.name, value: option.id };
+            placeholderAddElement={"Agregar Fabricante: "}
+            onCreateOption={(manufacturerName: string) => {
+              setManufacturerAux({
+                name: manufacturerName
+              })
+              manufacturersModal.show()
             }}
+            selector={(option: any) => {
+              return { display: option.name, value: option.id };
+            }}
+            onStartLoad={
+              () => {
+                setIsLoadingFabricante(true)
+              }
+            }
             onFinishLoad={
               () => {
                 setIsLoadingFabricante(false)
               }
             }
-            as={ApiSelect}
+            reload={reloadManufacturersList}
+            as={SelectAdd}
           />
           <ErrorMessage errors={errors} name="fabricante">
             {({ message }) => <small className={'text-danger'}>{message}</small>}
           </ErrorMessage>
         </Col>
       </Row>
-      
+
       <Row hidden={watchFields['tipo_plano'] === 'planos_conjunto'}>
         <Col className="mb-3">
           <Controller control={control}
@@ -182,14 +266,27 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
             source={'componentes_planos/select'}
             placeholder={"Seleccione componente ..."}
             selector={(option: any) => {
-              return { label: option.nombre, value: option.id };
+              return { display: option.nombre, value: option.id };
             }}
-            as={ApiSelect}
+            placeholderAddElement={"Agregar Fabricante: "}
+            onCreateOption={(plansComponentName: string) => {
+              setComponenteAux({
+                nombre: plansComponentName
+              })
+              plansComponentsModal.show()
+            }}
+            as={SelectAdd}
+            onStartLoad={
+              () => {
+                setIsLoadingFabricante(true)
+              }
+            }
             onFinishLoad={
               () => {
                 setIsLoadingComponente(false)
               }
             }
+            reload={reloadPlansComponents}
           />
           <ErrorMessage errors={errors} name="componente">
             {({ message }) => <small className={'text-danger'}>{message}</small>}
@@ -220,7 +317,7 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
 
       <Row>
         <Col sm={12} className={"text-right mt-3"}>
-          <Button variant={"primary"} type="submit" 
+          <Button variant={"primary"} type="submit"
             disabled={isSaving || isLoadingEquipo || isLoadingFabricante || isLoadingComponente}>
             {isSaving
               ? (<i className="fas fa-circle-notch fa-spin"></i>)
@@ -232,6 +329,9 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
       </Row>
     </form>
 
+    <FabricanteFormModal show={manufacturersModal.visible} hide={manufacturersModal.hide} size="sm" modalType={"agregar"} onSubmit={onSubmitAddManufacturer} isLoading={isSaving} title={`Agregar Fabricante`} initialState={manufacturerAux} />
+
+    <ComponentesPlanoFormModal show={plansComponentsModal.visible} hide={plansComponentsModal.hide} size="sm" modalType={"agregar"} onSubmit={onSubmitAddPlansComponents} isLoading={isSaving} title={`Agregar Componentes de Planos`} initialState={componenteAux} />
 
   </>);
 };
