@@ -1,10 +1,10 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import {
-  IDataColumnComponentesPlano,
-  IDataFormComponentesPlano,
-} from "../../Data/Models/ComponentesPlano/componentes_plano";
-import FormComponentesPlano from "../views/Home/ComponentesPlano/FormComponentesPlano";
+  IColumnasBitacora,
+  IDataFormBitacora,
+} from "../../Data/Models/Binnacle/Binnacle";
+import FormBitacora from "../views/Home/Bitacora/FormBitacora";
 
 interface Props<T> {
   show: boolean;
@@ -12,18 +12,17 @@ interface Props<T> {
   size?: "sm" | "lg" | "xl";
   title?: string;
   textButton?: string;
-  onSubmit: (data: IDataFormComponentesPlano) => void;
-  initialState?: Partial<IDataColumnComponentesPlano>;
+  onSubmit: (data: IDataFormBitacora) => void;
+  initialState?: IColumnasBitacora;
   isLoading?: boolean;
   modalType: "agregar" | "editar";
 }
 
-const ComponentesPlanoFormModal = <T extends unknown>({
+const BitacoraFormModal = <T extends unknown>({
   show,
   size = "sm",
   hide,
   title = "",
-  textButton = "Enviar",
   onSubmit,
   initialState,
   isLoading = false,
@@ -38,7 +37,7 @@ const ComponentesPlanoFormModal = <T extends unknown>({
         </div>
       </Modal.Header>
       <Modal.Body className="col-12 mb-3">
-        <FormComponentesPlano
+        <FormBitacora
           onSubmit={onSubmit}
           isSaving={isLoading}
           isEdit={modalType === "editar"}
@@ -49,4 +48,4 @@ const ComponentesPlanoFormModal = <T extends unknown>({
   );
 };
 
-export default ComponentesPlanoFormModal;
+export default BitacoraFormModal;
