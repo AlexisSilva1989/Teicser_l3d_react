@@ -1,89 +1,123 @@
-import { Fragment, useCallback, useEffect, useState } from 'react'
-import React from 'react'
-import { useFullIntl } from '../../Common/Hooks/useFullIntl'
-import DatePicker, { registerLocale } from 'react-datepicker'
-import es from 'date-fns/locale/es'
-import 'react-datepicker/dist/react-datepicker-cssmodules.css'
-import { $m } from '../../Common/Utils/Reimports'
-import format from 'date-fns/format'
+import { Fragment, useCallback, useEffect, useState } from "react";
+import React from "react";
+import { useFullIntl } from "../../Common/Hooks/useFullIntl";
+import DatePicker, { registerLocale } from "react-datepicker";
+import es from "date-fns/locale/es";
+import "react-datepicker/dist/react-datepicker-cssmodules.css";
+import { $m } from "../../Common/Utils/Reimports";
+import format from "date-fns/format";
+import { FieldError } from "react-hook-form";
 interface Props {
-  label?: string
-  name?: string
-  value?: string
-  minDate?: string
-  maxDate?: string
-  errors?: string[]
-  readonly?: boolean
-  className?: string
-  disabled?: boolean
-  onChange?: (e: string) => void
+  label?: string;
+  name?: string;
+  value?: string;
+  minDate?: string;
+  maxDate?: string;
+  errors?: string[];
+  errorForm?: FieldError;
+  readonly?: boolean;
+  className?: string;
+  disabled?: boolean;
+  monthsShown?: number;
+  inline?: boolean;
+  typeDate?: string;
+  onChange?: (e: string) => void;
+  required?: boolean;
+  withPortal?: boolean;
 }
-registerLocale('es', es)
+registerLocale("es", es);
 
 export const Datepicker = (props: Props) => {
-  const innerClasses = ['form-control msig-datepicker-input']
+  const innerClasses = ["form-control msig-datepicker-input"];
   if (props.className) {
-    innerClasses.push(props.className)
+    innerClasses.push(props.className);
   }
   if (props.readonly) {
-    innerClasses.push('readonly')
+    innerClasses.push("readonly");
   }
-  const iconClasses = ['input-group-prepend msig-datepicker-icon']
+  const iconClasses = [
+    "input-group-prepend msig-datepicker-icon d-flex align-items-center",
+  ];
   if (props.readonly) {
-    iconClasses.push('readonly')
+    iconClasses.push("readonly");
   }
 
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
-  const { capitalize: caps } = useFullIntl()
-  const { onChange } = props
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [minDateValid, setMinDateValid] = useState<Date | undefined>();
+  const [maxDateValid, setMaxDateValid] = useState<Date | undefined>();
+  const { capitalize: caps } = useFullIntl();
+  const { onChange } = props;
 
   const setDate = useCallback(
     (e) => {
       if (onChange != null) {
-        const value = e ? format(e, 'dd-MM-yyyy') : ''
-        onChange(value)
+        let value = e ? format(e, "dd-MM-yyyy") : "";
+        onChange(value);
       }
     },
     [onChange]
-  )
-  
-  useEffect(()=>{
-    const valueDateInit = props.value
-    ? $m(props.value, 'DD-MM-YYYY').toDate()
-    : undefined
-    
-    setStartDate(valueDateInit)
-  },[props.value])
+  );
+
+  useEffect(() => {
+    setStartDate(
+      props.value !== undefined && props.value !== null && props.value !== ""
+        ? $m(props.value, "DD-MM-YYYY").toDate()
+        : undefined
+    );
+  }, [props.value]);
+
+  useEffect(() => {
+    setMaxDateValid(
+      props.maxDate !== undefined &&
+        props.maxDate !== null &&
+        props.maxDate !== ""
+        ? $m(props.maxDate, "DD-MM-YYYY").toDate()
+        : undefined
+    );
+  }, [props.maxDate]);
+
+  useEffect(() => {
+    setMinDateValid(
+      props.minDate !== undefined &&
+        props.minDate !== null &&
+        props.minDate !== ""
+        ? $m(props.minDate, "DD-MM-YYYY").toDate()
+        : undefined
+    );
+  }, [props.minDate]);
+
   return (
     <div className="msig-datepicker">
       {props.label && (
         <label>
+          {props.required && <span className="text-danger">* </span>}
           <b>{caps(props.label)}:</b>
         </label>
       )}
       <div className="input-group">
-        <div className={iconClasses.join(' ')}>
-          <i className="fas fa-calendar-alt input-group-text" />
+        <div className={iconClasses.join(" ")}>
+          <i className="fas fa-calendar-alt input-group-text d-flex" />
         </div>
         <DatePicker
           name={props.name}
           disabled={props.disabled}
           readOnly={props.readonly}
-          minDate={
-            props.minDate ? $m(props.minDate, 'DD-MM-YYYY').toDate() : undefined
-          }
-          maxDate={
-            props.maxDate ? $m(props.maxDate, 'DD-MM-YYYY').toDate() : undefined
-          }
-          selected={ startDate }
+          minDate={minDateValid}
+          maxDate={maxDateValid}
+          selected={startDate}
           onChange={(date: Date) => {
-            setStartDate(date)
+            setStartDate(date);
           }}
+          inline={props.inline}
+          monthsShown={props.monthsShown}
           onSelect={setDate}
-          dateFormat="yyyy-MM-dd"
+          dateFormat={props.typeDate ? props.typeDate : "dd-MM-yyyy"}
           autoComplete="off"
           locale="es"
-          className={innerClasses.join(' ')}
+          className={innerClasses.join(" ")}
+          wrapperClassName="datepicker"
+          withPortal={props.withPortal || false}
+          popperClassName="msig-datepicker-popper"
           // value={props.value}
           // strictParsing = {true}
         />
@@ -98,13 +132,18 @@ export const Datepicker = (props: Props) => {
                 </small>
                 <br />
               </Fragment>
-            )
+            );
           })}
         </div>
       )}
+      {props.errorForm && (
+        <div>
+          <small className="text-danger">{props.errorForm.message}</small>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
 // const { capitalize: caps } = useFullIntl();
 // const datepicker = useRef<HTMLInputElement>(null);

@@ -50,7 +50,8 @@ import ListaFabricantes from "../Views/Masters/Fabricantes/ListaFabricantes";
 import DashboardPlano from "../Views/Binnacle/planos/DashboardPlano";
 import InsertPlanos from "../Views/Binnacle/planos/InsertPlanos";
 import ListaPlanosComponentes from "../Views/Masters/PlanosComponentes/ListaPlanosComponentes";
-
+import ListaBitacora from "../Views/Masters/Bitacora/ListaBitacora";
+import TimeLineChrono from "../Views/Masters/Bitacora/TimeLineChrono";
 
 interface Route {
   path: string;
@@ -75,45 +76,31 @@ const routes: RouteGroup[] = [
   },
   {
     prefix: "routes:base.scam_3d",
-    routes: [
-      { path: "routes:meta.base", component: <IndexScam3d /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <IndexScam3d /> }],
   },
   {
     prefix: "routes:base.calibration",
-    routes: [
-      { path: "routes:meta.base", component: <IndexCalibration /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <IndexCalibration /> }],
   },
   {
     prefix: "routes:base.operational_data",
-    routes: [
-      { path: "routes:meta.base", component: <IndexOperationalData /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <IndexOperationalData /> }],
   },
   {
     prefix: "routes:base.image_condicion",
-    routes: [
-      { path: "routes:meta.base", component: <IndexImagenCondicion /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <IndexImagenCondicion /> }],
   },
   {
     prefix: "routes:base.information",
-    routes: [
-      { path: "routes:meta.base", component: <IndexInformation /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <IndexInformation /> }],
   },
   {
     prefix: "routes:base.records",
-    routes: [
-      { path: "routes:meta.base", component: <IndexRecords /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <IndexRecords /> }],
   },
   {
     prefix: "routes:base.reports_pdf",
-    routes: [
-      { path: "routes:meta.base", component: <IndexReportsPdf /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <IndexReportsPdf /> }],
   },
   {
     prefix: "routes:base.downloadable_report",
@@ -123,15 +110,11 @@ const routes: RouteGroup[] = [
   },
   {
     prefix: "routes:base.measurement",
-    routes: [
-      { path: "routes:meta.base", component: <IndexMeasurement /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <IndexMeasurement /> }],
   },
   {
     prefix: "routes:base.measurement",
-    routes: [
-      { path: "routes:meta.base", component: <IndexMeasurement /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <IndexMeasurement /> }],
   },
   {
     prefix: "routes:base.projection",
@@ -150,7 +133,6 @@ const routes: RouteGroup[] = [
       { path: "routes:meta.modify", component: <SimulacionDias /> },
       { path: "routes:meta.details", component: <SimulacionDias /> },
       { path: "/:data_select?", component: <SimulacionDias /> },
-
     ],
   },
   {
@@ -175,13 +157,11 @@ const routes: RouteGroup[] = [
   },
   {
     prefix: "routes:base.company",
-    routes: [
-      { path: "routes:meta.base", component: <ModificarEmpresa /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <ModificarEmpresa /> }],
   },
   {
     prefix: "routes:base.change_password",
-    routes: [{ path: "routes:meta.base", component: <CambiarContrasena /> }]
+    routes: [{ path: "routes:meta.base", component: <CambiarContrasena /> }],
   },
   {
     prefix: "routes:base.equipment",
@@ -193,9 +173,7 @@ const routes: RouteGroup[] = [
   },
   {
     prefix: "routes:base.manufacturers",
-    routes: [
-      { path: "routes:meta.base", component: <ListaFabricantes /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <ListaFabricantes /> }],
   },
   {
     prefix: "routes:base.plans_components",
@@ -250,27 +228,27 @@ const routes: RouteGroup[] = [
   },
   {
     prefix: "routes:base.data_op",
-    routes: [
-      { path: "routes:meta.base", component: <DatosOperativos /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <DatosOperativos /> }],
   },
   {
     prefix: "routes:base.projections",
-    routes: [
-      { path: "routes:meta.base", component: <Projections /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <Projections /> }],
   },
   {
     prefix: "routes:base.insert_binnacle",
-    routes: [
-      { path: "routes:meta.base", component: <InsertPlanos /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <InsertPlanos /> }],
   },
   {
     prefix: "routes:base.time_line_binnacle",
-    routes: [
-      { path: "routes:meta.base", component: <DashboardPlano /> },
-    ],
+    routes: [{ path: "routes:meta.base", component: <DashboardPlano /> }],
+  },
+  {
+    prefix: "routes:base.time_line_log",
+    routes: [{ path: "routes:meta.base", component: <ListaBitacora /> }],
+  },
+  {
+    prefix: "routes:base.time_line_chrono",
+    routes: [{ path: "routes:meta.base", component: <TimeLineChrono /> }],
   },
 ];
 

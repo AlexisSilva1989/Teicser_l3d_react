@@ -22,84 +22,84 @@ File: style.css
 =================================================================================== */
 
 // React Select Search
-@import 'react-select-search';
+@import "react-select-search";
 
 // Theme Font
-@import 'themes/font/theme-font';
+@import "themes/font/theme-font";
 
 // theme scrollbar
-@import 'themes/plugin/perfect-scrollbar';
+@import "themes/plugin/perfect-scrollbar";
 
 // main framework
-@import '~bootstrap/scss/functions';
-@import '~bootstrap/scss/variables';
-@import 'settings/custom-variables';
-@import 'settings/theme-variables';
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "settings/custom-variables";
+@import "settings/theme-variables";
 
 // ng module
-@import 'react-module/react-module';
+@import "react-module/react-module";
 
 // bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
 
 // icon
-@import 'themes/font/next-icon';
-@import 'themes/font/feather';
-@import 'themes/font/fontawesome';
-@import 'themes/font/flaticon';
-@import 'themes/font/cryptofont';
+@import "themes/font/next-icon";
+@import "themes/font/feather";
+@import "themes/font/fontawesome";
+@import "themes/font/flaticon";
+@import "themes/font/cryptofont";
 
 // bootstrap css
-@import 'themes/bootstrap-overlay/card';
-@import 'themes/bootstrap-overlay/button';
-@import 'themes/bootstrap-overlay/radiobox-checkbox';
-@import 'themes/bootstrap-overlay/switches';
-@import 'themes/bootstrap-overlay/badge';
+@import "themes/bootstrap-overlay/card";
+@import "themes/bootstrap-overlay/button";
+@import "themes/bootstrap-overlay/radiobox-checkbox";
+@import "themes/bootstrap-overlay/switches";
+@import "themes/bootstrap-overlay/badge";
 
-@import 'themes/general';
-@import 'themes/generic';
-@import 'themes/plugin/animate';
+@import "themes/general";
+@import "themes/generic";
+@import "themes/plugin/animate";
 
 // theme layouts
-@import 'themes/layouts/menu-lite';
-@import 'themes/layouts/menu-react';
-@import 'layout-dark';
-@import 'layout-rtl';
+@import "themes/layouts/menu-lite";
+@import "themes/layouts/menu-react";
+@import "layout-dark";
+@import "layout-rtl";
 
 // Dashboard Widgets
-@import 'themes/dashboard/widget';
+@import "themes/dashboard/widget";
 
 // custom plugin
-@import 'themes/plugin/sweatalert';
-@import 'themes/plugin/lightbox';
-@import 'themes/plugin/notification';
-@import 'themes/plugin/pnotify';
-@import 'themes/plugin/bar-rating';
-@import 'themes/plugin/rangeslider';
-@import 'themes/plugin/daterange';
-@import 'themes/plugin/tags-input';
-@import 'themes/plugin/maxlength';
-@import 'themes/plugin/wizard';
-@import 'themes/plugin/select2';
-@import 'themes/plugin/data-tables';
+@import "themes/plugin/sweatalert";
+@import "themes/plugin/lightbox";
+@import "themes/plugin/notification";
+@import "themes/plugin/pnotify";
+@import "themes/plugin/bar-rating";
+@import "themes/plugin/rangeslider";
+@import "themes/plugin/daterange";
+@import "themes/plugin/tags-input";
+@import "themes/plugin/maxlength";
+@import "themes/plugin/wizard";
+@import "themes/plugin/select2";
+@import "themes/plugin/data-tables";
 
 // Charts
-@import 'themes/plugin/highcharts';
-@import 'themes/plugin/peitychart';
+@import "themes/plugin/highcharts";
+@import "themes/plugin/peitychart";
 
 // pages
-@import 'themes/pages/authentication';
-@import 'themes/pages/maintaince';
-@import 'themes/pages/pages';
-@import 'themes/pages/help-desk';
-@import 'themes/pages/fullcalender';
-@import 'themes/pages/icon-lauouts';
-@import 'themes/pages/user';
-@import 'themes/pages/task-board';
-@import 'themes/pages/masonry-gallery';
+@import "themes/pages/authentication";
+@import "themes/pages/maintaince";
+@import "themes/pages/pages";
+@import "themes/pages/help-desk";
+@import "themes/pages/fullcalender";
+@import "themes/pages/icon-lauouts";
+@import "themes/pages/user";
+@import "themes/pages/task-board";
+@import "themes/pages/masonry-gallery";
 
 // custom
-@import 'themes/custom';
+@import "themes/custom";
 
 input.form-control {
   border-radius: 0.25rem !important;
@@ -252,9 +252,9 @@ li:not(.pcoded-hasmenu) .active .text-warning {
 
     &::before {
       // Based on https://fabriceleven.com/design/clever-way-to-change-the-drop-down-selector-arrow-icon/
-      content: '>';
+      content: ">";
       position: absolute;
-      font: 20px 'Consolas', monospace;
+      font: 20px "Consolas", monospace;
       font-weight: bold;
       transform: rotate(90deg);
       top: 0.6rem;
@@ -411,10 +411,10 @@ li:not(.pcoded-hasmenu) .active .text-warning {
 }
 
 .msig-subquotation-details-pic {
-  width: '100%';
-  border: '1px solid gray';
-  max-height: '400px';
-  object-fit: 'cover';
+  width: "100%";
+  border: "1px solid gray";
+  max-height: "400px";
+  object-fit: "cover";
 }
 
 .bg-c-orange {
@@ -496,7 +496,7 @@ li:not(.pcoded-hasmenu) .active .text-warning {
 }
 
 .float-none {
-  float: 'none';
+  float: "none";
 }
 .title-card-ods {
   font-size: 17px;
@@ -520,7 +520,7 @@ html {
 .info,
 .logoholder,
 .me,
-[class*='col-'] {
+[class*="col-"] {
   vertical-align: top;
   display: inline-block;
   font-size: 1rem;
@@ -549,19 +549,19 @@ html {
   }
 }
 
-.CheckWithInput { 
+.CheckWithInput {
   width: 28px;
-  height: 35px; 
-  position: absolute; 
+  height: 35px;
+  position: absolute;
   top: 36px;
   left: 19px;
- }
-
-.InputWithCheck {
-  padding-left: 40px !important
 }
 
-.mill-card{
+.InputWithCheck {
+  padding-left: 40px !important;
+}
+
+.mill-card {
   transition: transform 0.3s;
 
   &:hover {
@@ -581,7 +581,6 @@ html {
       transition: transform 0.5s;
     }
   }
-
 }
 
 .overflow-x-scroll {
@@ -597,4 +596,81 @@ html {
       background-color: #ffffff;
     }
   }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  float: right;
+  margin-bottom: 0;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  display: none;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input.default:checked + .slider {
+  background-color: #444;
+}
+input.primary:checked + .slider {
+  background-color: #2196f3;
+}
+input.success:checked + .slider {
+  background-color: #8bc34a;
+}
+input.info:checked + .slider {
+  background-color: #3de0f5;
+}
+input.warning:checked + .slider {
+  background-color: #ffc107;
+}
+input.danger:checked + .slider {
+  background-color: #f44336;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }

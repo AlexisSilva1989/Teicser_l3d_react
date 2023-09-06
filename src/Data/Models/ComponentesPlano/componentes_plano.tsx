@@ -3,28 +3,44 @@ import { IntlShape } from "react-intl";
 import { Utils } from "../../../Common/Utils/Utils";
 
 export interface IComponentesPlano {
-  id: string
-  name: string
-  status: string
+  id: string;
+  name: string;
+  location: string;
+  status: string;
 }
 
-export const ComponentesPlanoColumns: (intl: IntlShape) => IDataTableColumn<IComponentesPlano>[] = (intl) => {
+export const ComponentesPlanoColumns: (
+  intl: IntlShape
+) => IDataTableColumn<IComponentesPlano>[] = (intl) => {
   const header = Utils.capitalize(intl);
   return [
     {
-      selector: 'nombre',
-      name: header('columns:name'),
+      selector: "nombre",
+      name: header("columns:name"),
     },
     {
-      selector: 'activo',
-      name: header('columns:active'),
-      format: (plano) => header(plano.status ? 'labels:common.yes' : 'labels:common.no')
-    }
+      selector: "activo",
+      name: header("columns:active"),
+      format: (plano) =>
+        header(plano.status ? "labels:common.yes" : "labels:common.no"),
+    },
   ];
 };
 
+export interface UbicacionComponentesPlano {
+  id: number;
+  nombre: string;
+}
+
+export interface IDataColumnComponentesPlano
+  extends Omit<IComponentesPlano, "location" | "name"> {
+  ubicacion: UbicacionComponentesPlano;
+  nombre: string;
+}
+
 export interface IDataFormComponentesPlano {
-  id?: string
-  nombre: string
-  status?: string
+  id?: string;
+  nombre: string;
+  ubicacion: number;
+  status?: string;
 }
