@@ -3,6 +3,7 @@ import { ParamsColumnsCallback } from "../../../Common/Utils/LocalizedColumnsCal
 import { IDataTableColumn } from "react-data-table-component";
 import { Utils } from "../../../Common/Utils/Utils";
 import { Attachment } from "../Common/general";
+import { OptionType } from "../../../Components/Api/ApiSelect";
 
 export interface IPlanosAntiguos {
   equipo: string;
@@ -51,7 +52,7 @@ export interface IBitacora {
   type: number;
   date: string;
   equipment: number;
-  location: number;
+  location: OptionType[];
   components: ComponenteBitacora[];
   description?: string;
   status?: number;
@@ -67,7 +68,7 @@ export interface EventType {
 }
 export interface EventLocation {
   id: number;
-  name: string;
+  nombre: string;
 }
 export interface EventEquipment {
   id: number;
@@ -77,7 +78,7 @@ export interface EventEquipment {
 export interface IColumnasBitacora
   extends Omit<IBitacora, "type" | "equipment" | "location"> {
   type: EventType;
-  location: EventLocation;
+  location: OptionType[];
   equipment: EventEquipment;
   files?: Partial<Attachment>[];
 }
@@ -106,10 +107,10 @@ export const BitacoraColumns = (
         selector: "equipment.name",
         name: header("columns:equipo"),
       },
-      {
-        selector: "location.name",
-        name: header("columns:location"),
-      },
+      // {
+      //   selector: "location.name",
+      //   name: header("columns:location"),
+      // },
       ...appendColumns,
     ];
   };

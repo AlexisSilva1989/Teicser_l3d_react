@@ -20,11 +20,12 @@ import dayjs from "dayjs";
 import { ApiSelect, OptionType } from "../../../Components/Api/ApiSelect";
 import Select from "react-select";
 import TimeLineCardContent from "./TimeLineCardContent";
+import ApiSelectMultiple from "../../../Components/Api/ApiSelectMultiple";
 
 interface Filter {
-  dateFrom: string;
-  dateTo: string;
-  eventTypes: { label: string; value: number }[] | null;
+  date_from: string;
+  date_to: string;
+  event_types: OptionType[];
 }
 
 const EVENT_TEST: ITimeline[] = [
@@ -38,11 +39,11 @@ const EVENT_TEST: ITimeline[] = [
     media: [
       {
         id: 1,
-        url: "https://picsum.photos/512/512",
+        url: "https://picsum.photos/id/908/512/512",
       },
       {
         id: 2,
-        url: "https://picsum.photos/512/512",
+        url: "https://picsum.photos/id/674/512/512",
       },
     ],
   },
@@ -52,6 +53,16 @@ const EVENT_TEST: ITimeline[] = [
     title: "Lorem ipsum dolor sit amet",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
+    media: [
+      {
+        id: 1,
+        url: "https://picsum.photos/id/908/512/512",
+      },
+      {
+        id: 2,
+        url: "https://picsum.photos/id/674/512/512",
+      },
+    ],
   },
   {
     id: 3,
@@ -59,6 +70,16 @@ const EVENT_TEST: ITimeline[] = [
     title: "Lorem ipsum dolor sit amet",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
+    media: [
+      {
+        id: 1,
+        url: "https://picsum.photos/id/908/512/512",
+      },
+      {
+        id: 2,
+        url: "https://picsum.photos/id/674/512/512",
+      },
+    ],
   },
   {
     id: 4,
@@ -66,6 +87,16 @@ const EVENT_TEST: ITimeline[] = [
     title: "Lorem ipsum dolor sit amet",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
+    media: [
+      {
+        id: 1,
+        url: "https://picsum.photos/id/908/512/512",
+      },
+      {
+        id: 2,
+        url: "https://picsum.photos/id/674/512/512",
+      },
+    ],
   },
   {
     id: 5,
@@ -73,6 +104,16 @@ const EVENT_TEST: ITimeline[] = [
     title: "Lorem ipsum dolor sit amet",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
+    media: [
+      {
+        id: 1,
+        url: "https://picsum.photos/id/908/512/512",
+      },
+      {
+        id: 2,
+        url: "https://picsum.photos/id/674/512/512",
+      },
+    ],
   },
   {
     id: 6,
@@ -151,10 +192,13 @@ const TimeLineChrono = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [events, setEvents] = useState<CardContent[]>([]);
   const [filter, setFilter] = useState<Filter>({
-    dateFrom: dayjs().subtract(3, "month").format("DD-MM-YYYY"),
-    dateTo: dayjs().add(3, "month").format("DD-MM-YYYY"),
-    eventTypes: [],
+    date_from: dayjs().subtract(3, "month").format("DD-MM-YYYY"),
+    date_to: dayjs().add(3, "month").format("DD-MM-YYYY"),
+    event_types: [],
   });
+  const [timelineDirection, setTimelineDirection] = useState<
+    "horizontal" | "vertical"
+  >("horizontal");
 
   const parseEventsToChronoItems = (data: ITimeline[]): CardContent[] => {
     return data.map((event) => ({
@@ -204,8 +248,8 @@ const TimeLineChrono = () => {
   }, [filter]);
 
   return (
-    <div style={{ width: "100%", height: "900px" }}>
-      <Row className="p-3 bg-white">
+    <div className="p-3 bg-white" style={{ width: "100%" }}>
+      <Row>
         <Col sm={12}>
           <Row className="mb-4">
             <Col>
@@ -227,7 +271,7 @@ const TimeLineChrono = () => {
                 }}
               >
                 <ApiSelect
-                  label="Linea de tiempo"
+                  label="Linea de trabajo"
                   name="workline"
                   source={"linea_tiempos/select"}
                   selector={(option: any) => ({
@@ -272,11 +316,11 @@ const TimeLineChrono = () => {
                 <Datepicker
                   label="Fecha desde"
                   name="dateFrom"
-                  value={filter.dateFrom}
+                  value={filter.date_from}
                   onChange={(date) =>
                     setFilter((state) =>
                       $u(state, {
-                        dateFrom: { $set: date },
+                        date_from: { $set: date },
                       })
                     )
                   }
@@ -287,45 +331,40 @@ const TimeLineChrono = () => {
                 <Datepicker
                   label="Fecha hasta"
                   name="dateTo"
-                  value={filter.dateTo}
+                  value={filter.date_to}
                   onChange={(date) =>
                     setFilter((state) =>
                       $u(state, {
-                        dateTo: { $set: date },
+                        date_to: { $set: date },
                       })
                     )
                   }
                 />
               </div>
             </Col>
-            {/* <Col>
-                <Switch
-                  status={filter.isVertical}
-                  title="Vertical"
-                  onChange={(data: any) => {
-                    console.log({ data });
-                    setFilter((state) =>
-                      $u(state, {
-                        isVertical: {
-                          $set: data,
-                        },
-                      })
-                    );
-                  }}
-                />
-              </Col> */}
           </Row>
           <Row className="mb-4">
+            <Col sm="12" md="3">
+              <Switch
+                status={timelineDirection === "vertical"}
+                title="Vertical"
+                onChange={(data: any) => {
+                  console.log({ data });
+                  setTimelineDirection(data ? "vertical" : "horizontal");
+                  doReload();
+                }}
+              />
+            </Col>
             <Col
               sm="12"
-              md={{ span: 8, offset: 4 }}
-              lg={{ span: 6, offset: 6 }}
+              md={{ span: 8, offset: 1 }}
+              lg={{ span: 6, offset: 3 }}
               className="d-flex justify-content-end align-items-start"
               style={{
                 gap: 8,
               }}
             >
-              <div className="w-100">
+              {/* <div className="w-100">
                 <label>
                   <b>Tipos de eventos:</b>
                 </label>
@@ -361,7 +400,22 @@ const TimeLineChrono = () => {
                     }),
                   }}
                 />
-              </div>
+              </div> */}
+              <ApiSelectMultiple
+                source={"tipo_eventos/select"}
+                selector={(option: any) => ({
+                  label: option.nombre,
+                  value: option.id.toString(),
+                })}
+                onChange={(data: any) => {
+                  console.log({ data });
+                  setFilter((state) => ({
+                    ...state,
+                    event_types: data,
+                  }));
+                }}
+                value={filter.event_types}
+              />
             </Col>
             {/* <Col>
                 <Switch
@@ -383,21 +437,24 @@ const TimeLineChrono = () => {
           {isLoading ? (
             <LoadingSpinner />
           ) : (
-            <Row>
-              <Col>
-                <Chrono
-                  items={events}
-                  mode={CHRONO_DIRECTION["horizontal"]}
-                  showAllCardsHorizontal
-                  cardHeight={196}
-                  cardWidth={256}
-                >
-                  {events.map((event) => (
-                    <TimeLineCardContent event={event} />
-                  ))}
-                </Chrono>
-              </Col>
-            </Row>
+            !reload && (
+              <Row>
+                <Col>
+                  <Chrono
+                    items={events}
+                    mode={CHRONO_DIRECTION[timelineDirection]}
+                    showAllCardsHorizontal
+                    cardHeight={196}
+                    cardWidth={196}
+                    allowDynamicUpdate
+                  >
+                    {events.map((event) => (
+                      <TimeLineCardContent event={event} />
+                    ))}
+                  </Chrono>
+                </Col>
+              </Row>
+            )
           )}
         </Col>
       </Row>

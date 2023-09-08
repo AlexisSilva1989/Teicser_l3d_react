@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Controller, ErrorMessage, useForm } from "react-hook-form";
 import { Row, Col, Button } from "react-bootstrap";
 import { Textbox } from "../../../Forms/Textbox";
@@ -12,6 +12,7 @@ import { ComponentSelect } from "./ComponentSelect";
 import { ApiSelect } from "../../../Api/ApiSelect";
 import { Datepicker } from "../../../Forms/Datepicker";
 import FilesMultipleUploader from "../../../Forms/FilesMultipleUploader";
+import ApiSelectMultiple from "../../../Api/ApiSelectMultiple";
 
 interface IProps {
   onSubmit: (data: IDataFormBitacora) => void;
@@ -79,7 +80,8 @@ const FormBitacora = ({
     });
 
   const locationWatch = watch("location");
-  const equipmentWatch = watch("equipment");
+
+  const locationMemo = useMemo(() => locationWatch, [locationWatch]);
 
   //effects
   useEffect(() => {
@@ -96,7 +98,7 @@ const FormBitacora = ({
       { description: initialData?.description },
       { type: initialData?.type.id },
       { equipment: initialData?.equipment.id },
-      { location: initialData?.location.id },
+      { location: initialData?.location },
       { date: initialData?.date },
       { components: initialData?.components },
       { files: initialData?.files },
@@ -113,32 +115,7 @@ const FormBitacora = ({
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Row>
-          <Col sm={12} md={6} className={"mb-2"}>
-            <label>
-              <b>Tipo de Evento *:</b>
-            </label>
-            <Controller
-              control={control}
-              name="type"
-              rules={{ required: caps("validations:required") }}
-              // source={"service_render/equipos/tipos"}
-              source={TYPE_TEST}
-              defaultValue={"-1"}
-              selector={(option: any) => {
-                return { label: option.name, value: option.id };
-              }}
-              onChange={(data) => {
-                return data[0];
-              }}
-              as={ApiSelect}
-            />
-            <ErrorMessage errors={errors} name="type">
-              {({ message }) => (
-                <small className={"text-danger"}>{message}</small>
-              )}
-            </ErrorMessage>
-          </Col>
-          <Col sm={12} md={6} className={"mb-2"}>
+          <Col sm={12} md={4} className={"mb-2"}>
             <Controller
               control={control}
               label="Fecha del evento: *"
@@ -153,9 +130,33 @@ const FormBitacora = ({
               )}
             </ErrorMessage>
           </Col>
+          <Col sm={12} md={8} className={"mb-2"}>
+            <label>
+              <b>Tipo de Evento *:</b>
+            </label>
+            <Controller
+              control={control}
+              name="type"
+              rules={{ required: caps("validations:required") }}
+              source={"tipo_eventos/select"}
+              defaultValue={"-1"}
+              selector={(option: any) => {
+                return { label: option.nombre, value: option.id };
+              }}
+              onChange={(data) => {
+                return data[0];
+              }}
+              as={ApiSelect}
+            />
+            <ErrorMessage errors={errors} name="type">
+              {({ message }) => (
+                <small className={"text-danger"}>{message}</small>
+              )}
+            </ErrorMessage>
+          </Col>
         </Row>
         <Row>
-          <Col sm={12} md={6} className={"mb-2"}>
+          <Col sm={12} md={4} className={"mb-2"}>
             <label>
               <b>Equipo *:</b>
             </label>
@@ -163,11 +164,11 @@ const FormBitacora = ({
               control={control}
               name="equipment"
               rules={{ required: caps("validations:required") }}
-              // source={"service_render/equipos"}
-              source={EQUIPMENT_TEST}
+              source={"service_render/equipos"}
+              // source={EQUIPMENT_TEST}
               defaultValue={"-1"}
               selector={(option: any) => {
-                return { label: option.name, value: option.id };
+                return { label: option.nombre, value: option.id };
               }}
               onChange={(data) => {
                 return data[0];
@@ -180,27 +181,25 @@ const FormBitacora = ({
               )}
             </ErrorMessage>
           </Col>
-          <Col sm={12} md={6} className={"mb-2"}>
-            <label>
-              <b>Ubicación *:</b>
-            </label>
+          <Col sm={12} md={8} className={"mb-2"}>
             <Controller
               control={control}
               name="location"
+              label="Ubicación *"
               rules={{ required: caps("validations:required") }}
-              // source={"service_render/equipos/tipos"}
-              source={LOCATION_TEST}
+              source={"locations"}
               defaultValue={"-1"}
               selector={(option: any) => {
                 return {
-                  label: option.name,
+                  label: option.nombre,
                   value: option.id,
                 };
               }}
               onChange={(data) => {
+                setValue("components", []);
                 return data[0];
               }}
-              as={ApiSelect}
+              as={ApiSelectMultiple}
             />
             <ErrorMessage errors={errors} name="location">
               {({ message }) => (
@@ -216,8 +215,7 @@ const FormBitacora = ({
               control={control}
               source={"/componentes_planos/select"}
               queryParams={{
-                equipment: equipmentWatch,
-                location: locationWatch,
+                location: locationMemo?.map((location) => location.value),
               }}
               selector={(component: any) => ({
                 value: component.id.toString(),
@@ -227,7 +225,7 @@ const FormBitacora = ({
             />
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Col sm={12} className={"mb-2"}>
             <Textbox
               label={`Título *`}
@@ -247,7 +245,7 @@ const FormBitacora = ({
               errorForm={errors.title}
             />
           </Col>
-        </Row>
+        </Row> */}
         <Row>
           <Col sm={12} className={"mb-2"}>
             <TextArea

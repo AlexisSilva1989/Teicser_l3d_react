@@ -52,7 +52,7 @@ const TimeLineCardContent = ({ event }: Props) => {
               className="timeline-slider-prev"
               style={{
                 position: "absolute",
-                left: 0,
+                left: 4,
                 top: "50%",
                 zIndex: 20,
                 width: 18,
@@ -60,9 +60,9 @@ const TimeLineCardContent = ({ event }: Props) => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "var(--primary)",
+                backgroundColor: "var(--warning)",
                 cursor: "pointer",
-                color: "var(--light)",
+                color: "var(--dark)",
                 transform: "translateY(-50%)",
                 borderRadius: "50%",
               }}
@@ -73,7 +73,7 @@ const TimeLineCardContent = ({ event }: Props) => {
               className="timeline-slider-next"
               style={{
                 position: "absolute",
-                right: 0,
+                right: 4,
                 top: "50%",
                 zIndex: 20,
                 width: 18,
@@ -81,9 +81,9 @@ const TimeLineCardContent = ({ event }: Props) => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "var(--primary)",
+                backgroundColor: "var(--warning)",
                 cursor: "pointer",
-                color: "var(--light)",
+                color: "var(--dark)",
                 transform: "translateY(-50%)",
                 borderRadius: "50%",
               }}

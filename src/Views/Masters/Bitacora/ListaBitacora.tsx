@@ -35,7 +35,7 @@ const EVENT_TEST = [
     type: { id: 1, name: "Tipo 1" },
     date: "05-09-2023",
     equipment: { id: 2, name: "Equipo 2" },
-    location: { id: 2, name: "Ubicacion 2" },
+    location: [{ value: "2", label: "Ubicacion 2" }],
     components: [
       {
         id: 4,
@@ -334,50 +334,50 @@ const ListaBitacora = () => {
           modalBitacoraEvent.show();
         }}
       >
-        <ApiSelect<{ label: string; value: string }>
+        <ApiSelect<{ nombre: string; id: number }>
           name="type"
           label="Tipo de evento"
-          source={$j("type")}
+          source={$j("tipo_eventos/select")}
           value={filter.type}
           selector={(option) => {
-            return { label: option.label, value: option.value };
+            return { label: option.nombre, value: option.id.toString() };
           }}
           onChange={(data) => {
             setFilter((s) => $u(s, { type: { $set: data } }));
           }}
         />
 
-        <ApiSelect<{ label: string; value: string }>
+        <ApiSelect<{ id: number; nombre: string }>
           name="equipment"
           label="Equipo"
-          source={$j("equipments")}
+          source={$j("service_render/equipos")}
           value={filter.equipment}
           selector={(option) => {
-            return { label: option.label, value: option.value };
+            return { label: option.nombre, value: option.id.toString() };
           }}
           onChange={(data) => {
             setFilter((s) => $u(s, { equipment: { $set: data } }));
           }}
         />
-        <ApiSelect<{ label: string; value: string }>
+        <ApiSelect<{ nombre: string; id: string }>
           name="location"
           label="Ubicación"
           source={$j("locations")}
           value={filter.location}
           selector={(option) => {
-            return { label: option.label, value: option.value };
+            return { label: option.nombre, value: option.id.toString() };
           }}
           onChange={(data) => {
             setFilter((s) => $u(s, { location: { $set: data } }));
           }}
         />
-        <ApiSelect<{ label: string; value: string }>
+        <ApiSelect<{ id: number; nombre: string }>
           name="component"
           label="Componente"
-          source={$j("components")}
+          source={$j("/componentes_planos/select")}
           value={filter.component}
           selector={(option) => {
-            return { label: option.label, value: option.value };
+            return { value: option.id.toString(), label: option.nombre };
           }}
           onChange={(data) => {
             setFilter((s) => $u(s, { component: { $set: data } }));
@@ -391,7 +391,7 @@ const ListaBitacora = () => {
             setFilter((s) => $u(s, { date: { $set: data } }));
           }}
         />
-        {/* <ApiSelect<{ label: string; value: string }>
+        <ApiSelect<{ label: string; value: string }>
           name="status"
           label="Activo"
           source={[
@@ -415,7 +415,7 @@ const ListaBitacora = () => {
           onChange={(data) => {
             setFilter((s) => $u(s, { status: { $set: data } }));
           }}
-        /> */}
+        />
       </ListaBase>
       <BitacoraFormModal
         show={modalBitacoraEvent.visible}

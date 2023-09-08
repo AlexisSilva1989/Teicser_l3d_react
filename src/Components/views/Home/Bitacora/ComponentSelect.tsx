@@ -81,8 +81,6 @@ export const ComponentSelect = <T extends unknown>({
         (option) => option.id === Number(component.value)
       ) !== -1;
 
-    console.log({ isSelected });
-
     if (!isSelected) {
       setOptionsSelected((state) => [
         ...state,
@@ -163,6 +161,7 @@ export const ComponentSelect = <T extends unknown>({
 
   // EFFECTS
   useEffect(() => {
+    console.log({ queryParams });
     if (!Array.isArray(source)) {
       fetch();
       return;
