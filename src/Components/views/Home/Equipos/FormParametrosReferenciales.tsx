@@ -23,12 +23,29 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
 
   const isPolinomio = watch("active_polinomio");
   const isIa = watch("active_ia");
+  const isMultivariado = watch("active_multivariado");
 
   useEffect(() => {
     register({ name: "equipo_id" }, { required: true })
     register({ name: "componente_id" }, { required: true })
   }, [register])
 
+  useEffect(() => {
+    if(isMultivariado === "1"){
+      setValue([
+        { active_ia: "0" },
+        { active_polinomio: "0" },
+      ])
+    }
+  }, [isMultivariado])
+
+  useEffect(() => {
+    if(isPolinomio === "1" || isIa === "1"){
+      setValue([
+        { active_multivariado: "0" },
+      ])
+    }
+  }, [isIa, isPolinomio])
 
   useEffect(() => {
     setValue([
@@ -51,6 +68,9 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
       { grado_pol_placa_b: initialData?.grado_pol_placa_b },
       { equipo_id: initialData?.equipo_id },
       { componente_id: initialData?.componente_id },
+
+      { active_multivariado: initialData?.active_multivariado ? "1" : "0" },
+      { dias_multivariado: initialData?.dias_multivariado },
     ]);
   }, [initialData]);
 
@@ -108,7 +128,56 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
         </Col>
       </Col>
 
-      <Col sm={12}>
+      <Col sm={12} className="pt-2">
+        <Col sm={12} className="px-0 border rounded">
+          <Col className="pt-3">
+            <p className="mb-0" style={{ fontSize: "12px", fontWeight: 600 }}>Configuración de modelo multivariado</p>
+          </Col>
+          <hr />
+          <Col sm={2}>
+            <label><b>Proyectar:</b></label>
+            <Controller control={control}
+              name={"active_multivariado"}
+              options={[
+                {
+                  label: "Si",
+                  value: "1"
+                }, {
+                  label: "No",
+                  value: "0"
+                }
+              ]}
+
+              rules={{ required: { value: true, message: caps('validations:required') } }}
+              style={{ display: "inline" }}
+              as={RadioSelect}
+            />
+            <ErrorMessage errors={errors} name="active_multivariado">
+              {({ message }) => <small className='text-danger'>{message}</small>}
+            </ErrorMessage>
+          </Col>
+
+          <Col sm={2} className={"mb-2"}>
+            <Textbox
+              type="number"
+              min={1}
+              label={`Días a proyectar *`}
+              name={"dias_multivariado"}
+              id={"dias_multivariado"}
+              onlyNumber={true}
+              disabled={isMultivariado !== "1"}
+              placeholder={"Días a proyectar"}
+              ref={register({
+                required: { value: isMultivariado === "1", message: caps('validations:required') },
+                min: { value: 1, message: 'Debe ser mayor a 0' }
+              })}
+              errorForm={errors.dias_multivariado}
+            />
+          </Col>
+        </Col>
+      </Col>
+
+      <Col sm={12} className="pt-2">
         <Col sm={12} className="px-0 border rounded">
           <Col className="pt-3">
             <p className="mb-0" style={{ fontSize: "12px", fontWeight: 600 }}>Configuración de polinomio</p>
@@ -132,7 +201,7 @@ const FormParametrosReferenciales = ({ onSubmit, isSaving, initialData }: IProps
               style={{ display: "inline" }}
               as={RadioSelect}
             />
-            <ErrorMessage errors={errors} name="status">
+            <ErrorMessage errors={errors} name="active_polinomio">
               {({ message }) => <small className='text-danger'>{message}</small>}
             </ErrorMessage>
           </Col>

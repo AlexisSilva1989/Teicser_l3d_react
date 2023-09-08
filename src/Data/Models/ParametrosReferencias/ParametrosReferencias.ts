@@ -16,6 +16,9 @@ export interface IParametrosReferencias {
   grado_pol_placa:number
   grado_pol_placa_b:number
 
+  active_multivariado: boolean | string
+  dias_multivariado: number
+
   critico_lifter: number | null
   critico_placa_a: number | null
   critico_placa_b: number | null
