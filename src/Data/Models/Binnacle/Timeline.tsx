@@ -1,3 +1,5 @@
+import { TimelineItem } from "react-chrono";
+
 export interface ITimeline {
   id: number;
   title: string;
@@ -10,4 +12,8 @@ export interface ITimeline {
 export interface IMediaTimeline {
   id: number;
   url: string;
+}
+
+export interface CardContent extends TimelineItem {
+  images?: IMediaTimeline[];
 }
