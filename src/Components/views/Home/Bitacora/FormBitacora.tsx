@@ -13,6 +13,8 @@ import { ApiSelect } from "../../../Api/ApiSelect";
 import { Datepicker } from "../../../Forms/Datepicker";
 import FilesMultipleUploader from "../../../Forms/FilesMultipleUploader";
 import ApiSelectMultiple from "../../../Api/ApiSelectMultiple";
+import { RadioSelect } from "../../../Forms/RadioSelect";
+import { usePermissions } from "../../../../Common/Hooks/usePermissions";
 
 interface IProps {
   onSubmit: (data: IDataFormBitacora) => void;
@@ -73,6 +75,7 @@ const FormBitacora = ({
   //hooks
   const { capitalize: caps } = useFullIntl();
   // const { addToast } = useToasts();
+  const { canUpdate } = usePermissions();
   const { handleSubmit, control, errors, setValue, register, watch } =
     useForm<IDataFormBitacora>({
       mode: "onSubmit",
@@ -93,14 +96,14 @@ const FormBitacora = ({
   useEffect(() => {
     setValue([
       { id: initialData?.id },
-      { status: initialData?.status },
+      { show: initialData?.show?.toString() },
       { title: initialData?.title },
       { description: initialData?.description },
-      { type: initialData?.type.id },
-      { equipment: initialData?.equipment.id },
-      { location: initialData?.location },
+      { type: initialData?.tipo_evento.id },
+      { equipment: initialData?.equipo.id },
+      { location: initialData?.ubicaciones },
       { date: initialData?.date },
-      { components: initialData?.components },
+      { components: initialData?.componentes_planos },
       { files: initialData?.files },
     ]);
 
@@ -124,11 +127,6 @@ const FormBitacora = ({
               errorForm={errors.date}
               as={Datepicker}
             />
-            <ErrorMessage errors={errors} name="date">
-              {({ message }) => (
-                <small className={"text-danger"}>{message}</small>
-              )}
-            </ErrorMessage>
           </Col>
           <Col sm={12} md={8} className={"mb-2"}>
             <label>
@@ -249,31 +247,69 @@ const FormBitacora = ({
         <Row>
           <Col sm={12} className={"mb-2"}>
             <TextArea
-              label={`Descripción`}
+              label={`Descripción *`}
               name={"description"}
               placeholder={"Descripción del evento"}
               ref={register({
-                // required: {
-                //   value: true,
-                //   message: caps("validations:required"),
-                // },
-                maxLength: {
-                  value: 50,
-                  message: "Máximo 50 caracteres permitidos",
+                required: {
+                  value: true,
+                  message: caps("validations:required"),
                 },
+                // maxLength: {
+                //   value: 240,
+                //   message: "Máximo 240 caracteres permitidos",
+                // },
               })}
               errorForm={errors.description}
             />
           </Col>
         </Row>
+        {canUpdate("binnacle") && (
+          <Row>
+            <Col sm={12} className={"mb-2"}>
+              <Controller
+                control={control}
+                name="files"
+                as={FilesMultipleUploader}
+              />
+            </Col>
+          </Row>
+        )}
         <Row>
-          <Col sm={12} className={"mb-2"}>
-            <Controller
-              control={control}
-              name="files"
-              as={FilesMultipleUploader}
-            />
-          </Col>
+          {isEdit && (
+            <Col sm={3}>
+              <label>
+                <b>¿Es visible en timeline? *:</b>
+              </label>
+              <Controller
+                control={control}
+                name={"show"}
+                options={[
+                  {
+                    label: "Si",
+                    value: "1",
+                  },
+                  {
+                    label: "No",
+                    value: "0",
+                  },
+                ]}
+                rules={{
+                  required: {
+                    value: !isEdit,
+                    message: caps("validations:required"),
+                  },
+                }}
+                as={RadioSelect}
+              />
+
+              <ErrorMessage errors={errors} name="status">
+                {({ message }) => (
+                  <small className="text-danger">{message}</small>
+                )}
+              </ErrorMessage>
+            </Col>
+          )}
         </Row>
 
         <Row>

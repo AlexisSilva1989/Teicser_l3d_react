@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Chrono, TimelineItem } from "react-chrono";
 import { ax } from "../../../Common/Utils/AxiosCustom";
 import { useToasts } from "react-toast-notifications";
 import { useReload } from "../../../Common/Hooks/useReload";
 import { IColumnasBitacora } from "../../../Data/Models/Binnacle/Binnacle";
-import { AxiosError } from "axios";
+import Axios, { AxiosError } from "axios";
 import { useFullIntl } from "../../../Common/Hooks/useFullIntl";
 import { LoadingSpinner } from "../../../Components/Common/LoadingSpinner";
 import { Card, Col, Row } from "react-bootstrap";
@@ -21,167 +21,30 @@ import { ApiSelect, OptionType } from "../../../Components/Api/ApiSelect";
 import Select from "react-select";
 import TimeLineCardContent from "./TimeLineCardContent";
 import ApiSelectMultiple from "../../../Components/Api/ApiSelectMultiple";
+import { useMedia } from "react-use";
 
 interface Filter {
   date_from: string;
   date_to: string;
   event_types: OptionType[];
+  location: OptionType[];
+  components: OptionType[];
+  equipment: number;
+  workline: number;
 }
-
-const EVENT_TEST: ITimeline[] = [
-  {
-    id: 1,
-    date: "05-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    subtitle: "Lorem ipsum",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-    media: [
-      {
-        id: 1,
-        url: "https://picsum.photos/id/908/512/512",
-      },
-      {
-        id: 2,
-        url: "https://picsum.photos/id/674/512/512",
-      },
-    ],
-  },
-  {
-    id: 2,
-    date: "06-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-    media: [
-      {
-        id: 1,
-        url: "https://picsum.photos/id/908/512/512",
-      },
-      {
-        id: 2,
-        url: "https://picsum.photos/id/674/512/512",
-      },
-    ],
-  },
-  {
-    id: 3,
-    date: "07-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-    media: [
-      {
-        id: 1,
-        url: "https://picsum.photos/id/908/512/512",
-      },
-      {
-        id: 2,
-        url: "https://picsum.photos/id/674/512/512",
-      },
-    ],
-  },
-  {
-    id: 4,
-    date: "08-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-    media: [
-      {
-        id: 1,
-        url: "https://picsum.photos/id/908/512/512",
-      },
-      {
-        id: 2,
-        url: "https://picsum.photos/id/674/512/512",
-      },
-    ],
-  },
-  {
-    id: 5,
-    date: "09-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-    media: [
-      {
-        id: 1,
-        url: "https://picsum.photos/id/908/512/512",
-      },
-      {
-        id: 2,
-        url: "https://picsum.photos/id/674/512/512",
-      },
-    ],
-  },
-  {
-    id: 6,
-    date: "10-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-  },
-  {
-    id: 7,
-    date: "11-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-  },
-  {
-    id: 8,
-    date: "12-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-  },
-  {
-    id: 9,
-    date: "13-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-  },
-  {
-    id: 10,
-    date: "14-09-2023",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dui id ornare arcu odio ut. Eleifend donec pretium vulputate sapien nec. Eu feugiat pretium nibh ipsum consequat nisl vel. A diam sollicitudin tempor id eu nisl nunc mi ipsum. Venenatis tellus in metus vulputate. Eu sem integer vitae justo eget. Tellus cras adipiscing enim eu turpis egestas. Elit ullamcorper dignissim cras tincidunt. Duis tristique sollicitudin nibh sit amet commodo nulla. Enim diam vulputate ut pharetra sit amet aliquam id. A diam maecenas sed enim. Ut lectus arcu bibendum at varius vel pharetra vel.",
-  },
-];
-
-const EVENT_TYPE_TEST = [
-  {
-    id: 1,
-    nombre: "Mantención mayor",
-  },
-  {
-    id: 2,
-    nombre: "Mantención de servicio",
-  },
-  {
-    id: 3,
-    nombre: "Medición laser",
-  },
-  {
-    id: 4,
-    nombre: "Fractura/s",
-  },
-  {
-    id: 5,
-    nombre: "Desprendimientos",
-  },
-  {
-    id: 6,
-    nombre: "Corte de pernos",
-  },
-];
 
 const CHRONO_DIRECTION = {
   vertical: "VERTICAL_ALTERNATING",
   horizontal: "HORIZONTAL",
+};
+
+const EVENT_TYPES_LEVELS: { [key: number]: number[] } = {
+  1: [1, 2, 3],
+  2: [1, 2, 3],
+  3: [1, 2],
+  4: [1],
+  5: [1],
+  6: [1],
 };
 
 const TimeLineChrono = () => {
@@ -195,10 +58,87 @@ const TimeLineChrono = () => {
     date_from: dayjs().subtract(3, "month").format("DD-MM-YYYY"),
     date_to: dayjs().add(3, "month").format("DD-MM-YYYY"),
     event_types: [],
+    location: [],
+    components: [],
+    equipment: -1,
+    workline: -1,
   });
   const [timelineDirection, setTimelineDirection] = useState<
     "horizontal" | "vertical"
   >("horizontal");
+  const [equipmentList, setEquipmentList] = useState([]);
+  const [componentList, setComponentList] = useState([]);
+  const [eventTypesList, setEventTypesList] = useState([]);
+
+  const source = Axios.CancelToken.source();
+
+  const getEquipmentList = async () => {
+    await ax
+      .get("service_render/equipos", {
+        params: {
+          isSelectFilter: true,
+          workline:
+            Number(filter.workline) !== -1 ? filter.workline : undefined,
+        },
+      })
+      .then((response) => {
+        setEquipmentList(response.data);
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(caps("errors:base.get", { element: "equipos select" }), {
+            appearance: "error",
+            autoDismiss: true,
+          });
+        }
+      })
+      .finally(() => {});
+  };
+  const getComponentList = async () => {
+    await ax
+      .get("componentes_planos/select", {
+        params: {
+          location:
+            filter.location !== null && filter.location.length > 0
+              ? filter.location.map((location) => location.value)
+              : undefined,
+        },
+      })
+      .then((response) => {
+        setComponentList(response.data);
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(caps("errors:base.get", { element: "equipos select" }), {
+            appearance: "error",
+            autoDismiss: true,
+          });
+        }
+      })
+      .finally(() => {});
+  };
+
+  const getEventTypesList = async () => {
+    await ax
+      .get("tipo_eventos/select")
+      .then((response) => {
+        setEventTypesList(response.data);
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(
+            caps("errors:base.get", { element: "tipos de eventos select" }),
+            {
+              appearance: "error",
+              autoDismiss: true,
+            }
+          );
+        }
+      })
+      .finally(() => {});
+  };
+
+  const media = useMedia("(min-width: 768px)");
 
   const parseEventsToChronoItems = (data: ITimeline[]): CardContent[] => {
     return data.map((event) => ({
@@ -206,7 +146,7 @@ const TimeLineChrono = () => {
       title: event.date,
       cardTitle: event.title,
       // url: "http://www.history.com",
-      cardSubtitle: event.subtitle,
+      cardSubtitle: event.subtitle ?? event.date,
       cardDetailedText: event.description,
       // media: {
       //   type: "IMAGE",
@@ -218,34 +158,107 @@ const TimeLineChrono = () => {
     }));
   };
 
+  const getZoomLevel = (diffDate: number) => {
+    if (diffDate >= 0 && diffDate <= 6) return 3;
+    if (diffDate > 6 && diffDate < 12) return 2;
+    if (diffDate >= 12) return 1;
+    return 0;
+  };
+
+  const getEventTypeVisibilityByZoomLevel = (
+    eventTypeId: number,
+    zoomLevel: number
+  ) => {
+    return EVENT_TYPES_LEVELS[eventTypeId].includes(zoomLevel);
+  };
+
   const fetch = useCallback(async () => {
     setIsLoading(true);
     await ax
       .get("timeline", {
-        params: filter,
+        params: {
+          ...filter,
+          event_types:
+            filter.event_types !== null
+              ? filter.event_types.map((event) => event.value)
+              : undefined,
+          components:
+            filter.components !== null
+              ? filter.components.map((event) => event.value)
+              : undefined,
+          date_from: filter.date_from.split("-").reverse().join("-"),
+          date_to: filter.date_to.split("-").reverse().join("-"),
+        },
+        cancelToken: source.token,
       })
       .then((response) => {
         const { data }: { data: ITimeline[] } = response;
 
+        setEvents(parseEventsToChronoItems(data));
+
         doReload();
+        setIsLoading(false);
       })
       .catch((e: AxiosError) => {
-        setEvents(parseEventsToChronoItems(EVENT_TEST));
         if (e.response) {
+          // setEvents(parseEventsToChronoItems(EVENT_TEST));
           addToast(caps("errors:base.get", { element: "los eventos" }), {
             appearance: "error",
             autoDismiss: true,
           });
         }
+        if (Axios.isCancel(e.response)) {
+          // Si la solicitud fue cancelada, puedes manejarlo aquí
+          console.log("Solicitud cancelada:", e.response);
+        }
+        // setIsLoading(false);
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .finally(() => {});
   }, [filter]);
 
   useEffect(() => {
+    if (Number(filter.workline) !== -1) {
+      getEquipmentList();
+    }
+  }, [filter.workline]);
+
+  useEffect(() => {
+    getComponentList();
+  }, [filter.location]);
+
+  useEffect(() => {
+    const dateFrom = dayjs(filter.date_from.split("-").reverse().join("-"));
+    const dateTo = dayjs(filter.date_to.split("-").reverse().join("-"));
+    const diffDates = dateTo.diff(dateFrom, "months");
+    const zoomLevel = getZoomLevel(diffDates);
+    const eventsByZoomLevel = eventTypesList
+      .filter((event: any) => event.jerarquia <= zoomLevel)
+      .map((event: any) => ({ label: event.nombre, value: event.id }));
+    setFilter((state) =>
+      $u(state, {
+        event_types: {
+          $set: eventsByZoomLevel,
+        },
+      })
+    );
+    console.log({ zoom: zoomLevel, events: eventsByZoomLevel });
+  }, [filter.date_from, filter.date_to, eventTypesList]);
+
+  useEffect(() => {
     fetch();
+    return () => {
+      source.cancel(
+        "Solicitud cancelada debido a la desaparición del componente"
+      );
+    };
   }, [filter]);
+
+  useEffect(() => {
+    setTimelineDirection(media ? "horizontal" : "vertical");
+    getEquipmentList();
+    getComponentList();
+    getEventTypesList();
+  }, []);
 
   return (
     <div className="p-3 bg-white" style={{ width: "100%" }}>
@@ -256,159 +269,140 @@ const TimeLineChrono = () => {
               <h3>Timeline</h3>
             </Col>
           </Row>
-          <Row className="mb-4">
-            <Col
-              sm="12"
-              className="d-flex justify-content-end align-items-start"
-              style={{
-                gap: 8,
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  maxWidth: 189.32,
-                }}
-              >
-                <ApiSelect
-                  label="Linea de trabajo"
-                  name="workline"
-                  source={"linea_tiempos/select"}
-                  selector={(option: any) => ({
-                    label: option.nombre,
-                    value: option.id,
-                  })}
-                />
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  maxWidth: 189.32,
-                }}
-              >
-                <ApiSelect
-                  label="Equipo"
-                  name="equipment"
-                  source={"equipos/select"}
-                  selector={(option: any) => ({
-                    label: option.nombre,
-                    value: option.id,
-                  })}
-                />
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  maxWidth: 189.32,
-                }}
-              >
-                <ApiSelect
-                  label="Componente"
-                  name="component"
-                  source={"componentes_planos/select"}
-                  selector={(option: any) => ({
-                    label: option.nombre,
-                    value: option.id,
-                  })}
-                />
-              </div>
-              <div style={{ width: "100%", maxWidth: 132 }}>
-                <Datepicker
-                  label="Fecha desde"
-                  name="dateFrom"
-                  value={filter.date_from}
-                  onChange={(date) =>
-                    setFilter((state) =>
-                      $u(state, {
-                        date_from: { $set: date },
-                      })
-                    )
-                  }
-                />
-              </div>
 
-              <div style={{ width: "100%", maxWidth: 132 }}>
-                <Datepicker
-                  label="Fecha hasta"
-                  name="dateTo"
-                  value={filter.date_to}
-                  onChange={(date) =>
-                    setFilter((state) =>
-                      $u(state, {
-                        date_to: { $set: date },
-                      })
-                    )
-                  }
-                />
-              </div>
-            </Col>
-          </Row>
-          <Row className="mb-4">
-            <Col sm="12" md="3">
-              <Switch
-                status={timelineDirection === "vertical"}
-                title="Vertical"
-                onChange={(data: any) => {
-                  console.log({ data });
-                  setTimelineDirection(data ? "vertical" : "horizontal");
-                  doReload();
+          <Row>
+            <Col sm="12" md="3" className="mb-4">
+              <ApiSelect
+                label="Linea de trabajo"
+                name="workline"
+                source={"lineas_trabajo"}
+                value={filter.workline.toString()}
+                selector={(option: any) => ({
+                  label: option.nombre,
+                  value: option.id,
+                })}
+                onChange={(data) => {
+                  setFilter((state) =>
+                    $u(state, {
+                      workline: { $set: data },
+                      equipment: { $set: -1 },
+                    })
+                  );
+                }}
+                firtsOptions={{
+                  label: "Todos",
+                  value: "-1",
                 }}
               />
             </Col>
-            <Col
-              sm="12"
-              md={{ span: 8, offset: 1 }}
-              lg={{ span: 6, offset: 3 }}
-              className="d-flex justify-content-end align-items-start"
-              style={{
-                gap: 8,
-              }}
-            >
-              {/* <div className="w-100">
-                <label>
-                  <b>Tipos de eventos:</b>
-                </label>
-                <Select
-                  options={EVENT_TYPE_TEST.map((option) => ({
-                    label: option.nombre,
-                    value: option.id,
-                  }))}
-                  selector={(option: any) => ({
-                    label: option.nombre,
-                    value: option.id.toString(),
-                  })}
-                  onChange={(data: any) => {
-                    console.log({ data });
-                    setFilter((state) => ({
-                      ...state,
-                      eventTypes: data,
-                    }));
-                  }}
-                  value={filter.eventTypes}
-                  className="mb-0"
-                  isMulti
-                  styles={{
-                    control: (base) => ({
-                      ...base,
-                      minHeight: "calc(1.5em + 1.25rem + 1.75px)",
-                      borderColor: "#e3eaef",
-                      borderRadius: "0.25rem",
-                    }),
-                    indicatorsContainer: (base) => ({
-                      ...base,
-                      div: { padding: 5 },
-                    }),
-                  }}
-                />
-              </div> */}
+            <Col sm="12" md="3" className="mb-4">
+              <ApiSelect
+                label="Equipo"
+                name="equipment"
+                source={equipmentList}
+                queryParams={{
+                  workline: filter.workline,
+                }}
+                value={filter.equipment.toString()}
+                selector={(option: any) => ({
+                  label: option.nombre,
+                  value: option.id,
+                })}
+                onChange={(date) => {
+                  setFilter((state) =>
+                    $u(state, {
+                      equipment: { $set: date },
+                    })
+                  );
+                }}
+                firtsOptions={{
+                  label: "Todos",
+                  value: "-1",
+                }}
+              />
+            </Col>
+            <Col sm="12" md="3" className="mb-4">
+              <Datepicker
+                label="Fecha desde"
+                name="dateFrom"
+                value={filter.date_from}
+                onChange={(data) =>
+                  setFilter((state) =>
+                    $u(state, {
+                      date_from: { $set: data },
+                    })
+                  )
+                }
+              />
+            </Col>
+            <Col sm="12" md="3" className="mb-4">
+              <Datepicker
+                label="Fecha hasta"
+                name="dateTo"
+                value={filter.date_to}
+                onChange={(data) =>
+                  setFilter((state) =>
+                    $u(state, {
+                      date_to: { $set: data },
+                    })
+                  )
+                }
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col sm="12" md="6" className="mb-4">
               <ApiSelectMultiple
-                source={"tipo_eventos/select"}
+                label="Ubicacion"
+                source={"locations"}
                 selector={(option: any) => ({
                   label: option.nombre,
                   value: option.id.toString(),
                 })}
                 onChange={(data: any) => {
-                  console.log({ data });
+                  setFilter((state) =>
+                    $u(state, {
+                      location: { $set: data },
+                      components: { $set: [] },
+                    })
+                  );
+                }}
+                value={filter.location}
+              />
+            </Col>
+            <Col sm="12" md="6" className="mb-4">
+              <ApiSelectMultiple
+                label="Componente"
+                name="component"
+                source={componentList}
+                queryParams={{
+                  equipment: filter.equipment,
+                }}
+                value={filter.components}
+                selector={(option: any) => ({
+                  label: option.nombre,
+                  value: option.id,
+                })}
+                onChange={(data) => {
+                  setFilter((state) =>
+                    $u(state, {
+                      components: { $set: data },
+                    })
+                  );
+                }}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col sm="12" md="9" className="mb-4">
+              <ApiSelectMultiple
+                label="Tipos de Eventos"
+                source={eventTypesList}
+                selector={(option: any) => ({
+                  label: option.nombre,
+                  value: option.id.toString(),
+                })}
+                onChange={(data: any) => {
                   setFilter((state) => ({
                     ...state,
                     event_types: data,
@@ -417,23 +411,22 @@ const TimeLineChrono = () => {
                 value={filter.event_types}
               />
             </Col>
-            {/* <Col>
-                <Switch
-                  status={filter.isVertical}
-                  title="Vertical"
-                  onChange={(data: any) => {
-                    console.log({ data });
-                    setFilter((state) =>
-                      $u(state, {
-                        isVertical: {
-                          $set: data,
-                        },
-                      })
-                    );
-                  }}
-                />
-              </Col> */}
+            <Col
+              sm="12"
+              md="3"
+              className="d-flex justify-content-start align-items-end mb-4"
+            >
+              <Switch
+                status={timelineDirection === "vertical"}
+                title="Vertical"
+                onChange={(data: any) => {
+                  setTimelineDirection(data ? "vertical" : "horizontal");
+                  doReload();
+                }}
+              />
+            </Col>
           </Row>
+
           {isLoading ? (
             <LoadingSpinner />
           ) : (
@@ -449,7 +442,7 @@ const TimeLineChrono = () => {
                     allowDynamicUpdate
                   >
                     {events.map((event) => (
-                      <TimeLineCardContent event={event} />
+                      <TimeLineCardContent key={event.id} event={event} />
                     ))}
                   </Chrono>
                 </Col>

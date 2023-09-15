@@ -13,6 +13,7 @@ interface Props<T> {
   selector: (data: T) => OptionType;
   onChange?: (values: OptionType[]) => void;
   filter?: (x: OptionType) => boolean;
+  onFinishLoad?: () => void;
   label?: string;
   name?: string;
   id?: string;
@@ -39,6 +40,7 @@ const ApiSelectMultiple = <T extends unknown>({
   errors,
   errorForm,
   filter,
+  onFinishLoad,
 }: Props<T>) => {
   // HOOKS
   const { capitalize: caps } = useFullIntl();
@@ -52,6 +54,7 @@ const ApiSelectMultiple = <T extends unknown>({
   // METHODS
 
   const getMappedSource = (data: T[]) => {
+    console.log({ data });
     if (Array.isArray(data)) {
       const options =
         filter && filter !== null
@@ -61,7 +64,7 @@ const ApiSelectMultiple = <T extends unknown>({
           : data.map((option) => selector(option));
       setOptionList((state) =>
         $u(state, {
-          $set: options ?? [],
+          $set: options,
         })
       );
     }
@@ -91,6 +94,7 @@ const ApiSelectMultiple = <T extends unknown>({
         .finally(() => {
           setIsLoading(false);
           setHasInit(true);
+          onFinishLoad && onFinishLoad();
         });
     } else {
       getMappedSource(source);
@@ -103,6 +107,12 @@ const ApiSelectMultiple = <T extends unknown>({
     fetchOptions();
   }, []);
 
+  useEffect(() => {
+    if (Array.isArray(source)) {
+      getMappedSource(source);
+    }
+  }, [source]);
+
   return (
     <div className="w-100">
       {label && (
@@ -113,7 +123,6 @@ const ApiSelectMultiple = <T extends unknown>({
       <Select
         options={optionList}
         onChange={(data: any) => {
-          console.log({ data });
           onChange && onChange(data);
         }}
         value={value}

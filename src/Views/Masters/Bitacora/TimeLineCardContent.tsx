@@ -11,6 +11,8 @@ interface Props {
 
 const TimeLineCardContent = ({ event }: Props) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const isExpandible =
+    event?.cardDetailedText && event.cardDetailedText.length > 240;
 
   SwiperCore.use([Navigation, Autoplay]);
 
@@ -94,7 +96,11 @@ const TimeLineCardContent = ({ event }: Props) => {
         </div>
       )}
       <div>
-        {isExpanded ? event.cardDetailedText : truncateDescription}
+        {isExpandible
+          ? isExpanded
+            ? event.cardDetailedText
+            : truncateDescription
+          : event.cardDetailedText}
         <span
           onClick={() => setIsExpanded((state) => !state)}
           style={{
@@ -105,7 +111,7 @@ const TimeLineCardContent = ({ event }: Props) => {
             zIndex: 20,
           }}
         >
-          {isExpanded ? "Leer menos" : "Leer más"}
+          {isExpandible && (isExpanded ? "Leer menos" : "Leer más")}
         </span>
       </div>
     </div>

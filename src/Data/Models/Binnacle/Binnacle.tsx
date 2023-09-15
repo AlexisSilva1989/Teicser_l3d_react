@@ -55,7 +55,7 @@ export interface IBitacora {
   location: OptionType[];
   components: ComponenteBitacora[];
   description?: string;
-  status?: number;
+  show?: string;
 }
 
 export interface IDataFormBitacora extends IBitacora {
@@ -76,11 +76,16 @@ export interface EventEquipment {
 }
 
 export interface IColumnasBitacora
-  extends Omit<IBitacora, "type" | "equipment" | "location"> {
-  type: EventType;
-  location: OptionType[];
-  equipment: EventEquipment;
+  extends Omit<
+    IBitacora,
+    "type" | "equipment" | "location" | "components" | "show"
+  > {
+  tipo_evento: EventType;
+  ubicaciones: OptionType[];
+  equipo: EventEquipment;
+  componentes_planos: ComponenteBitacora[];
   files?: Partial<Attachment>[];
+  show?: number;
 }
 
 export const BitacoraColumns = (
@@ -92,11 +97,7 @@ export const BitacoraColumns = (
     const header = Utils.capitalize(intl);
     return [
       {
-        selector: "title",
-        name: header("columns:title"),
-      },
-      {
-        selector: "type.name",
+        selector: "tipo_evento.name",
         name: header("columns:event_type"),
       },
       {
@@ -104,7 +105,7 @@ export const BitacoraColumns = (
         name: header("columns:event_date"),
       },
       {
-        selector: "equipment.name",
+        selector: "equipo.name",
         name: header("columns:equipo"),
       },
       // {

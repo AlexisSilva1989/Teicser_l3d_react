@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ListaBase } from "../../Common/ListaBase";
 import { $j, $u } from "../../../Common/Utils/Reimports";
 import { ApiSelect } from "../../../Components/Api/ApiSelect";
@@ -16,27 +16,29 @@ import {
 import BitacoraFormModal from "../../../Components/Modals/BitacoraFormModal";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Datepicker } from "../../../Components/Forms/Datepicker";
+import dayjs from "dayjs";
+import swal from "sweetalert";
 
 interface FilterBitacora {
-  status: string;
+  is_show: string;
   type: string;
-  date: string;
+  date: string | undefined;
   equipment: string;
   location: string;
-  component: string;
+  components: string;
 }
 
-const EVENT_TEST = [
+const EVENT_TEST: IColumnasBitacora[] = [
   {
     id: 1,
-    status: 1,
+    // status: 1,
     title: "Titulo1",
     description: "Descripcion 1",
-    type: { id: 1, name: "Tipo 1" },
+    tipo_evento: { id: 1, name: "Tipo 1" },
     date: "05-09-2023",
-    equipment: { id: 2, name: "Equipo 2" },
-    location: [{ value: "2", label: "Ubicacion 2" }],
-    components: [
+    equipo: { id: 2, name: "Equipo 2" },
+    ubicaciones: [{ value: "2", label: "Ubicacion 2" }],
+    componentes_planos: [
       {
         id: 4,
         has_all_parts: true,
@@ -72,14 +74,16 @@ const ListaBitacora = () => {
   const modalBitacoraEvent = useShortModal();
   const { addToast } = useToasts();
 
+  const [hasInit, setHasInit] = useState<boolean>(false);
+  const [eventList, setEventList] = useState<IColumnasBitacora[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<FilterBitacora>({
-    status: "-1",
+    is_show: "-1",
     type: "-1",
-    date: "-1",
+    date: undefined,
     equipment: "-1",
     location: "-1",
-    component: "-1",
+    components: "-1",
   });
   const [modalActionType, setModalActionType] = useState<"agregar" | "editar">(
     "agregar"
@@ -88,20 +92,28 @@ const ListaBitacora = () => {
     IColumnasBitacora | undefined
   >();
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [componentList, setComponentList] = useState([]);
 
-  const handleStatusChange = async (eventId: number, status: number) => {
+  const getList = async () => {
     setIsLoading(true);
     await ax
-      .delete(`bitacora`, { params: { eventId, status } })
+      .get(`eventos_bitacora`, {
+        params: {
+          ...filter,
+          date:
+            filter.date !== undefined
+              ? dayjs(filter.date.split("-").reverse().join("-")).format(
+                  "YYYY-MM-DD"
+                )
+              : filter.date,
+        },
+      })
       .then((response) => {
-        doReload();
-        addToast(caps("success:base.save"), {
-          appearance: "success",
-          autoDismiss: true,
-        });
+        setEventList(response.data);
       })
       .catch((e: AxiosError) => {
         if (e.response) {
+          // setEventList(EVENT_TEST);
           addToast(caps("errors:base.delete", { element: "Evento" }), {
             appearance: "error",
             autoDismiss: true,
@@ -113,12 +125,33 @@ const ListaBitacora = () => {
       });
   };
 
-  const handleDeleteEvent = async (eventId: number) => {
+  const getComponentList = async () => {
+    await ax
+      .get("componentes_planos/select", {
+        params: {
+          location:
+            Number(filter.location) !== -1 ? [filter.location] : undefined,
+        },
+      })
+      .then((response) => {
+        setComponentList(response.data);
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(caps("errors:base.get", { element: "equipos select" }), {
+            appearance: "error",
+            autoDismiss: true,
+          });
+        }
+      })
+      .finally(() => {});
+  };
+
+  const handleIsShowChange = async (eventId: number, isShow: number) => {
     setIsLoading(true);
     await ax
-      .delete(`bitacora`, { params: { eventId } })
+      .patch(`eventos_bitacora/show`, { eventId, isShow })
       .then((response) => {
-        doReload();
         addToast(caps("success:base.save"), {
           appearance: "success",
           autoDismiss: true,
@@ -134,7 +167,46 @@ const ListaBitacora = () => {
       })
       .finally(() => {
         setIsLoading(false);
+        doReload();
       });
+  };
+
+  const deleteEvent = async (eventId: number) => {
+    setIsLoading(true);
+    await ax
+      .delete(`eventos_bitacora`, { params: { eventId } })
+      .then((response) => {
+        addToast(caps("success:base.save"), {
+          appearance: "success",
+          autoDismiss: true,
+        });
+      })
+      .catch((e: AxiosError) => {
+        if (e.response) {
+          addToast(caps("errors:base.delete", { element: "Evento" }), {
+            appearance: "error",
+            autoDismiss: true,
+          });
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+        doReload();
+      });
+  };
+
+  const handleDeleteEvent = async (eventId: number) => {
+    swal({
+      // title: "Está seguro de cambiar este campo?",
+      text: caps("messages:confirmations.on_remove_permanent_element"),
+      icon: "warning",
+      className: "swal-text-justify",
+      buttons: ["Cancelar", "Si, estoy seguro"],
+    }).then((result: any) => {
+      if (result) {
+        deleteEvent(eventId);
+      }
+    });
   };
 
   const columns = BitacoraColumns([
@@ -150,12 +222,12 @@ const ListaBitacora = () => {
       },
       cell: (event) => (
         <>
-          {event.status && event.status === 1 ? (
+          {event.show === 1 ? (
             <OverlayTrigger
               placement="top"
               overlay={
                 <Tooltip id={`tooltip-preview-${event.id}`}>
-                  {caps("labels:meta.comprob")}
+                  {caps("¿Es visible en timeline?")}
                 </Tooltip>
               }
             >
@@ -163,7 +235,7 @@ const ListaBitacora = () => {
                 className="fas fa-eye"
                 style={{ cursor: "pointer", color: "var(--info)" }}
                 onClick={() =>
-                  handleStatusChange(event.id, event.status ? 0 : 1)
+                  handleIsShowChange(event.id, event.show === 1 ? 0 : 1)
                 }
               />
             </OverlayTrigger>
@@ -172,7 +244,7 @@ const ListaBitacora = () => {
               placement="top"
               overlay={
                 <Tooltip id={`tooltip-preview-${event.id}`}>
-                  {caps("labels:meta.comprob")}
+                  {caps("¿Es visible en timeline?")}
                 </Tooltip>
               }
             >
@@ -180,7 +252,7 @@ const ListaBitacora = () => {
                 className="fas fa-eye-slash"
                 style={{ cursor: "pointer", color: "var(--info)" }}
                 onClick={() =>
-                  handleStatusChange(event.id, event.status ? 0 : 1)
+                  handleIsShowChange(event.id, event.show === 1 ? 0 : 1)
                 }
               />
             </OverlayTrigger>
@@ -189,7 +261,7 @@ const ListaBitacora = () => {
             placement="top"
             overlay={
               <Tooltip id={`tooltip-preview-${event.id}`}>
-                {caps("labels:meta.comprob")}
+                {caps("Eliminar evento")}
               </Tooltip>
             }
           >
@@ -216,14 +288,14 @@ const ListaBitacora = () => {
     },
   ];
 
-  const customFilter = useCallback(
-    (evento: IColumnasBitacora): boolean => {
-      const isFilterByStatus: boolean =
-        filter.status == "-1" || evento.status?.toString() == filter.status;
-      return isFilterByStatus;
-    },
-    [filter]
-  );
+  // const customFilter = useCallback(
+  //   (evento: IColumnasBitacora): boolean => {
+  //     const isFilterByShow: boolean =
+  //       filter.is_show == "-1" || evento.is_show?.toString() == filter.is_show;
+  //     return isFilterByStatus;
+  //   },
+  //   [filter]
+  // );
 
   /*HANDLES */
   const onSubmitAdd = async (data: IDataFormBitacora) => {
@@ -232,22 +304,28 @@ const ListaBitacora = () => {
     });
     const formData = new FormData();
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
-    formData.append("title", data.title);
     data.description && formData.append("description", data.description);
-    data.description && formData.append("date", data.date);
+    data.date &&
+      formData.append(
+        "date",
+        dayjs(data.date.split("-").reverse().join("-")).format("YYYY-MM-DD")
+      );
     formData.append("type", data.type.toString());
     formData.append("equipment", data.equipment.toString());
-    formData.append("location", data.location.toString());
     formData.append("components", JSON.stringify(data.components));
     data.files?.forEach((file) => {
       file.data &&
         file.action === "add" &&
         formData.append("files[]", file.data);
     });
+    formData.append(
+      "location",
+      JSON.stringify(data.location.map((item) => item.value))
+    );
 
     setIsSaving(true);
     await ax
-      .post("bitacora", formData, headers)
+      .post("eventos_bitacora", formData, headers)
       .then((response) => {
         modalBitacoraEvent.hide();
         doReload();
@@ -273,12 +351,17 @@ const ListaBitacora = () => {
     const formData = new FormData();
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
 
-    formData.append("title", data.title);
+    console.log({ date: data.date });
+
+    formData.append("id", data.id.toString());
     data.description && formData.append("description", data.description);
-    data.description && formData.append("date", data.date);
+    data.date &&
+      formData.append(
+        "date",
+        dayjs(data.date.split("-").reverse().join("-")).format("YYYY-MM-DD")
+      );
     formData.append("type", data.type.toString());
     formData.append("equipment", data.equipment.toString());
-    formData.append("location", data.location.toString());
     formData.append("components", JSON.stringify(data.components));
     data.files?.forEach((file) => {
       file.data &&
@@ -290,10 +373,15 @@ const ListaBitacora = () => {
         "files_raw",
         JSON.stringify(data.files?.filter((file) => file.action !== "add"))
       );
+    formData.append(
+      "location",
+      JSON.stringify(data.location.map((item) => item.value))
+    );
+    formData.append("show", data?.show ? "1" : "0");
 
     setIsSaving(true);
     await ax
-      .patch("bitacora", formData, headers)
+      .patch("eventos_bitacora", formData, headers)
       .then((response) => {
         modalBitacoraEvent.hide();
         doReload();
@@ -315,15 +403,31 @@ const ListaBitacora = () => {
       });
   };
 
+  useEffect(() => {
+    getList();
+    getComponentList();
+    setHasInit(true);
+  }, []);
+
+  useEffect(() => {
+    if (hasInit) {
+      getList();
+    }
+  }, [filter, hasInit, reload]);
+
+  useEffect(() => {
+    Number(filter.location) !== -1 && getComponentList();
+  }, [filter.location]);
+
   return (
     <>
       <ListaBase<IColumnasBitacora>
         title="titles:binnacle"
-        // source={$j("bitacora")}
-        source={EVENT_TEST}
+        source={eventList}
+        // source={EVENT_TEST}
         permission="masters"
         columns={columns}
-        customFilter={customFilter}
+        // customFilter={customFilter}
         isRemoveAddButon
         modals={modals}
         reload={reload}
@@ -368,32 +472,26 @@ const ListaBitacora = () => {
             return { label: option.nombre, value: option.id.toString() };
           }}
           onChange={(data) => {
-            setFilter((s) => $u(s, { location: { $set: data } }));
+            setFilter((s) =>
+              $u(s, { location: { $set: data }, components: { $set: "-1" } })
+            );
           }}
         />
         <ApiSelect<{ id: number; nombre: string }>
           name="component"
           label="Componente"
-          source={$j("/componentes_planos/select")}
-          value={filter.component}
+          source={componentList}
+          value={filter.components}
           selector={(option) => {
             return { value: option.id.toString(), label: option.nombre };
           }}
           onChange={(data) => {
-            setFilter((s) => $u(s, { component: { $set: data } }));
-          }}
-        />
-        <Datepicker
-          name="date"
-          label="Fecha"
-          value={filter.date}
-          onChange={(data) => {
-            setFilter((s) => $u(s, { date: { $set: data } }));
+            setFilter((s) => $u(s, { components: { $set: data } }));
           }}
         />
         <ApiSelect<{ label: string; value: string }>
-          name="status"
-          label="Activo"
+          name="is_show"
+          label="¿Es Visible?"
           source={[
             {
               label: caps("labels:common.all"),
@@ -408,12 +506,20 @@ const ListaBitacora = () => {
               value: "0",
             },
           ]}
-          value={filter.status}
+          value={filter.is_show}
           selector={(option) => {
             return { label: option.label, value: option.value };
           }}
           onChange={(data) => {
-            setFilter((s) => $u(s, { status: { $set: data } }));
+            setFilter((s) => $u(s, { is_show: { $set: data } }));
+          }}
+        />
+        <Datepicker
+          name="date"
+          label="Fecha"
+          value={filter.date}
+          onChange={(data) => {
+            setFilter((s) => $u(s, { date: { $set: data } }));
           }}
         />
       </ListaBase>
