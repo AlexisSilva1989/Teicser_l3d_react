@@ -264,7 +264,7 @@ const FormBitacora = ({
             />
           </Col>
         </Row>
-        {canUpdate("binnacle") && (
+        {canUpdate("timeline_images") && (
           <Row>
             <Col sm={12} className={"mb-2"}>
               <Controller

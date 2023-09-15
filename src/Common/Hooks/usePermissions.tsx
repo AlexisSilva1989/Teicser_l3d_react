@@ -10,7 +10,8 @@ export type UserPermission =
   | "reports"
   | "configuration"
   | "masters"
-  | "binnacle";
+  | "binnacle"
+  | "timeline_images";
 
 export const usePermissions = () => {
   const permissions = useSelector<IAppState, IUserPermission[]>(
