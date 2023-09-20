@@ -241,16 +241,17 @@ const TimeLineChrono = () => {
         },
       })
     );
-    console.log({ zoom: zoomLevel, events: eventsByZoomLevel });
   }, [filter.date_from, filter.date_to, eventTypesList]);
 
   useEffect(() => {
-    fetch();
-    return () => {
-      source.cancel(
-        "Solicitud cancelada debido a la desaparición del componente"
-      );
-    };
+    if (filter.date_from !== "" && filter.date_to !== "") {
+      fetch();
+      return () => {
+        source.cancel(
+          "Solicitud cancelada debido a la desaparición del componente"
+        );
+      };
+    }
   }, [filter]);
 
   useEffect(() => {

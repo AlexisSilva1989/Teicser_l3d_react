@@ -102,9 +102,11 @@ const ListaBitacora = () => {
           ...filter,
           date:
             filter.date !== undefined
-              ? dayjs(filter.date.split("-").reverse().join("-")).format(
-                  "YYYY-MM-DD"
-                )
+              ? filter.date !== ""
+                ? dayjs(filter.date.split("-").reverse().join("-")).format(
+                    "YYYY-MM-DD"
+                  )
+                : undefined
               : filter.date,
         },
       })
@@ -114,7 +116,7 @@ const ListaBitacora = () => {
       .catch((e: AxiosError) => {
         if (e.response) {
           // setEventList(EVENT_TEST);
-          addToast(caps("errors:base.delete", { element: "Evento" }), {
+          addToast(caps("errors:base.load", { element: "Eventos" }), {
             appearance: "error",
             autoDismiss: true,
           });
