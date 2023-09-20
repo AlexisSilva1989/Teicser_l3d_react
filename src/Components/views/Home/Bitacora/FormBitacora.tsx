@@ -107,7 +107,6 @@ const FormBitacora = ({
       { files: initialData?.files },
     ]);
 
-    console.log("initialData: ", initialData);
   }, [initialData]);
 
   // const onSubmit = (data: any) => {
@@ -183,8 +182,8 @@ const FormBitacora = ({
             <Controller
               control={control}
               name="location"
-              label="Ubicación *"
-              rules={{ required: caps("validations:required") }}
+              label="Ubicación"
+              // rules={{ required: caps("validations:required") }}
               source={"locations"}
               defaultValue={"-1"}
               selector={(option: any) => {
