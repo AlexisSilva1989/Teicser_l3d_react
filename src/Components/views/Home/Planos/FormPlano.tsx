@@ -191,6 +191,7 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
   console.log({ locationWatch });
 
   useEffect(() => {
+    setValue("componente", undefined);
     locationWatch && doReloadPlansComponents();
   }, [locationWatch]);
 
@@ -330,7 +331,7 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
               rules={{ required: caps("validations:required") }}
               source={"componentes_planos/select"}
               queryParams={{
-                location: locationWatch,
+                location: [locationWatch],
               }}
               placeholder={"Seleccione componente ..."}
               selector={(option: any) => {
