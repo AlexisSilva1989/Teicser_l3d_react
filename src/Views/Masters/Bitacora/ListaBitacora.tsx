@@ -410,7 +410,15 @@ const ListaBitacora = () => {
     if (hasInit) {
       getList();
     }
-  }, [filter, hasInit, reload]);
+  }, [
+    filter.components,
+    filter.date,
+    filter.equipment,
+    filter.is_show,
+    filter.type,
+    hasInit,
+    reload,
+  ]);
 
   useEffect(() => {
     Number(filter.location) !== -1 && getComponentList();
@@ -446,6 +454,10 @@ const ListaBitacora = () => {
           onChange={(data) => {
             setFilter((s) => $u(s, { type: { $set: data } }));
           }}
+          firtsOptions={{
+            label: "Todos",
+            value: "-1",
+          }}
         />
 
         <ApiSelect<{ id: number; nombre: string }>
@@ -458,6 +470,10 @@ const ListaBitacora = () => {
           }}
           onChange={(data) => {
             setFilter((s) => $u(s, { equipment: { $set: data } }));
+          }}
+          firtsOptions={{
+            label: "Todos",
+            value: "-1",
           }}
         />
         <ApiSelect<{ nombre: string; id: string }>
@@ -473,6 +489,10 @@ const ListaBitacora = () => {
               $u(s, { location: { $set: data }, components: { $set: "-1" } })
             );
           }}
+          firtsOptions={{
+            label: "Todas",
+            value: "-1",
+          }}
         />
         <ApiSelect<{ id: number; nombre: string }>
           name="component"
@@ -484,6 +504,10 @@ const ListaBitacora = () => {
           }}
           onChange={(data) => {
             setFilter((s) => $u(s, { components: { $set: data } }));
+          }}
+          firtsOptions={{
+            label: "Todos",
+            value: "-1",
           }}
         />
         <ApiSelect<{ label: string; value: string }>
