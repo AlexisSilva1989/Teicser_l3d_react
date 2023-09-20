@@ -421,7 +421,7 @@ const ListaBitacora = () => {
   ]);
 
   useEffect(() => {
-    Number(filter.location) !== -1 && getComponentList();
+    Number(filter.location) !== null && getComponentList();
   }, [filter.location]);
 
   return (
