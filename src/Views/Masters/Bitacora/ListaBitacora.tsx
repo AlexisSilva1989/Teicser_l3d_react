@@ -333,7 +333,7 @@ const ListaBitacora = () => {
       })
       .catch((e: AxiosError) => {
         if (e.response) {
-          addToast(caps("errors:base.post", { element: "fabricante" }), {
+          addToast(caps("errors:base.post", { element: "evento" }), {
             appearance: "error",
             autoDismiss: true,
           });
@@ -389,7 +389,7 @@ const ListaBitacora = () => {
       })
       .catch((e: AxiosError) => {
         if (e.response) {
-          addToast(caps("errors:base.post", { element: "fabricante" }), {
+          addToast(caps("errors:base.post", { element: "evento" }), {
             appearance: "error",
             autoDismiss: true,
           });
