@@ -299,9 +299,6 @@ const ListaBitacora = () => {
 
   /*HANDLES */
   const onSubmitAdd = async (data: IDataFormBitacora) => {
-    console.log({
-      files: data.files?.filter((file) => !file.data),
-    });
     const formData = new FormData();
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
     data.description && formData.append("description", data.description);
@@ -318,10 +315,10 @@ const ListaBitacora = () => {
         file.action === "add" &&
         formData.append("files[]", file.data);
     });
-    formData.append(
-      "location",
-      JSON.stringify(data.location.map((item) => item.value))
-    );
+    // formData.append(
+    //   "location",
+    //   JSON.stringify(data.location.map((item) => item.value))
+    // );
 
     setIsSaving(true);
     await ax
@@ -373,10 +370,10 @@ const ListaBitacora = () => {
         "files_raw",
         JSON.stringify(data.files?.filter((file) => file.action !== "add"))
       );
-    formData.append(
-      "location",
-      JSON.stringify(data.location.map((item) => item.value))
-    );
+    // formData.append(
+    //   "location",
+    //   JSON.stringify(data.location.map((item) => item.value))
+    // );
     formData.append("show", data?.show ? "1" : "0");
 
     setIsSaving(true);
