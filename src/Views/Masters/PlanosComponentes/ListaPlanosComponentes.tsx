@@ -60,6 +60,7 @@ const ListaPlanosComponentes = () => {
     const formData = new FormData();
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
     formData.append("nombre", data.nombre);
+    data.codigo !== undefined && formData.append("codigo", data.codigo);
     formData.append("ubicacion", data.ubicacion.toString());
 
     setIsSaving(true);
@@ -94,6 +95,7 @@ const ListaPlanosComponentes = () => {
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
     formData.append("id_componente", data.id);
     formData.append("nombre", data.nombre);
+    data.codigo !== undefined && formData.append("codigo", data.codigo);
     formData.append("ubicacion", data.ubicacion.toString());
     formData.append("status", data.status);
 

@@ -40,13 +40,12 @@ const FormComponentesPlano = ({
 
   useEffect(() => {
     setValue([
+      { codigo: initialData?.codigo },
       { nombre: initialData?.nombre },
       { ubicacion: initialData?.ubicacion?.id },
       { status: initialData?.status?.toString() },
       { id: initialData?.id },
     ]);
-
-    console.log("initialData: ", initialData);
   }, [initialData]);
 
   return (
@@ -70,6 +69,16 @@ const FormComponentesPlano = ({
                 },
               })}
               errorForm={errors.nombre}
+            />
+          </Col>
+          <Col sm={12} className={"mb-2"}>
+            <Textbox
+              label={`Código`}
+              name={"codigo"}
+              id={"codigo"}
+              placeholder={"Código"}
+              ref={register()}
+              errorForm={errors.codigo}
             />
           </Col>
           <Col sm={12} className={"mb-2"}>

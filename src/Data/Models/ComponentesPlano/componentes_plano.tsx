@@ -7,6 +7,7 @@ export interface IComponentesPlano {
   name: string;
   location: string;
   status: string;
+  codigo?: string;
 }
 
 export const ComponentesPlanoColumns: (
@@ -17,6 +18,10 @@ export const ComponentesPlanoColumns: (
     {
       selector: "nombre",
       name: header("columns:name"),
+    },
+    {
+      name: "Código",
+      selector: (row) => row?.codigo as string,
     },
     {
       selector: "activo",
@@ -43,4 +48,5 @@ export interface IDataFormComponentesPlano {
   nombre: string;
   ubicacion: number;
   status?: string;
+  codigo?: string;
 }
