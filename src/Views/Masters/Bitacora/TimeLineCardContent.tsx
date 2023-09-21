@@ -12,11 +12,12 @@ interface Props {
 const TimeLineCardContent = ({ event }: Props) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const isExpandible =
-    event?.cardDetailedText && event.cardDetailedText.length > 240;
+    event?.cardDetailedText && event.cardDetailedText.length > 180;
 
   SwiperCore.use([Navigation, Autoplay]);
 
-  const truncateDescription = `${event?.cardDetailedText?.slice(0, 240)} ...`;
+  const truncateDescription = `${event?.cardDetailedText?.slice(0, 180)} ...`;
+  const componentsLength = event?.components?.length || 0;
   return (
     <div key={event.id} className="w-100">
       {event.images && (
@@ -96,23 +97,45 @@ const TimeLineCardContent = ({ event }: Props) => {
         </div>
       )}
       <div>
-        {isExpandible
-          ? isExpanded
-            ? event.cardDetailedText
-            : truncateDescription
-          : event.cardDetailedText}
-        <span
-          onClick={() => setIsExpanded((state) => !state)}
+        <div
+          className="mb-3 border rounded py-2 d-flex flex-column"
           style={{
-            cursor: "pointer",
-            color: "var(--primary)",
-            textDecoration: "underline",
-            padding: "2px 1px",
-            zIndex: 20,
+            height: "100%",
+            maxHeight: 88,
+            overflowY: componentsLength > 2 ? "scroll" : "auto",
+            gap: 2,
           }}
         >
-          {isExpandible && (isExpanded ? "Leer menos" : "Leer más")}
-        </span>
+          {event.components?.map((component) => (
+            <div className="bg-light px-2" key={component.id}>
+              <div className="font-weight-bold" style={{ fontSize: 10 }}>
+                {component.name}
+              </div>
+              <div className="font-weight-bold" style={{ fontSize: 10 }}>
+                N° parte: {component.part_number}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div>
+          {isExpandible
+            ? isExpanded
+              ? event.cardDetailedText
+              : truncateDescription
+            : event.cardDetailedText}
+          <span
+            onClick={() => setIsExpanded((state) => !state)}
+            style={{
+              cursor: "pointer",
+              color: "var(--primary)",
+              textDecoration: "underline",
+              padding: "2px 1px",
+              zIndex: 20,
+            }}
+          >
+            {isExpandible && (isExpanded ? "Leer menos" : "Leer más")}
+          </span>
+        </div>
       </div>
     </div>
   );

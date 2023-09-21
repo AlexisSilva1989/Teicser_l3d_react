@@ -155,6 +155,7 @@ const TimeLineChrono = () => {
       //   },
       // },
       images: event?.media,
+      components: event?.components,
     }));
   };
 
