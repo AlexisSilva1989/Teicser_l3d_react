@@ -83,8 +83,10 @@ const FormBitacora = ({
     });
 
   const locationWatch = watch("location");
+  const equipmentWatch = watch("equipment");
 
   const locationMemo = useMemo(() => locationWatch, [locationWatch]);
+  const equipmentMemo = useMemo(() => equipmentWatch, [equipmentWatch]);
 
   //effects
   useEffect(() => {
@@ -106,7 +108,6 @@ const FormBitacora = ({
       { components: initialData?.componentes_planos },
       { files: initialData?.files },
     ]);
-
   }, [initialData]);
 
   // const onSubmit = (data: any) => {
@@ -168,6 +169,7 @@ const FormBitacora = ({
                 return { label: option.nombre, value: option.id };
               }}
               onChange={(data) => {
+                setValue("components", []);
                 return data[0];
               }}
               as={ApiSelect}
@@ -210,9 +212,10 @@ const FormBitacora = ({
             <Controller
               name="components"
               control={control}
-              source={"/componentes_planos/select"}
+              source={"/revestimientos/select"}
               queryParams={{
-                location: locationMemo?.map((location) => location.value),
+                ubicacion: locationMemo?.map((location) => location.value),
+                equipo: equipmentMemo,
               }}
               selector={(component: any) => ({
                 value: component.id.toString(),

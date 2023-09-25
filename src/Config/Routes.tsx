@@ -52,6 +52,7 @@ import InsertPlanos from "../Views/Binnacle/planos/InsertPlanos";
 import ListaPlanosComponentes from "../Views/Masters/PlanosComponentes/ListaPlanosComponentes";
 import ListaBitacora from "../Views/Masters/Bitacora/ListaBitacora";
 import TimeLineChrono from "../Views/Masters/Bitacora/TimeLineChrono";
+import ListaBitacoraComponentes from "../Views/Masters/Bitacora/ListaBitacoraComponentes";
 
 interface Route {
   path: string;
@@ -179,6 +180,12 @@ const routes: RouteGroup[] = [
     prefix: "routes:base.plans_components",
     routes: [
       { path: "routes:meta.base", component: <ListaPlanosComponentes /> },
+    ],
+  },
+  {
+    prefix: "routes:base.binnacle_components",
+    routes: [
+      { path: "routes:meta.base", component: <ListaBitacoraComponentes /> },
     ],
   },
   {
