@@ -53,6 +53,7 @@ import ListaPlanosComponentes from "../Views/Masters/PlanosComponentes/ListaPlan
 import ListaBitacora from "../Views/Masters/Bitacora/ListaBitacora";
 import TimeLineChrono from "../Views/Masters/Bitacora/TimeLineChrono";
 import ListaBitacoraComponentes from "../Views/Masters/Bitacora/ListaBitacoraComponentes";
+import ListaTipoEventos from "../Views/Masters/Bitacora/ListaTipoEventos";
 
 interface Route {
   path: string;
@@ -187,6 +188,10 @@ const routes: RouteGroup[] = [
     routes: [
       { path: "routes:meta.base", component: <ListaBitacoraComponentes /> },
     ],
+  },
+  {
+    prefix: "routes:base.type_of_events",
+    routes: [{ path: "routes:meta.base", component: <ListaTipoEventos /> }],
   },
   {
     prefix: "routes:base.equipments_alarms",

@@ -47,6 +47,62 @@ const EVENT_TYPES_LEVELS: { [key: number]: number[] } = {
   6: [1],
 };
 
+const TEST = [
+  {
+    id: 2,
+    // title: "Febrero 2021",
+    date: "2021-01-01",
+    events: [
+      {
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        // media: [
+        //   {
+        //     id: 1,
+        //     url: "https://picsum.photos/512/512",
+        //   },
+        // ],
+        components: [
+          {
+            id: 1,
+            name: "Componente 1",
+            is_full_part: 1,
+            part_number: "123456",
+          },
+          {
+            id: 2,
+            name: "Componente 2",
+            is_full_part: 0,
+            part_number: "123456",
+          },
+        ],
+      },
+      {
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        // media: [
+        //   {
+        //     id: 1,
+        //     url: "https://picsum.photos/512/512",
+        //   },
+        // ],
+        components: [
+          {
+            id: 1,
+            name: "Componente 1",
+            is_full_part: 1,
+            part_number: "123456",
+          },
+          {
+            id: 2,
+            name: "Componente 2",
+            is_full_part: 0,
+            part_number: "123456",
+          },
+        ],
+      },
+    ],
+  },
+];
+
 const TimeLineChrono = () => {
   const { addToast } = useToasts();
   const [reload, doReload] = useReload();
@@ -96,7 +152,7 @@ const TimeLineChrono = () => {
   };
   const getComponentList = async () => {
     await ax
-      .get("componentes_planos/select", {
+      .get("revestimientos/select", {
         params: {
           location:
             filter.location !== null && filter.location.length > 0
@@ -147,15 +203,14 @@ const TimeLineChrono = () => {
       cardTitle: event.title,
       // url: "http://www.history.com",
       cardSubtitle: event.subtitle ?? event.date,
-      cardDetailedText: event.description,
+      // cardDetailedText: event.description,
       // media: {
       //   type: "IMAGE",
       //   source: {
       //     url: "https://picsum.photos/512/512",
       //   },
       // },
-      images: event?.media,
-      components: event?.components,
+      events: event?.events,
     }));
   };
 
@@ -202,7 +257,7 @@ const TimeLineChrono = () => {
       })
       .catch((e: AxiosError) => {
         if (e.response) {
-          // setEvents(parseEventsToChronoItems(EVENT_TEST));
+          // setEvents(parseEventsToChronoItems(TEST));
           addToast(caps("errors:base.get", { element: "los eventos" }), {
             appearance: "error",
             autoDismiss: true,
@@ -214,7 +269,9 @@ const TimeLineChrono = () => {
         }
         // setIsLoading(false);
       })
-      .finally(() => {});
+      .finally(() => {
+        // setIsLoading(false);
+      });
   }, [filter]);
 
   useEffect(() => {
@@ -439,7 +496,7 @@ const TimeLineChrono = () => {
                     items={events}
                     mode={CHRONO_DIRECTION[timelineDirection]}
                     showAllCardsHorizontal
-                    cardHeight={196}
+                    cardHeight={224}
                     cardWidth={196}
                     allowDynamicUpdate
                   >

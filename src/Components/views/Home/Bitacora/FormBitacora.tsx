@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, ErrorMessage, useForm } from "react-hook-form";
 import { Row, Col, Button } from "react-bootstrap";
 import { Textbox } from "../../../Forms/Textbox";
@@ -76,17 +76,32 @@ const FormBitacora = ({
   const { capitalize: caps } = useFullIntl();
   // const { addToast } = useToasts();
   const { canUpdate } = usePermissions();
-  const { handleSubmit, control, errors, setValue, register, watch } =
-    useForm<IDataFormBitacora>({
-      mode: "onSubmit",
-      submitFocusError: true,
-    });
+  const {
+    handleSubmit,
+    control,
+    errors,
+    setValue,
+    register,
+    watch,
+    formState: { touched },
+  } = useForm<IDataFormBitacora>({
+    mode: "onSubmit",
+    submitFocusError: true,
+  });
 
   const locationWatch = watch("location");
   const equipmentWatch = watch("equipment");
 
   const locationMemo = useMemo(() => locationWatch, [locationWatch]);
   const equipmentMemo = useMemo(() => equipmentWatch, [equipmentWatch]);
+
+  const isComponenteSelectActive = useMemo(() => {
+    return locationMemo?.length > 0 && equipmentMemo && locationMemo;
+  }, [locationMemo, equipmentMemo]);
+
+  const [equipmentInit, setEquipmentInit] = useState<boolean>(false);
+
+  console.log({ locationMemo, equipmentMemo, isComponenteSelectActive });
 
   //effects
   useEffect(() => {
@@ -169,8 +184,11 @@ const FormBitacora = ({
                 return { label: option.nombre, value: option.id };
               }}
               onChange={(data) => {
-                setValue("components", []);
+                equipmentInit && setValue("components", []);
                 return data[0];
+              }}
+              onFinishLoad={() => {
+                setEquipmentInit(true);
               }}
               as={ApiSelect}
             />
@@ -221,6 +239,7 @@ const FormBitacora = ({
                 value: component.id.toString(),
                 label: component.nombre,
               })}
+              disabled={!isComponenteSelectActive}
               as={ComponentSelect}
             />
           </Col>

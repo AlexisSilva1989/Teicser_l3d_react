@@ -7,7 +7,7 @@ import { useShortModal } from "../../../Common/Hooks/useModal";
 import { useReload } from "../../../Common/Hooks/useReload";
 import { ax } from "../../../Common/Utils/AxiosCustom";
 import { useToasts } from "react-toast-notifications";
-import { AxiosError } from "axios";
+import Axios, { AxiosError } from "axios";
 import {
   BitacoraColumns,
   IColumnasBitacora,
@@ -73,6 +73,7 @@ const ListaBitacora = () => {
   const [reload, doReload] = useReload();
   const modalBitacoraEvent = useShortModal();
   const { addToast } = useToasts();
+  const source = Axios.CancelToken.source();
 
   const [hasInit, setHasInit] = useState<boolean>(false);
   const [eventList, setEventList] = useState<IColumnasBitacora[]>([]);
@@ -109,9 +110,11 @@ const ListaBitacora = () => {
                 : undefined
               : filter.date,
         },
+        cancelToken: source.token,
       })
       .then((response) => {
         setEventList(response.data);
+        doReload();
       })
       .catch((e: AxiosError) => {
         if (e.response) {
@@ -121,6 +124,10 @@ const ListaBitacora = () => {
             autoDismiss: true,
           });
         }
+        if (Axios.isCancel(e.response)) {
+          // Si la solicitud fue cancelada, puedes manejarlo aquí
+          console.log("Solicitud cancelada:", e.response);
+        }
       })
       .finally(() => {
         setIsLoading(false);
@@ -129,10 +136,12 @@ const ListaBitacora = () => {
 
   const getComponentList = async () => {
     await ax
-      .get("componentes_planos/select", {
+      .get("revestimientos/select", {
         params: {
           location:
             Number(filter.location) !== -1 ? [filter.location] : undefined,
+          equipo:
+            Number(filter.equipment) !== -1 ? filter.equipment : undefined,
         },
       })
       .then((response) => {
@@ -169,7 +178,7 @@ const ListaBitacora = () => {
       })
       .finally(() => {
         setIsLoading(false);
-        doReload();
+        getList();
       });
   };
 
@@ -193,7 +202,7 @@ const ListaBitacora = () => {
       })
       .finally(() => {
         setIsLoading(false);
-        doReload();
+        getList();
       });
   };
 
@@ -327,7 +336,7 @@ const ListaBitacora = () => {
       .post("eventos_bitacora", formData, headers)
       .then((response) => {
         modalBitacoraEvent.hide();
-        doReload();
+        getList();
         addToast(caps("success:base.save"), {
           appearance: "success",
           autoDismiss: true,
@@ -383,7 +392,7 @@ const ListaBitacora = () => {
       .patch("eventos_bitacora", formData, headers)
       .then((response) => {
         modalBitacoraEvent.hide();
-        doReload();
+        getList();
         addToast(caps("success:base.save"), {
           appearance: "success",
           autoDismiss: true,
@@ -403,28 +412,36 @@ const ListaBitacora = () => {
   };
 
   useEffect(() => {
-    getList();
+    // getList();
     getComponentList();
-    setHasInit(true);
+    // setHasInit(true);
+    // return () => {
+    //   source.cancel(
+    //     "Solicitud cancelada debido a la desaparición del componente"
+    //   );
+    // };
   }, []);
 
   useEffect(() => {
-    if (hasInit) {
-      getList();
-    }
+    getList();
+
+    return () => {
+      source.cancel(
+        "Solicitud cancelada debido a la desaparición del componente"
+      );
+    };
   }, [
     filter.components,
     filter.date,
     filter.equipment,
     filter.is_show,
     filter.type,
-    hasInit,
-    reload,
   ]);
 
   useEffect(() => {
-    Number(filter.location) !== null && getComponentList();
-  }, [filter.location]);
+    (Number(filter.location) !== null || Number(filter.equipment !== null)) &&
+      getComponentList();
+  }, [filter.location, filter.equipment]);
 
   return (
     <>

@@ -7,14 +7,22 @@ export interface ComponentsTimelineCard {
   part_number: string;
 }
 
+export interface EventsTimelineCard {
+  title: string;
+  media?: IMediaTimeline[];
+  components?: ComponentsTimelineCard[];
+  description: string;
+}
+
 export interface ITimeline {
   id: number;
-  title: string;
+  title?: string;
   subtitle?: string;
   description?: string;
   date: string;
   media?: IMediaTimeline[];
   components?: ComponentsTimelineCard[];
+  events?: EventsTimelineCard[];
 }
 
 export interface IMediaTimeline {
@@ -23,6 +31,5 @@ export interface IMediaTimeline {
 }
 
 export interface CardContent extends TimelineItem {
-  images?: IMediaTimeline[];
-  components?: ComponentsTimelineCard[];
+  events?: EventsTimelineCard[];
 }

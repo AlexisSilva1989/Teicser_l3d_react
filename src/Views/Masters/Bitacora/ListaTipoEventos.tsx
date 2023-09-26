@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ListaBase } from "../../Common/ListaBase";
-import { $j, $u } from "../../../Common/Utils/Reimports";
+import { $u } from "../../../Common/Utils/Reimports";
 import { ApiSelect } from "../../../Components/Api/ApiSelect";
 import { useFullIntl } from "../../../Common/Hooks/useFullIntl";
 import { useShortModal } from "../../../Common/Hooks/useModal";
@@ -8,57 +8,53 @@ import { useReload } from "../../../Common/Hooks/useReload";
 import { ax } from "../../../Common/Utils/AxiosCustom";
 import { useToasts } from "react-toast-notifications";
 import Axios, { AxiosError } from "axios";
-import {
-  ComponentesPlanoColumns,
-  IComponentesPlano,
-  IDataColumnComponentesPlano,
-  IDataFormComponentesPlano,
-} from "../../../Data/Models/ComponentesPlano/componentes_plano";
-import ComponentesPlanoFormModal from "../../../Components/Modals/ComponentesPlanoFormModal";
+import { IDataColumnComponentesPlano } from "../../../Data/Models/ComponentesPlano/componentes_plano";
 import {
   BitacoraComponentesColumns,
   BitacoraComponentesForm,
-  IBitacoraComponentes,
-  IBitacoraComponentesColumns,
 } from "../../../Data/Models/Binnacle/BitacoraComponentes";
-import ComponentesBitacoraFormModal from "../../../Components/Modals/ComponentesBitacoraFormModal";
-import ApiSelectMultiple from "../../../Components/Api/ApiSelectMultiple";
+import TipoEventosFormModal from "../../../Components/Modals/TipoEventosFormModal";
+import {
+  ITypeEventsColumns,
+  TypeEventsColumns,
+  TypeEventsForm,
+} from "../../../Data/Models/Binnacle/TypeEvents";
 
-const ListaBitacoraComponentes = () => {
+const ListaTipoEventos = () => {
   const { capitalize: caps } = useFullIntl();
   const [reload, doReload] = useReload();
-  const modalBitacoraComponentes = useShortModal();
+  const modalTipoEventos = useShortModal();
   const { addToast } = useToasts();
   const source = Axios.CancelToken.source();
 
   const [filter, setFilter] = useState<{
-    ubicacion?: string;
-    fabricante?: string;
-    equipo?: string;
+    // ubicacion?: string;
+    // fabricante?: string;
+    // equipo?: string;
     status?: string;
   }>({
-    ubicacion: "-1",
-    fabricante: "-1",
-    equipo: "-1",
+    // ubicacion: "-1",
+    // fabricante: "-1",
+    // equipo: "-1",
     status: "-1",
   });
   const [modalActionType, setModalActionType] = useState<"agregar" | "editar">(
     "agregar"
   );
-  const [planosComponentesSelected, setPlanosComponentesSelected] = useState<
+  const [tipoEventoSelected, setTipoEventoSelected] = useState<
     IDataColumnComponentesPlano | undefined
   >();
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [list, setList] = useState<BitacoraComponentesColumns[]>([]);
+  const [list, setList] = useState<TypeEventsColumns[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const modals = [
     {
       label: "Agregar",
       action: () => {
-        setPlanosComponentesSelected(undefined);
+        setTipoEventoSelected(undefined);
         setModalActionType("agregar");
-        modalBitacoraComponentes.show();
+        modalTipoEventos.show();
       },
       className: "btn-primary",
     },
@@ -76,19 +72,19 @@ const ListaBitacoraComponentes = () => {
   const getList = useCallback(async () => {
     setIsLoading(true);
     await ax
-      .get("revestimientos", {
+      .get("tipo_eventos", {
         params: {
           ...filter,
-          ubicacion: filter.ubicacion === "-1" ? undefined : filter.ubicacion,
-          fabricante:
-            filter.fabricante === "-1" ? undefined : filter.fabricante,
-          equipo: filter.equipo === "-1" ? undefined : filter.equipo,
+          // ubicacion: filter.ubicacion === "-1" ? undefined : filter.ubicacion,
+          // fabricante:
+          //   filter.fabricante === "-1" ? undefined : filter.fabricante,
+          // equipo: filter.equipo === "-1" ? undefined : filter.equipo,
           status: filter.status === "-1" ? undefined : filter.status,
         },
         cancelToken: source.token,
       })
       .then((response) => {
-        const { data }: { data: BitacoraComponentesColumns[] } = response;
+        const { data }: { data: TypeEventsColumns[] } = response;
 
         setList(data);
 
@@ -113,23 +109,18 @@ const ListaBitacoraComponentes = () => {
   }, [filter]);
 
   /*HANDLES */
-  const onSubmitAdd = async (data: BitacoraComponentesForm) => {
+  const onSubmitAdd = async (data: TypeEventsForm) => {
     const formData = new FormData();
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
 
     formData.append("nombre", data.nombre);
-    formData.append("std_job", data.std_job);
-    data.ubicacion_id &&
-      formData.append("ubicacion_id", data.ubicacion_id?.toString());
-    data.fabricante_id &&
-      formData.append("fabricante_id", data.fabricante_id?.toString());
-    data.equipo_id && formData.append("equipo_id", data.equipo_id?.toString());
+    formData.append("jerarquia", data.jerarquia);
 
     setIsSaving(true);
     await ax
-      .post("revestimientos", formData, headers)
+      .post("tipo_eventos", formData, headers)
       .then((response) => {
-        modalBitacoraComponentes.hide();
+        modalTipoEventos.hide();
         getList();
         doReload();
         addToast(caps("success:base.save"), {
@@ -139,13 +130,10 @@ const ListaBitacoraComponentes = () => {
       })
       .catch((e: AxiosError) => {
         if (e.response) {
-          addToast(
-            caps("errors:base.post", { element: "componentes de bitácora" }),
-            {
-              appearance: "error",
-              autoDismiss: true,
-            }
-          );
+          addToast(caps("errors:base.post", { element: "tipo de eventos" }), {
+            appearance: "error",
+            autoDismiss: true,
+          });
         }
       })
       .finally(() => {
@@ -153,24 +141,19 @@ const ListaBitacoraComponentes = () => {
       });
   };
 
-  const onSubmitEdit = async (data: any) => {
+  const onSubmitEdit = async (data: TypeEventsForm) => {
     const formData = new FormData();
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
-    formData.append("id_componente", data.id);
+    formData.append("id_tipo_evento", data.id);
     formData.append("nombre", data.nombre);
-    formData.append("std_job", data.std_job);
-    data.ubicacion_id &&
-      formData.append("ubicacion_id", data.ubicacion_id?.toString());
-    data.fabricante_id &&
-      formData.append("fabricante_id", data.fabricante_id?.toString());
-    data.equipo_id && formData.append("equipo_id", data.equipo_id?.toString());
-    formData.append("status", data.status);
+    formData.append("jerarquia", data.jerarquia);
+    formData.append("status", data.status || "0");
 
     setIsSaving(true);
     await ax
-      .patch("revestimientos", formData, headers)
+      .patch("tipo_eventos", formData, headers)
       .then((response) => {
-        modalBitacoraComponentes.hide();
+        modalTipoEventos.hide();
         getList();
         doReload();
         addToast(caps("success:base.save"), {
@@ -180,13 +163,10 @@ const ListaBitacoraComponentes = () => {
       })
       .catch((e: AxiosError) => {
         if (e.response) {
-          addToast(
-            caps("errors:base.post", { element: "componentes de bitácora" }),
-            {
-              appearance: "error",
-              autoDismiss: true,
-            }
-          );
+          addToast(caps("errors:base.post", { element: "tipo de eventos" }), {
+            appearance: "error",
+            autoDismiss: true,
+          });
         }
       })
       .finally(() => {
@@ -205,19 +185,19 @@ const ListaBitacoraComponentes = () => {
 
   return (
     <>
-      <ListaBase<BitacoraComponentesColumns>
-        title="titles:binnacle_components"
+      <ListaBase<TypeEventsColumns>
+        title="titles:type_events"
         source={list}
         permission="masters"
-        columns={IBitacoraComponentesColumns}
+        columns={ITypeEventsColumns}
         isRemoveAddButon
         modals={modals}
         reload={reload}
         loading={isLoading}
         onSelectWithModal={(data: any) => {
-          setPlanosComponentesSelected(data);
+          setTipoEventoSelected(data);
           setModalActionType("editar");
-          modalBitacoraComponentes.show();
+          modalTipoEventos.show();
         }}
       >
         <ApiSelect<{ label: string; value: string }>
@@ -245,7 +225,7 @@ const ListaBitacoraComponentes = () => {
             setFilter((s) => $u(s, { status: { $set: data } }));
           }}
         />
-        <ApiSelect
+        {/* <ApiSelect
           label="Fabricante"
           name="manufacturer"
           source={$j("fabricantes/select")}
@@ -306,22 +286,22 @@ const ListaBitacoraComponentes = () => {
             label: "Todos",
             value: "-1",
           }}
-        />
+        /> */}
       </ListaBase>
-      <ComponentesBitacoraFormModal
-        show={modalBitacoraComponentes.visible}
-        hide={modalBitacoraComponentes.hide}
+      <TipoEventosFormModal
+        show={modalTipoEventos.visible}
+        hide={modalTipoEventos.hide}
         size="sm"
         modalType={modalActionType}
         onSubmit={modalActionType === "agregar" ? onSubmitAdd : onSubmitEdit}
         isLoading={isSaving}
         title={`${
           modalActionType === "agregar" ? "Agregar" : "Modificar"
-        } Componentes de Bitácora`}
-        initialState={planosComponentesSelected}
+        } Tipo de evento`}
+        initialState={tipoEventoSelected}
       />
     </>
   );
 };
 
-export default ListaBitacoraComponentes;
+export default ListaTipoEventos;

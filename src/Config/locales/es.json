@@ -250,6 +250,7 @@
   "titles:plans_components": "Componentes de Planos",
   "titles:binnacle": "Bitácora",
   "titles:binnacle_components": "Componentes de Bitácora",
+  "titles:type_events": "Tipo de eventos",
 
   "labels:titles.modalConfirmAction": "Confirmar acción",
   "labels:titles.INFORMATION_LOAD": "Cargar información",

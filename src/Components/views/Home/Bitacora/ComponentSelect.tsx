@@ -25,6 +25,7 @@ interface Props<T> {
   selector: (data: T) => OptionType;
   isLoading?: boolean;
   isRequired?: boolean;
+  disabled?: boolean;
 }
 
 interface List<T> {
@@ -56,6 +57,7 @@ export const ComponentSelect = <T extends unknown>({
   queryParams,
   filter,
   value,
+  disabled = false,
 }: Props<T>) => {
   const { capitalize: caps } = useFullIntl();
 
@@ -76,25 +78,27 @@ export const ComponentSelect = <T extends unknown>({
 
   // METHODS
   const handleComponentSelect = (component: OptionType) => {
-    const isSelected =
-      optionsSelected.findIndex(
-        (option) => option.id === Number(component.value)
-      ) !== -1;
+    if (!disabled) {
+      const isSelected =
+        optionsSelected.findIndex(
+          (option) => option.id === Number(component.value)
+        ) !== -1;
 
-    if (!isSelected) {
-      setOptionsSelected((state) => [
-        ...state,
-        {
-          id: Number(component.value),
-          has_all_parts: true,
-          part_number: undefined,
-        },
-      ]);
-      return;
+      if (!isSelected) {
+        setOptionsSelected((state) => [
+          ...state,
+          {
+            id: Number(component.value),
+            has_all_parts: true,
+            part_number: undefined,
+          },
+        ]);
+        return;
+      }
+      setOptionsSelected((state) =>
+        state.filter((option) => option.id !== Number(component.value))
+      );
     }
-    setOptionsSelected((state) =>
-      state.filter((option) => option.id !== Number(component.value))
-    );
   };
 
   const handleCheckAllPart = (componentId: number, value: boolean) => {
@@ -161,15 +165,18 @@ export const ComponentSelect = <T extends unknown>({
 
   // EFFECTS
   useEffect(() => {
-    console.log({ queryParams });
-    if (!Array.isArray(source)) {
-      fetch();
-      return;
+    if (!disabled) {
+      console.log({ queryParams });
+      if (!Array.isArray(source)) {
+        fetch();
+        return;
+      }
+      setOptionList((state) => ({
+        ...state,
+        data: source,
+      }));
     }
-    setOptionList((state) => ({
-      ...state,
-      data: source,
-    }));
+    setOptionList((state) => ({ ...state, loading: false, data: [] }));
   }, [source, queryParams]);
 
   useEffect(() => {
@@ -224,12 +231,26 @@ export const ComponentSelect = <T extends unknown>({
                     : "transparent",
                 }}
               >
-                <span
-                  className="w-100"
-                  onClick={() => handleComponentSelect(option)}
+                <label
+                  className="w-100 d-flex align-items-center mb-0 h-100"
+                  style={{
+                    gap: 8,
+                    cursor: "pointer",
+                  }}
+                  // onClick={() => handleComponentSelect(option)}
                 >
+                  <input
+                    type="checkbox"
+                    name={option.label}
+                    checked={isSelected}
+                    onChange={() => handleComponentSelect(option)}
+                    style={{
+                      cursor: "pointer",
+                    }}
+                  />
+
                   {option.label}
-                </span>
+                </label>
                 <div
                   className="d-flex align-items-center justify-content-center"
                   style={{
@@ -239,7 +260,12 @@ export const ComponentSelect = <T extends unknown>({
                   <input
                     type="text"
                     placeholder="Numero de parte"
-                    disabled={!isSelected || selectedComponent?.has_all_parts}
+                    onClick={() => {
+                      if (selectedComponent?.has_all_parts) {
+                        handleCheckAllPart(Number(option.value), false);
+                      }
+                    }}
+                    // disabled={!isSelected || selectedComponent?.has_all_parts}
                     style={{
                       backgroundColor: "#FFF",
                       borderRadius: "0.25rem",
@@ -254,7 +280,11 @@ export const ComponentSelect = <T extends unknown>({
                       );
                     }}
                     value={
-                      selectedComponent ? selectedComponent.part_number : ""
+                      selectedComponent
+                        ? selectedComponent.part_number !== "Todas"
+                          ? selectedComponent.part_number
+                          : ""
+                        : ""
                     }
                   />
                   <label
