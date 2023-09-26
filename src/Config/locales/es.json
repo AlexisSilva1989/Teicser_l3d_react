@@ -28,6 +28,7 @@
   "labels:common.not_applicable": "N/A",
   "labels:common.delete": "eliminar",
   "labels:common.status": "estado",
+  "labels:misc.module": "Módulo",
 
   "menus": "---------------------------------------------",
   "menus:configuration": "configuración",
@@ -51,6 +52,8 @@
   "menus:manufacturers": "Fabricantes",
   "menus:plans": "Planos",
   "menus:plans_components": "componentes de planos",
+  "menus:binnacle_components": "Componentes de bitácora",
+  "menus:type_of_events": "Tipos de eventos",
 
   "menus:dashboard": "dashboard",
   "menus:simulation_days": "proyección a 30 días",
@@ -130,6 +133,7 @@
   "routes:base.time_line_log": "bitacora",
   "routes:base.time_line_chrono": "timeline",
   "routes:base.binnacle_components": "bitacora_componentes",
+  "routes:base.type_of_events": "tipo_evento",
 
   "routes_base": "----------------------------------------------",
   "routes:base.reports": "reportes",
