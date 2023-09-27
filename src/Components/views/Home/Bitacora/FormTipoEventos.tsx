@@ -96,21 +96,13 @@ const FormTipoEventos = ({
           </Col>
           <Col sm={12} className={"mb-2"}>
             <Textbox
-              label={`Jerarquía *`}
+              label={`Jerarquía`}
               name={"jerarquia"}
               id={"jerarquia"}
-              placeholder={"Jerarquía"}
-              ref={register({
-                required: {
-                  value: true,
-                  message: caps("validations:required"),
-                },
-                maxLength: {
-                  value: 50,
-                  message: "Máximo 50 caracteres permitidos",
-                },
-              })}
-              errorForm={errors.nombre}
+              placeholder={"Ingrese un valor numérico"}
+              type="number"
+              ref={register({})}
+              errorForm={errors.jerarquia}
             />
           </Col>
 

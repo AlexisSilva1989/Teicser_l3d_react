@@ -58,7 +58,6 @@ const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IPr
       { id: initialData?.id },
     ]);
 
-    console.log('initialData: ', initialData);
   }, [initialData]);
 
   /*OBTENER COMPONENTES REGISTRADOS Y SELECCIONADOS */

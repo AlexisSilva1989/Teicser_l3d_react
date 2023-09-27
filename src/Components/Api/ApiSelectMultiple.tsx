@@ -54,7 +54,6 @@ const ApiSelectMultiple = <T extends unknown>({
   // METHODS
 
   const getMappedSource = (data: T[]) => {
-    console.log({ data });
     if (Array.isArray(data)) {
       const options =
         filter && filter !== null

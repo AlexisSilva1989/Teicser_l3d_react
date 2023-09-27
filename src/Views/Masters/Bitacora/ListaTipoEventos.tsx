@@ -101,7 +101,6 @@ const ListaTipoEventos = () => {
         }
         if (Axios.isCancel(e.response)) {
           // Si la solicitud fue cancelada, puedes manejarlo aquí
-          console.log("Solicitud cancelada:", e.response);
         }
         // setIsLoading(false);
       })

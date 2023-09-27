@@ -112,7 +112,6 @@ const InsertPlanoComponente = ({
     modalConfirmarEliminar.hide()
     setLoading(true);
     const idPDF = PdfToDelete.id?.toString() as string
-    console.log('idPDF: ', idPDF);
     ax.get($j('planos_componentes', "delete", idPDF))
       .then((response) => {
         doReloadTable()

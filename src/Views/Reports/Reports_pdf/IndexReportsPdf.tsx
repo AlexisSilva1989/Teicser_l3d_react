@@ -1,62 +1,61 @@
-import React, { useState } from 'react';
-import { BaseContentView } from '../../Common/BaseContentView';
-import { Col, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import { Datepicker } from '../../../Components/Forms/Datepicker';
-import { FileInputWithDescription } from './../../../Components/Forms/FileInputWithDescription';
-import { $u, $j, $d } from '../../../Common/Utils/Reimports';
-import { ax } from '../../../Common/Utils/AxiosCustom';
-import { useToasts } from 'react-toast-notifications';
-import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
+import React, { useState } from "react";
+import { BaseContentView } from "../../Common/BaseContentView";
+import { Col, Button, Tooltip, OverlayTrigger } from "react-bootstrap";
+import { Datepicker } from "../../../Components/Forms/Datepicker";
+import { FileInputWithDescription } from "./../../../Components/Forms/FileInputWithDescription";
+import { $u, $j, $d } from "../../../Common/Utils/Reimports";
+import { ax } from "../../../Common/Utils/AxiosCustom";
+import { useToasts } from "react-toast-notifications";
+import { useFullIntl } from "../../../Common/Hooks/useFullIntl";
 import { useApi } from "../../../Common/Hooks/useApi";
-import { useDashboard } from '../../../Common/Hooks/useDashboard';
-import { useReload } from '../../../Common/Hooks/useReload';
-import { LocalizedColumnsCallback } from '../../../Common/Utils/LocalizedColumnsCallback';
-import { ApiTable } from '../../../Components/Api/ApiTable';
-import { ApiSelect } from '../../../Components/Api/ApiSelect';
-import { Equipo } from '../../../Data/Models/Equipo/Equipo';
-import { useSearch } from '../../../Common/Hooks/useSearch';
-import { SearchBar } from '../../../Components/Forms/SearchBar';
-import { OverlayChildren } from 'react-bootstrap/esm/Overlay';
+import { useDashboard } from "../../../Common/Hooks/useDashboard";
+import { useReload } from "../../../Common/Hooks/useReload";
+import { LocalizedColumnsCallback } from "../../../Common/Utils/LocalizedColumnsCallback";
+import { ApiTable } from "../../../Components/Api/ApiTable";
+import { ApiSelect } from "../../../Components/Api/ApiSelect";
+import { Equipo } from "../../../Data/Models/Equipo/Equipo";
+import { useSearch } from "../../../Common/Hooks/useSearch";
+import { SearchBar } from "../../../Components/Forms/SearchBar";
+import { OverlayChildren } from "react-bootstrap/esm/Overlay";
 
 export interface reportePdf {
-  equipo?: Equipo
-  fecha: string
-  pdf: string
-  pdf_name: string
-  idEquipo: string
+  equipo?: Equipo;
+  fecha: string;
+  pdf: string;
+  pdf_name: string;
+  idEquipo: string;
 }
 
 interface IErrorReportePdf {
-  equipo: string[] | undefined
-  fecha: string[] | undefined
-  pdf: string[] | undefined
+  equipo: string[] | undefined;
+  fecha: string[] | undefined;
+  pdf: string[] | undefined;
 }
 
 interface IDataFilters {
-  filterByEquipo: string | undefined
+  filterByEquipo: string | undefined;
 }
 
 const inicialreportePdf = {
   idEquipo: "",
   fecha: "",
   pdf: "",
-  pdf_name: ""
-}
+  pdf_name: "",
+};
 
 const inicialErrosreportePdf = {
   equipo: [],
   fecha: [],
   pdf: [],
-}
+};
 
 export const PdfColumns: LocalizedColumnsCallback<reportePdf> = () => [
-  { name: 'Equipo', selector: pdf => pdf.equipo?.nombre, width: '15%' },
-  { name: 'Fecha', selector: pdf => pdf.fecha, width: '10%'},
-  { name: 'Nombre', selector: pdf => pdf.pdf_name, }
+  { name: "Equipo", selector: (pdf) => pdf.equipo?.nombre, width: "15%" },
+  { name: "Fecha", selector: (pdf) => pdf.fecha, width: "10%" },
+  { name: "Nombre", selector: (pdf) => pdf.pdf_name },
 ];
 
 export const IndexReportsPdf = () => {
-
   //hooks
   const { addToast } = useToasts();
   const { intl, capitalize: caps } = useFullIntl();
@@ -67,62 +66,66 @@ export const IndexReportsPdf = () => {
   //states
   const [display, setDisplay] = useState<string>();
   const [reportePdf, setPeportePdf] = useState<reportePdf>(inicialreportePdf);
-  const [errorsReportePdf, setErrorsReportePdf] = useState<IErrorReportePdf>(inicialErrosreportePdf);
+  const [errorsReportePdf, setErrorsReportePdf] = useState<IErrorReportePdf>(
+    inicialErrosreportePdf
+  );
   const [filtersParams, setFiltersParams] = useState<IDataFilters>({
-    filterByEquipo: undefined
-  })
+    filterByEquipo: undefined,
+  });
   const [search, doSearch] = useSearch();
-
 
   const pdfDescargar = (pdf: any) => {
     setLoading(true);
-    api.get<string | Blob | File>($j('descargar_pdf', pdf.ruta.toString()), { responseType: 'blob' })
-      .success(e => {
+    api
+      .get<string | Blob | File>($j("descargar_pdf", pdf.ruta.toString()), {
+        responseType: "blob",
+      })
+      .success((e) => {
         $d(e, pdf.pdf_name);
-        addToast(caps('success:base.success'), {
-          appearance: 'success',
+        addToast(caps("success:base.success"), {
+          appearance: "success",
           autoDismiss: true,
         });
       })
-      .fail('Error al intentar descargar el archivo')
+      .fail("Error al intentar descargar el archivo")
       .finally(() => {
         setLoading(false);
       });
-  }
+  };
 
   const pdfEliminar = async (img: any) => {
     setLoading(true);
-    api.get<any>($j('delete_pdf', img.id.toString())).success(e => {
-      doReloadTable()
-      addToast(caps('success:base.success'), {
-        appearance: 'success',
-        autoDismiss: true,
-      });
-    })
-      .fail('Error al eliminar el archivo')
+    api
+      .get<any>($j("delete_pdf", img.id.toString()))
+      .success((e) => {
+        doReloadTable();
+        addToast(caps("success:base.success"), {
+          appearance: "success",
+          autoDismiss: true,
+        });
+      })
+      .fail("Error al eliminar el archivo")
       .finally(() => {
         setLoading(false);
       });
-  }
+  };
 
-  const colums = PdfColumns(intl)
+  const colums = PdfColumns(intl);
   const renderTooltip: OverlayChildren = (props: any) => (
     <Tooltip id="button-tooltip" {...props}>
       Simple tooltip
     </Tooltip>
   );
   colums.push({
-    name: 'Opción',
-    width: '10%',
+    name: "Opción",
+    width: "10%",
     center: true,
-    cell: pdf => (
+    cell: (pdf) => (
       <>
         <div className="col-6 font-size-18">
           <OverlayTrigger
             placement="top"
-            overlay={
-              <Tooltip id={"tooltip-descargar"}> Descargar </Tooltip>
-            }
+            overlay={<Tooltip id={"tooltip-descargar"}> Descargar </Tooltip>}
           >
             <i
               className="fas fa-file-pdf"
@@ -131,7 +134,7 @@ export const IndexReportsPdf = () => {
                 color: "#09922C",
               }}
               onClick={() => {
-                pdfDescargar(pdf)
+                pdfDescargar(pdf);
               }}
             />
           </OverlayTrigger>
@@ -139,9 +142,7 @@ export const IndexReportsPdf = () => {
         <div className="col-6 font-size-18">
           <OverlayTrigger
             placement="top"
-            overlay={
-              <Tooltip id={"tooltip-eliminar"}> Eliminar </Tooltip>
-            }
+            overlay={<Tooltip id={"tooltip-eliminar"}> Eliminar </Tooltip>}
           >
             <i
               className="fas fa-times-circle"
@@ -150,13 +151,13 @@ export const IndexReportsPdf = () => {
                 color: "#F44D5F",
               }}
               onClick={() => {
-                pdfEliminar(pdf)
+                pdfEliminar(pdf);
               }}
             />
           </OverlayTrigger>
         </div>
       </>
-    )
+    ),
   });
 
   const onClickEnviar = async () => {
@@ -171,41 +172,50 @@ export const IndexReportsPdf = () => {
     formData.append("file", reportePdf.pdf);
     formData.append("fecha", reportePdf.fecha);
 
-
     setLoading(true);
-    await ax.patch('pdf_save', formData, headers)
+    await ax
+      .patch("pdf_save", formData, headers)
       .then((response) => {
-        doReloadTable()
-        addToast(caps('success:base.success'), {
-          appearance: 'success',
+        doReloadTable();
+        addToast(caps("success:base.success"), {
+          appearance: "success",
           autoDismiss: true,
         });
       })
       .finally(() => {
         setLoading(false);
       });
-  }
+  };
 
   function onSendValidate() {
     var cantError = 0;
     setErrorsReportePdf(() => inicialErrosreportePdf);
     if (reportePdf.idEquipo === undefined || reportePdf.idEquipo === "") {
-      setErrorsReportePdf((s) => $u(s, { equipo: { $push: ["Por favor, seleccione un equipo"] } }));
+      setErrorsReportePdf((s) =>
+        $u(s, { equipo: { $push: ["Por favor, seleccione un equipo"] } })
+      );
       cantError++;
     }
     if (reportePdf.fecha === undefined || reportePdf.fecha === "") {
-      setErrorsReportePdf((s) => $u(s, { fecha: { $push: ["Por favor, seleccione una fecha"] } }));
+      setErrorsReportePdf((s) =>
+        $u(s, { fecha: { $push: ["Por favor, seleccione una fecha"] } })
+      );
       cantError++;
     }
-    if (reportePdf.pdf === undefined || reportePdf.pdf === null || reportePdf.pdf === "") {
-      console.log('Por favor, cargue un archivo pdf: ');
-      setErrorsReportePdf((s) => $u(s, { pdf: { $push: ["Por favor, cargue un archivo pdf"] } }));
+    if (
+      reportePdf.pdf === undefined ||
+      reportePdf.pdf === null ||
+      reportePdf.pdf === ""
+    ) {
+      setErrorsReportePdf((s) =>
+        $u(s, { pdf: { $push: ["Por favor, cargue un archivo pdf"] } })
+      );
       cantError++;
     }
 
     // if (!condArticulos) {
     // 	setErrors((s) =>$u(s, {	odc: {	$push: [validation('odc_items_required')]}}));
-    // 	cantError++;		
+    // 	cantError++;
     // }
 
     // if(!condCantidadArticulos){
@@ -230,43 +240,49 @@ export const IndexReportsPdf = () => {
   }
 
   const handleChangeFile = async (fileData: any) => {
-    setPeportePdf(state => $u(state, {
-      pdf: { $set: fileData }
-    }))
-  }
+    setPeportePdf((state) =>
+      $u(state, {
+        pdf: { $set: fileData },
+      })
+    );
+  };
 
   const handleChangeDisplay = (display: string | undefined) => {
-    setDisplay(state => $u(state, { $set: display }));
-  }
+    setDisplay((state) => $u(state, { $set: display }));
+  };
 
   return (
     <>
-      <BaseContentView title='titles:import_pdf'>
+      <BaseContentView title="titles:import_pdf">
         <Col sm={3}>
           <ApiSelect<Equipo>
-            name='equipo_select'
-            placeholder='Seleccione Equipo'
-            source={'service_render/equipos'}
-            label={'Equipo'}
+            name="equipo_select"
+            placeholder="Seleccione Equipo"
+            source={"service_render/equipos"}
+            label={"Equipo"}
             selector={(option) => {
               return { label: option.nombre, value: option.id.toString() };
             }}
             onChange={(value) => {
-              setPeportePdf(state => $u(state, {
-                idEquipo: { $set: value }
-              }))
+              setPeportePdf((state) =>
+                $u(state, {
+                  idEquipo: { $set: value },
+                })
+              );
             }}
             errors={errorsReportePdf.equipo}
           />
         </Col>
         <Col sm={3}>
           <Datepicker
-            label='Fecha de PDF'
+            label="Fecha de PDF"
             value={reportePdf.fecha}
-            onChange={value => {
-              setPeportePdf(state => $u(state, {
-                fecha: { $set: value }
-              }))
+            onChange={(value) => {
+              setPeportePdf((state) =>
+                $u(state, {
+                  fecha: { $set: value },
+                })
+              );
             }}
             errors={errorsReportePdf.fecha}
           />
@@ -284,32 +300,44 @@ export const IndexReportsPdf = () => {
           />
         </Col>
         <Col sm={3} className="d-flex justify-content-end align-items-end mb-3">
-          <Button onClick={onClickEnviar}>
-            Guardar
-          </Button>
+          <Button onClick={onClickEnviar}>Guardar</Button>
         </Col>
         <Col sm={12} className="mt-2">
           <hr />
         </Col>
-        <Col sm={12} className="d-flex justify-content-end align-items-end pr-0 pl-0">
+        <Col
+          sm={12}
+          className="d-flex justify-content-end align-items-end pr-0 pl-0"
+        >
           <Col sm={3}>
             <ApiSelect<Equipo>
-              name='equipo_select'
-              placeholder='Seleccione'
-              source={'service_render/equipos'}
-              label={'Equipo'}
-              value={filtersParams.filterByEquipo == undefined ? '-1' : filtersParams.filterByEquipo}
-              firtsOptions={{ label: 'TODOS', value: '-1' }}
+              name="equipo_select"
+              placeholder="Seleccione"
+              source={"service_render/equipos"}
+              label={"Equipo"}
+              value={
+                filtersParams.filterByEquipo == undefined
+                  ? "-1"
+                  : filtersParams.filterByEquipo
+              }
+              firtsOptions={{ label: "TODOS", value: "-1" }}
               selector={(option) => {
                 return { label: option.nombre, value: option.id.toString() };
               }}
               onChange={(data) => {
-                setFiltersParams(state => $u(state, { filterByEquipo: { $set: data != '-1' ? data : undefined } }))
+                setFiltersParams((state) =>
+                  $u(state, {
+                    filterByEquipo: { $set: data != "-1" ? data : undefined },
+                  })
+                );
               }}
             />
           </Col>
 
-          <div className="col-lg-3 col-md-5 col-sm-6" style={{ verticalAlign: 'bottom' }}>
+          <div
+            className="col-lg-3 col-md-5 col-sm-6"
+            style={{ verticalAlign: "bottom" }}
+          >
             <SearchBar onChange={doSearch} />
           </div>
         </Col>
@@ -324,7 +352,6 @@ export const IndexReportsPdf = () => {
             search={search}
           />
         </Col>
-
       </BaseContentView>
     </>
   );

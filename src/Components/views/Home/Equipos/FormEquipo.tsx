@@ -64,7 +64,6 @@ const FormEquipo = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps)
       { id: initialData?.id },
     ]);
 
-    console.log('initialData: ', initialData);
   }, [initialData]);
 
 

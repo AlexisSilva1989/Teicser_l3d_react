@@ -233,7 +233,6 @@ const FormProjection = ({
   }
 
   useEffect(() => {
-    console.log('isDataPercent', getValues('isDataPercent'));
     setShowLabelPercent(getValues('isDataPercent') === "true")
   }, [getValues('isDataPercent')]);
 

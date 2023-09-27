@@ -232,7 +232,7 @@ const FormBitacora = ({
               control={control}
               source={"/revestimientos/select"}
               queryParams={{
-                ubicacion: locationMemo?.map((location) => location.value),
+                location: locationMemo?.map((location) => location.value),
                 equipo: equipmentMemo,
               }}
               selector={(component: any) => ({

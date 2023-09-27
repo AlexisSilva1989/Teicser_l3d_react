@@ -126,7 +126,6 @@ const ListaBitacora = () => {
         }
         if (Axios.isCancel(e.response)) {
           // Si la solicitud fue cancelada, puedes manejarlo aquí
-          console.log("Solicitud cancelada:", e.response);
         }
       })
       .finally(() => {
@@ -359,7 +358,6 @@ const ListaBitacora = () => {
     const formData = new FormData();
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
 
-    console.log({ date: data.date });
 
     formData.append("id", data.id.toString());
     data.description && formData.append("description", data.description);
@@ -385,7 +383,7 @@ const ListaBitacora = () => {
     //   "location",
     //   JSON.stringify(data.location.map((item) => item.value))
     // );
-    formData.append("show", data?.show ? "1" : "0");
+    formData.append("show", data?.show ?? "0");
 
     setIsSaving(true);
     await ax

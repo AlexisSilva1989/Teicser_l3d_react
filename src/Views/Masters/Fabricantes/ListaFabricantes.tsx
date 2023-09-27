@@ -110,7 +110,6 @@ const ListaFabricantes = () => {
       modals={modals}
       reload={reload}
       onSelectWithModal={(data: any) => {
-        console.log(data)
         setManufacturerSelected(data)
         setModalActionType("editar")
         modalManufacturers.show();

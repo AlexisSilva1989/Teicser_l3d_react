@@ -62,7 +62,6 @@ export const SelectWithAdd = (props: Props) => {
         });
         setOptions(data);
         }).catch( e => {
-          console.log(e);   
       });
     }
    getOption();
@@ -72,7 +71,6 @@ export const SelectWithAdd = (props: Props) => {
 
 
 const onChange = (event: any) => {
-  console.log(event)
   if(event !== undefined){
     setValue(event);
     setOptionSelected(event);
@@ -127,7 +125,6 @@ const onCreateOption = async (inputValue?: any) => {
          
         }).catch((error) => {
            setIsLoading(false);
-           console.log(error);
         })
     }else{
       setIsLoading(false);

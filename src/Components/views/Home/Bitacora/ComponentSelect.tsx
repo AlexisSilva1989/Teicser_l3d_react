@@ -111,6 +111,7 @@ export const ComponentSelect = <T extends unknown>({
           [componentIndex]: {
             $merge: {
               has_all_parts: value,
+              part_number: "",
             },
           },
         })
@@ -166,7 +167,6 @@ export const ComponentSelect = <T extends unknown>({
   // EFFECTS
   useEffect(() => {
     if (!disabled) {
-      console.log({ queryParams });
       if (!Array.isArray(source)) {
         fetch();
         return;
@@ -265,7 +265,7 @@ export const ComponentSelect = <T extends unknown>({
                         handleCheckAllPart(Number(option.value), false);
                       }
                     }}
-                    // disabled={!isSelected || selectedComponent?.has_all_parts}
+                    disabled={!isSelected}
                     style={{
                       backgroundColor: "#FFF",
                       borderRadius: "0.25rem",

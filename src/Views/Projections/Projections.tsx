@@ -381,7 +381,6 @@ const Projections = () => {
             pdf.save('PROYECCIONES_REVESTIMIENTOS.pdf');
           }
 
-          console.log('index: ', index);
           if ((index + 1) % 6 === 0) {
             pdf.addPage()
             headerPDf(pdf, bgColor, marginX);

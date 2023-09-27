@@ -29,7 +29,6 @@ export const AgregarParametro = (props:Props) => {
 
 
 	const Costonchange = () => {
-		console.log("Aquii")
 	}
 
 	return <Modal show={visible} onHide={hide}>

@@ -69,7 +69,6 @@ function LineGraph({ dataLine, dataMedicion, dataSelected, title, fecha_medicion
           if(!dataPointSelected.usadoEnEntrenamiento)
             return
           
-          console.log(dataPointSelected);
           chartContext.updateOptions({
             tooltip: {
               enabled: true,

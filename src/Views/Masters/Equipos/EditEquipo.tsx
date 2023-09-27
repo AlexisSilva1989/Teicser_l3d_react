@@ -23,7 +23,6 @@ export const EditEquipo = () => {
   const { data: element } = getState<{ data: EquipoTipo }>();
   const [equipoSelected, setEquipoSelected] = useState<IDataFormEquipo>();
 
-  console.log({ element })
 
   useEffect(() => {
     if (element == null || element == undefined) {

@@ -147,7 +147,6 @@ export const AdministrarRoles = () => {
     $(modalChangePermisson.current!).modal("hide");
   }
 
-  console.log(entidadesPermiso, "entidadesPermiso");
 
   return (
     <BaseContentView title="titles:roles_management">

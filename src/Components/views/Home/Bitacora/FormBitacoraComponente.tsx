@@ -125,21 +125,12 @@ const FormBitacoraComponente = ({
           </Col>
           <Col sm={12} className={"mb-2"}>
             <Textbox
-              label={`Std Job *`}
+              label={`Std Job`}
               name={"std_job"}
               id={"std_job"}
               placeholder={"Std Job"}
-              ref={register({
-                required: {
-                  value: true,
-                  message: caps("validations:required"),
-                },
-                maxLength: {
-                  value: 50,
-                  message: "Máximo 50 caracteres permitidos",
-                },
-              })}
-              errorForm={errors.nombre}
+              ref={register({})}
+              errorForm={errors.std_job}
             />
           </Col>
           <Col sm={12} className={"mb-2"}>
@@ -186,15 +177,15 @@ const FormBitacoraComponente = ({
               label={`Equipo *`}
               name={"equipo_id"}
               id={"equipo_id"}
-              errorForm={errors.ubicacion_id}
+              errorForm={errors.equipo_id}
               isSelectFirtsOption={false}
             />
           </Col>
           <Col sm={12} className={"mb-2"}>
             <Controller
               control={control}
-              name="fabricante"
-              label="Fabricante *"
+              name="fabricante_id"
+              label="Fabricante "
               rules={{ required: caps("validations:required") }}
               source={"fabricantes/select"}
               placeholder={"Seleccione fabricante ..."}
@@ -215,6 +206,7 @@ const FormBitacoraComponente = ({
                 setIsLoadingFabricante(false);
               }}
               reload={reloadManufacturersList}
+              isSelectFirstOption={false}
               as={SelectAdd}
             />
           </Col>
