@@ -158,6 +158,8 @@ const TimeLineChrono = () => {
             filter.location !== null && filter.location.length > 0
               ? filter.location.map((location) => location.value)
               : undefined,
+          equipo:
+            Number(filter.equipment) !== -1 ? filter.equipment : undefined,
         },
       })
       .then((response) => {
@@ -279,7 +281,7 @@ const TimeLineChrono = () => {
 
   useEffect(() => {
     getComponentList();
-  }, [filter.location]);
+  }, [filter.location, filter.equipment]);
 
   useEffect(() => {
     const dateFrom = dayjs(filter.date_from.split("-").reverse().join("-"));
@@ -431,9 +433,6 @@ const TimeLineChrono = () => {
                 label="Componente"
                 name="component"
                 source={componentList}
-                queryParams={{
-                  equipment: filter.equipment,
-                }}
                 value={filter.components}
                 selector={(option: any) => ({
                   label: option.nombre,
