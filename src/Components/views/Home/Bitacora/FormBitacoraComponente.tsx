@@ -186,7 +186,6 @@ const FormBitacoraComponente = ({
               control={control}
               name="fabricante_id"
               label="Fabricante "
-              rules={{ required: caps("validations:required") }}
               source={"fabricantes/select"}
               placeholder={"Seleccione fabricante ..."}
               placeholderAddElement={"Agregar Fabricante: "}

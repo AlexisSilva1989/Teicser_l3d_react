@@ -274,9 +274,7 @@ const TimeLineChrono = () => {
   }, [filter]);
 
   useEffect(() => {
-    if (Number(filter.workline) !== -1) {
-      getEquipmentList();
-    }
+    getEquipmentList();
   }, [filter.workline]);
 
   useEffect(() => {

@@ -20,10 +20,11 @@ const TimeLineCardContent = ({ event }: Props) => {
       key={event.id}
       style={{
         height: "224px",
+        width: "100%",
       }}
     >
       <ScrollBar className="w-100 d-flex flex-column" style={{ gap: 16 }}>
-        {event.events?.map((eventItem) => {
+        {event.events?.map((eventItem, index) => {
           const isExpandible =
             eventItem?.description && eventItem.description.length > 180;
           const componentsLength = eventItem?.components?.length || 0;
@@ -31,8 +32,17 @@ const TimeLineCardContent = ({ event }: Props) => {
             0,
             180
           )} ...`;
+          const length = event.events?.length || 0;
           return (
-            <div>
+            <div
+              style={{
+                borderBottom:
+                  index === length - 1
+                    ? "none"
+                    : "1.5px solid var(--secondary)",
+                paddingBottom: 16,
+              }}
+            >
               <h2
                 className="mb-2"
                 style={{
@@ -43,6 +53,16 @@ const TimeLineCardContent = ({ event }: Props) => {
               >
                 {eventItem.title}
               </h2>
+              <small
+                className="mb-2"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: "var(--secondary)",
+                }}
+              >
+                {eventItem.equipment}
+              </small>
 
               {eventItem.media && (
                 <div className="mb-3">
@@ -122,32 +142,34 @@ const TimeLineCardContent = ({ event }: Props) => {
               )}
 
               <div>
-                <div
-                  className="mb-3 border rounded py-2 d-flex flex-column"
-                  style={{
-                    height: "100%",
-                    maxHeight: 88,
-                    overflowY: componentsLength > 2 ? "scroll" : "auto",
-                    gap: 2,
-                  }}
-                >
-                  {eventItem.components?.map((component) => (
-                    <div className="bg-light px-2" key={component.id}>
-                      <div
-                        className="font-weight-bold"
-                        style={{ fontSize: 10 }}
-                      >
-                        {component.name}
+                {(eventItem?.components?.length ?? 0) > 0 && (
+                  <div
+                    className="mb-3 border rounded py-2 d-flex flex-column"
+                    style={{
+                      height: "100%",
+                      maxHeight: 88,
+                      overflowY: componentsLength > 2 ? "scroll" : "auto",
+                      gap: 2,
+                    }}
+                  >
+                    {eventItem.components?.map((component) => (
+                      <div className="bg-light px-2" key={component.id}>
+                        <div
+                          className="font-weight-bold"
+                          style={{ fontSize: 10 }}
+                        >
+                          {component.name}
+                        </div>
+                        <div
+                          className="font-weight-bold"
+                          style={{ fontSize: 10 }}
+                        >
+                          N° parte: {component.part_number}
+                        </div>
                       </div>
-                      <div
-                        className="font-weight-bold"
-                        style={{ fontSize: 10 }}
-                      >
-                        N° parte: {component.part_number}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
 
                 <div>
                   {isExpandible

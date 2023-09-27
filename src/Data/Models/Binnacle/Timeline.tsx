@@ -9,6 +9,7 @@ export interface ComponentsTimelineCard {
 
 export interface EventsTimelineCard {
   title: string;
+  equipment: string;
   media?: IMediaTimeline[];
   components?: ComponentsTimelineCard[];
   description: string;
