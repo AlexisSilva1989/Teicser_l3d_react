@@ -19,7 +19,7 @@ const TimeLineCardContent = ({ event }: Props) => {
     <div
       key={event.id}
       style={{
-        height: "224px",
+        height: "100%",
         width: "100%",
       }}
     >

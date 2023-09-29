@@ -492,7 +492,7 @@ const TimeLineChrono = () => {
                     items={events}
                     mode={CHRONO_DIRECTION[timelineDirection]}
                     showAllCardsHorizontal
-                    cardHeight={224}
+                    // cardHeight={384}
                     cardWidth={196}
                     allowDynamicUpdate
                   >
