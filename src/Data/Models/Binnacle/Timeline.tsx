@@ -5,6 +5,7 @@ export interface ComponentsTimelineCard {
   name: string;
   is_full_part: number;
   part_number: string;
+  location: string;
 }
 
 export interface EventsTimelineCard {

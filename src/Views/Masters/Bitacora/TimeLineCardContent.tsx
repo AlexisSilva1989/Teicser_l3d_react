@@ -153,18 +153,31 @@ const TimeLineCardContent = ({ event }: Props) => {
                     }}
                   >
                     {eventItem.components?.map((component) => (
-                      <div className="bg-light px-2" key={component.id}>
+                      <div className="bg-light px-2 d-flex " key={component.id}>
                         <div
-                          className="font-weight-bold"
-                          style={{ fontSize: 10 }}
+                          style={{
+                            padding: "0 8px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
                         >
-                          {component.name}
+                          <span>{component.location}</span>
                         </div>
-                        <div
-                          className="font-weight-bold"
-                          style={{ fontSize: 10 }}
-                        >
-                          N° parte: {component.part_number}
+                        <div>
+                          <div
+                            className="font-weight-bold"
+                            style={{ fontSize: 10 }}
+                          >
+                            {component.name}
+                          </div>
+                          <div
+                            className="font-weight-bold"
+                            style={{ fontSize: 10 }}
+                          >
+                            N° parte: {component.part_number}
+                          </div>
                         </div>
                       </div>
                     ))}
