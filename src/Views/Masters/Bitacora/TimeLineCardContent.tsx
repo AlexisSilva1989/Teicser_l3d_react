@@ -48,7 +48,7 @@ const TimeLineCardContent = ({ event }: Props) => {
                 style={{
                   fontSize: 14,
                   fontWeight: 600,
-                  color: "var(--primary)",
+                  color: "#1c5bd8",
                 }}
               >
                 {eventItem.title}

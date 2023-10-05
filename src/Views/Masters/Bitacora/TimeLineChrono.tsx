@@ -492,6 +492,12 @@ const TimeLineChrono = () => {
                     items={events}
                     mode={CHRONO_DIRECTION[timelineDirection]}
                     showAllCardsHorizontal
+                    theme={{
+                      primary: "#1c5bd8",
+                      secondary: "#8ac7ff",
+                      titleColor: "#1c5bd8",
+                      titleColorActive: "#000",
+                    }}
                     // cardHeight={384}
                     cardWidth={196}
                     allowDynamicUpdate
