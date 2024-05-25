@@ -33,6 +33,16 @@ const TimeLineCardContent = ({ event }: Props) => {
             180
           )} ...`;
           const length = event.events?.length || 0;
+
+          const descriptionsWithLinksAsATag = eventItem?.description?.replace(
+            /((http|https):\/\/[^\s]+)/g,
+            (url) => `\n<a href="${url}" target="_blank">${url}</a>\n`
+          );
+
+          const URLsFromDescriptionList = eventItem?.description?.match(
+            /((http|https):\/\/[^\s]+)/g
+          );
+
           return (
             <div
               style={{
@@ -185,11 +195,24 @@ const TimeLineCardContent = ({ event }: Props) => {
                 )}
 
                 <div>
-                  {isExpandible
-                    ? isExpanded
-                      ? eventItem.description
-                      : truncateDescription
-                    : eventItem.description}
+                  {isExpandible ? (
+                    isExpanded ? (
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: descriptionsWithLinksAsATag,
+                        }}
+                      ></p>
+                    ) : (
+                      truncateDescription
+                    )
+                  ) : (
+                    <p
+                      dangerouslySetInnerHTML={{
+                        __html: descriptionsWithLinksAsATag,
+                      }}
+                    ></p>
+                  )}
+
                   <span
                     onClick={() => setIsExpanded((state) => !state)}
                     style={{
