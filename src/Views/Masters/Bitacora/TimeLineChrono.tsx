@@ -111,7 +111,7 @@ const TimeLineChrono = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [events, setEvents] = useState<CardContent[]>([]);
   const [filter, setFilter] = useState<Filter>({
-    date_from: dayjs().subtract(3, "month").format("DD-MM-YYYY"),
+    date_from: dayjs().subtract(1, "year").format("DD-MM-YYYY"),
     date_to: dayjs().add(3, "month").format("DD-MM-YYYY"),
     event_types: [],
     location: [],
