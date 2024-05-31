@@ -188,7 +188,6 @@ const FormPlano = ({ initialData, onFinishSaving }: IProps) => {
   const watchFields = watch(["tipo_plano"]);
   const locationWatch = watch("location");
 
-
   useEffect(() => {
     setValue("componente", undefined);
     locationWatch && doReloadPlansComponents();

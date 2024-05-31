@@ -1,11 +1,19 @@
 export interface TypesIndrustries {
-	banqueteria: string;
-	reparacionMaquinaria: string
+  banqueteria: string;
+  reparacionMaquinaria: string;
 }
 
-export const industries = ["N/A", "reparacionMaquinaria", "banqueteria", "generica"];
+export const industries = [
+  "N/A",
+  "reparacionMaquinaria",
+  "banqueteria",
+  "generica",
+];
 
-export type typeIndustries = 'banqueteria' | 'reparacionMaquinaria' | 'generica';
+export type typeIndustries =
+  | "banqueteria"
+  | "reparacionMaquinaria"
+  | "generica";
 
 export const titlesByIndustries = {
   banqueteria: {
@@ -16,33 +24,25 @@ export const titlesByIndustries = {
           "seccion",
           "sub_service",
           "type_service",
-          "catalogos"
+          "catalogos",
         ],
-        add: [
-          "add_type_service",
-          "add_seccion",
-          "add_sub_service"
-        ],
-        modify: [
-          "modify_type_service",
-          "modify_seccion",
-          "modify_sub_service"
-        ],
+        add: ["add_type_service", "add_seccion", "add_sub_service"],
+        modify: ["modify_type_service", "modify_seccion", "modify_sub_service"],
         columns: {
           sistema: [
-            'columns:id',
-            'columns:internal',
-            'columns:seccion',
-            'columns:status_data'
+            "columns:id",
+            "columns:internal",
+            "columns:seccion",
+            "columns:status_data",
           ],
           componentes: [
-            'columns:id',
-            'columns:internal',
-            'columns:sub_service',
-            'columns:seccion',
-            'columns:status_data'
-          ]
-        }
+            "columns:id",
+            "columns:internal",
+            "columns:sub_service",
+            "columns:seccion",
+            "columns:status_data",
+          ],
+        },
       },
     },
   },
@@ -54,33 +54,25 @@ export const titlesByIndustries = {
           "systems",
           "components",
           "own_services",
-          "catalogos"
+          "catalogos",
         ],
-        add: [
-          "add_own_services",
-          "add_system",
-          "add_component"
-        ],
-        modify: [
-          "modify_own_services",
-          "modify_system",
-          "modify_component"
-        ],
+        add: ["add_own_services", "add_system", "add_component"],
+        modify: ["modify_own_services", "modify_system", "modify_component"],
         columns: {
           sistema: [
-            'columns:id',
-            'columns:internal',
-            'columns:system',
-            'columns:status_data'
+            "columns:id",
+            "columns:internal",
+            "columns:system",
+            "columns:status_data",
           ],
           componentes: [
-            'columns:id',
-            'columns:internal',
-            'columns:component',
-            'columns:system',
-            'columns:status_data'
-          ]
-        }
+            "columns:id",
+            "columns:internal",
+            "columns:component",
+            "columns:system",
+            "columns:status_data",
+          ],
+        },
       },
     },
   },
@@ -92,33 +84,25 @@ export const titlesByIndustries = {
           "seccion",
           "sub_service",
           "type_service",
-          "catalogos"
+          "catalogos",
         ],
-        add: [
-          "add_type_service",
-          "add_seccion",
-          "add_sub_service"
-        ],
-        modify: [
-          "modify_type_service",
-          "modify_seccion",
-          "modify_sub_service"
-        ],
+        add: ["add_type_service", "add_seccion", "add_sub_service"],
+        modify: ["modify_type_service", "modify_seccion", "modify_sub_service"],
         columns: {
           sistema: [
-            'columns:id',
-            'columns:internal',
-            'columns:seccion',
-            'columns:status_data'
+            "columns:id",
+            "columns:internal",
+            "columns:seccion",
+            "columns:status_data",
           ],
           componentes: [
-            'columns:id',
-            'columns:internal',
-            'columns:sub_service',
-            'columns:seccion',
-            'columns:status_data'
-          ]
-        }
+            "columns:id",
+            "columns:internal",
+            "columns:sub_service",
+            "columns:seccion",
+            "columns:status_data",
+          ],
+        },
       },
     },
   },

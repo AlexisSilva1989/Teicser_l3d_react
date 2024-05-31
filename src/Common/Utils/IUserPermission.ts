@@ -1,4 +1,4 @@
 export interface IUserPermission {
-	entity: string;
-	permission: number;
+  entity: string;
+  permission: number;
 }

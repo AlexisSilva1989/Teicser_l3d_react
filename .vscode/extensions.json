@@ -1,8 +1,8 @@
 {
-	"recommendations": [
-		"msjsdiag.debugger-for-chrome",
-		"firefox-devtools.vscode-firefox-debug",
-		"dbaeumer.vscode-eslint",
-		"eamodio.gitlens"
-	]
+  "recommendations": [
+    "msjsdiag.debugger-for-chrome",
+    "firefox-devtools.vscode-firefox-debug",
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens"
+  ]
 }

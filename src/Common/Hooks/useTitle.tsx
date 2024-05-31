@@ -1,11 +1,17 @@
-import React from 'react';
+import React from "react";
 
-import { industries, titlesByIndustries, typeIndustries } from "../../Config/titleIndustries.config";
+import {
+  industries,
+  titlesByIndustries,
+  typeIndustries,
+} from "../../Config/titleIndustries.config";
 
-const industryLoggedId = localStorage.getItem('industry') ?? "2";
+const industryLoggedId = localStorage.getItem("industry") ?? "2";
 
 export const useTitle = () => {
-  const industryLogged: typeIndustries = industries[parseInt(industryLoggedId) - 1] as typeIndustries;
+  const industryLogged: typeIndustries = industries[
+    parseInt(industryLoggedId) - 1
+  ] as typeIndustries;
   const titles = titlesByIndustries[industryLogged];
-	return titles;
+  return titles;
 };

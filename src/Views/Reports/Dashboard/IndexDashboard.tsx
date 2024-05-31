@@ -1,9 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback } from "react";
 
 export const IndexDashboard = () => {
-	return (
-		<>
-			IndexDashboard
-		</>
-	);
+  return <>IndexDashboard</>;
 };

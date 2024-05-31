@@ -1,19 +1,28 @@
-import React, { useState, useMemo, useRef, Fragment, useEffect } from 'react';
-import { useFullIntl } from '../../Common/Hooks/useFullIntl';
+import React, { useState, useMemo, useRef, Fragment, useEffect } from "react";
+import { useFullIntl } from "../../Common/Hooks/useFullIntl";
 
-export type acceptedFormat = "jpg" | "png" | "gif" | "jpeg" | "xls" | "xlsx" | "pdf" | "csv" | "h5" | "pkl";
+export type acceptedFormat =
+  | "jpg"
+  | "png"
+  | "gif"
+  | "jpeg"
+  | "xls"
+  | "xlsx"
+  | "pdf"
+  | "csv"
+  | "h5"
+  | "pkl";
 interface Props {
-  accept?: acceptedFormat[]
-  label?: string
-  errors?: string[]
-  id: string
-  onChange?: (e: File | null) => void
-  onChangeDisplay?: (e: string | undefined) => void
-  src?: string
-  name?: string
-  multiple?: boolean
-  display?: string
-
+  accept?: acceptedFormat[];
+  label?: string;
+  errors?: string[];
+  id: string;
+  onChange?: (e: File | null) => void;
+  onChangeDisplay?: (e: string | undefined) => void;
+  src?: string;
+  name?: string;
+  multiple?: boolean;
+  display?: string;
 }
 
 export const FileInputWithDescription = (props: Props) => {
@@ -24,7 +33,7 @@ export const FileInputWithDescription = (props: Props) => {
   const acceptFormat = useMemo(() => {
     if (props.accept && props.accept.length > 0) {
       const accept = props.accept.reduce((acc, format) => {
-        return `${acc},.${format}`
+        return `${acc},.${format}`;
       }, "");
       return accept.substr(1, accept.length);
     }
@@ -34,12 +43,12 @@ export const FileInputWithDescription = (props: Props) => {
 
   const openFileSelect = () => {
     input.current?.click();
-  }
+  };
 
   useEffect(() => {
-    if ((props.display === undefined) && (input && input.current)) input.current.value = "";
-  }, [props.display])
-
+    if (props.display === undefined && input && input.current)
+      input.current.value = "";
+  }, [props.display]);
 
   return (
     <div>
@@ -48,70 +57,93 @@ export const FileInputWithDescription = (props: Props) => {
           <b>{caps(props.label)}:</b>
         </label>
       )}
-      {
-      }
-      <div className='input-group'>
-        <input type='text' className='form-control border rounded'
+      {}
+      <div className="input-group">
+        <input
+          type="text"
+          className="form-control border rounded"
           onClick={openFileSelect}
-          placeholder={caps('placeholders:file_not_selected')}
-          style={{ cursor: 'pointer' }}
+          placeholder={caps("placeholders:file_not_selected")}
+          style={{ cursor: "pointer" }}
           value={props.display ? props.display : ""}
           readOnly
         />
-        <div
-          className='input-group-append'
-          style={{ cursor: 'pointer' }}
-        >
+        <div className="input-group-append" style={{ cursor: "pointer" }}>
           <span
-            className='input-group-text'
+            className="input-group-text"
             onClick={() => {
-              if (props.onChangeDisplay) { props.onChangeDisplay(undefined); }
-              if (props.onChange) { props.onChange(null); }
+              if (props.onChangeDisplay) {
+                props.onChangeDisplay(undefined);
+              }
+              if (props.onChange) {
+                props.onChange(null);
+              }
               if (input && input.current) input.current.value = "";
             }}
           >
-            <i className='text-danger text-center fas fa-trash' />
+            <i className="text-danger text-center fas fa-trash" />
           </span>
 
           <input
-            type='file'
-            className='form-control border rounded'
+            type="file"
+            className="form-control border rounded"
             accept={acceptFormat}
-            style={{ height: '30px' }}
+            style={{ height: "30px" }}
             ref={input}
             onChange={(e) => {
               const files = e.target.files;
               if (files && files.length !== 0) {
                 //VALIDAR QUE EL ARCHIVO SELECCIONADO ESTA DENTRO DE LOS FORMATOS PERMITIDOS
-                let extFile: string | undefined = files[0].name.split('.').pop();
-                if (props.accept && props.accept.length > 0 && extFile != undefined) {
-                  if (!props.accept.some(value => value == extFile?.toLowerCase())) {
+                let extFile: string | undefined = files[0].name
+                  .split(".")
+                  .pop();
+                if (
+                  props.accept &&
+                  props.accept.length > 0 &&
+                  extFile != undefined
+                ) {
+                  if (
+                    !props.accept.some(
+                      (value) => value == extFile?.toLowerCase()
+                    )
+                  ) {
                     return;
                   }
                 }
-                if (props.onChangeDisplay) { props.onChangeDisplay(files[0].name); }
-                if (props.onChange) { props.onChange(files[0]); }
+                if (props.onChangeDisplay) {
+                  props.onChangeDisplay(files[0].name);
+                }
+                if (props.onChange) {
+                  props.onChange(files[0]);
+                }
               }
-
-
             }}
             hidden
           />
         </div>
       </div>
-      {error &&
-        <div className="text-danger"> Formato invalido (validos: {props.accept && props.accept.join(", ").toUpperCase()})</div>
-      }
-      {props.errors && props.errors.length > 0 &&
+      {error && (
+        <div className="text-danger">
+          {" "}
+          Formato invalido (validos:{" "}
+          {props.accept && props.accept.join(", ").toUpperCase()})
+        </div>
+      )}
+      {props.errors && props.errors.length > 0 && (
         <div>
           {props.errors.map((e, i) => {
-            return <Fragment key={`file-${props.name}-${i}`}>
-              <small className='text-danger' key={i}> {e} </small> <br />
-            </Fragment>;
-          }
-          )}
+            return (
+              <Fragment key={`file-${props.name}-${i}`}>
+                <small className="text-danger" key={i}>
+                  {" "}
+                  {e}{" "}
+                </small>{" "}
+                <br />
+              </Fragment>
+            );
+          })}
         </div>
-      }
+      )}
     </div>
   );
 };
