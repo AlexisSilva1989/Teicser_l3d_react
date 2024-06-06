@@ -1,10 +1,10 @@
-import v from "voca";
-import m from "moment";
-import j from "url-join";
-import * as XLSX from "xlsx";
-import val from "validate.js";
-import ih from "immutability-helper";
-import d from "downloadjs";
+import v from 'voca';
+import m from 'moment';
+import j from 'url-join';
+import * as XLSX from 'xlsx';
+import val from 'validate.js';
+import ih from 'immutability-helper';
+import d from 'downloadjs';
 
 export const $u = ih;
 export const update = ih;

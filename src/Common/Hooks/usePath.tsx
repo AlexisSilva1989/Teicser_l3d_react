@@ -1,13 +1,18 @@
-import { useLocation } from "react-router-dom";
 
-export const usePath = (pathName: string) => {
-  const { pathname } = useLocation();
 
-  let isDone: boolean = false;
+import {useLocation} from "react-router-dom";
 
-  if (pathname.replace("/", "") === pathName) {
-    isDone = true;
-  }
 
-  return isDone;
-};
+export const usePath = (pathName:string) => {
+
+    const {pathname} = useLocation();
+
+	let isDone: boolean = false;
+    
+	if(pathname.replace('/', '') === pathName) {
+		isDone = true;
+	}
+    
+	return isDone;
+	
+}

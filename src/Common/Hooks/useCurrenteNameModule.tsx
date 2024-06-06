@@ -8,18 +8,23 @@ ejemplo:
 path => "/providers_selection" => useCurrenteNameModule => PROVIDERS SELECTION 
 */
 
-import { useLocation } from "react-router-dom";
+import {useLocation} from "react-router-dom";
 
-export const DEFAULT_NAME = "Sistema de proyecciones";
+export const DEFAULT_NAME = 'Sistema de proyecciones';
 
-export const useCurrenteNameModule = (newTitleName?: string) => {
-  const { pathname } = useLocation();
+export const useCurrenteNameModule = (newTitleName?:string) => {
+    
+    const {pathname} = useLocation();
 
-  if (pathname === "/") {
-    return newTitleName ? newTitleName : DEFAULT_NAME;
-  } else {
-    let str = pathname.replace("/", "").replace(/[/_]/gmu, " ");
+    if(pathname === '/'){
+      
+      return newTitleName ? newTitleName : DEFAULT_NAME;
 
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-};
+    } else{
+      
+    	let str = pathname.replace('/', '').replace(/[/_]/gum, ' ');
+
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+	
+}

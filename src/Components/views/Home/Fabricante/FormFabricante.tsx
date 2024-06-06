@@ -17,26 +17,21 @@ import { IDataFormFabricante } from "../../../../Data/Models/Fabricante/Fabrican
 // import { ax } from "../../../../Common/Utils/AxiosCustom";
 // import { ApiSelect } from "../../../Api/ApiSelect";
 interface IProps {
-  onSubmit: (data: IDataFormFabricante) => void;
-  isSaving?: boolean;
-  initialData?: IDataFormFabricante;
-  isEdit?: boolean;
+  onSubmit: (data: IDataFormFabricante) => void
+  isSaving?: boolean
+  initialData?: IDataFormFabricante
+  isEdit?: boolean
 }
 
-const FormFabricante = ({
-  onSubmit,
-  isSaving,
-  initialData,
-  isEdit = false,
-}: IProps) => {
+const FormFabricante = ({ onSubmit, isSaving, initialData, isEdit = false }: IProps) => {
+
   //hooks
   const { capitalize: caps } = useFullIntl();
   // const { addToast } = useToasts();
-  const { handleSubmit, control, errors, setValue, register } =
-    useForm<IDataFormFabricante>({
-      mode: "onSubmit",
-      submitFocusError: true,
-    });
+  const { handleSubmit, control, errors, setValue, register } = useForm<IDataFormFabricante>({
+    mode: "onSubmit",
+    submitFocusError: true
+  });
 
   //states
   // const [componentSelected, setComponentSelected] = useState<string[] | undefined>([]);
@@ -44,12 +39,11 @@ const FormFabricante = ({
 
   //effects
   useEffect(() => {
-    {
-      isEdit && register({ name: "id" }, { required: true });
-    }
-  }, [register]);
+    { isEdit && register({ name: "id" }, { required: true }) }
+  }, [register])
 
   useEffect(() => {
+
     // if (!isEdit) {
     //   getComponentesFabricante(undefined)
     // } else {
@@ -63,6 +57,7 @@ const FormFabricante = ({
       { status: initialData?.status?.toString() },
       { id: initialData?.id },
     ]);
+
   }, [initialData]);
 
   /*OBTENER COMPONENTES REGISTRADOS Y SELECCIONADOS */
@@ -85,67 +80,53 @@ const FormFabricante = ({
   //     });
   // }
 
-  return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Row>
-          <Col sm={12} className={"mb-2"}>
-            <Textbox
-              label={`Nombre *`}
-              name={"name"}
-              id={"name"}
-              placeholder={"Nombre del fabricante"}
-              ref={register({
-                required: {
-                  value: true,
-                  message: caps("validations:required"),
-                },
-                maxLength: {
-                  value: 50,
-                  message: "Máximo 50 caracteres permitidos",
-                },
-              })}
-              errorForm={errors.name}
+  return (<>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Row>
+        <Col sm={12} className={"mb-2"}>
+          <Textbox
+            label={`Nombre *`}
+            name={"name"}
+            id={"name"}
+            placeholder={"Nombre del fabricante"}
+            ref={register({
+              required: { value: true, message: caps('validations:required') },
+              maxLength: {
+                value: 50,
+                message: "Máximo 50 caracteres permitidos",
+              },
+            })}
+            errorForm={errors.name}
+          />
+        </Col>
+
+        {
+          isEdit && <Col sm={12}>
+            <label><b>Activo *:</b></label>
+            <Controller control={control}
+              name={"status"}
+              options={[
+                {
+                  label: "Si",
+                  value: "1"
+                }, {
+                  label: "No",
+                  value: "0"
+                }
+              ]}
+
+              rules={{ required: { value: !isEdit, message: caps('validations:required') } }}
+              as={RadioSelect}
             />
+
+            <ErrorMessage errors={errors} name="status">
+              {({ message }) => <small className='text-danger'>{message}</small>}
+            </ErrorMessage>
           </Col>
+        }
+      </Row>
 
-          {isEdit && (
-            <Col sm={12}>
-              <label>
-                <b>Activo *:</b>
-              </label>
-              <Controller
-                control={control}
-                name={"status"}
-                options={[
-                  {
-                    label: "Si",
-                    value: "1",
-                  },
-                  {
-                    label: "No",
-                    value: "0",
-                  },
-                ]}
-                rules={{
-                  required: {
-                    value: !isEdit,
-                    message: caps("validations:required"),
-                  },
-                }}
-                as={RadioSelect}
-              />
-
-              <ErrorMessage errors={errors} name="status">
-                {({ message }) => (
-                  <small className="text-danger">{message}</small>
-                )}
-              </ErrorMessage>
-            </Col>
-          )}
-        </Row>
-
-        {/* <Row>
+      {/* <Row>
         <Col sm={12}>
           <label><b>Componentes:</b></label>
           <Controller control={control}
@@ -191,23 +172,24 @@ const FormFabricante = ({
 
         </Col>
       </Row> */}
-        <Row>
-          <Col sm={12} className={"text-right mt-3"}>
-            <Button variant={"primary"} type="submit" disabled={isSaving}>
-              {isSaving ? (
-                <i className="fas fa-circle-notch fa-spin mr-3"></i>
-              ) : isEdit ? (
-                <i className="fas fa-save mr-3" />
-              ) : (
-                <i className="fas fa-plus mr-3" />
-              )}
-              {isEdit ? "Guardar" : "Agregar"}
-            </Button>
-          </Col>
-        </Row>
-      </form>
-    </>
-  );
-};
+      <Row>
+        <Col sm={12} className={"text-right mt-3"}>
+          <Button variant={"primary"} type="submit" disabled={isSaving}>
+            {isSaving
+              ? (<i className="fas fa-circle-notch fa-spin mr-3"></i>)
+              : isEdit
+                ? (<i className="fas fa-save mr-3" />)
+                : (<i className="fas fa-plus mr-3" />)
+            }
+            {
+              isEdit ? "Guardar" : "Agregar"
+            }
+          </Button>
+        </Col>
+      </Row>
 
-export default FormFabricante;
+    </form>
+  </>);
+}
+
+export default FormFabricante

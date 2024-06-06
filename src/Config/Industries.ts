@@ -1,4 +1,4 @@
 export const INDUSTRIES = {
-  BAQUETERIA_ID: "3",
-  GENERIC_ID: "2",
+	BAQUETERIA_ID: '3',
+    GENERIC_ID: '2'
 };

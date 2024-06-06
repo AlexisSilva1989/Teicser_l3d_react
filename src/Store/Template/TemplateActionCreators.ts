@@ -1,115 +1,115 @@
 import {
-  ISetHeaderColor,
-  ISetLayoutType,
-  IReset,
-  IToggleRtl,
-  IToggleFixedNav,
-  IToggleFixedHeader,
-  IToggleBoxMode,
-  IToggleMenu,
-  ISetFullscreen,
-  INavCollapseLeave,
-  INavContentLeave,
-  IToggleNav,
-  ISetLayout,
-} from "./TemplateActionType";
+	ISetHeaderColor,
+	ISetLayoutType,
+	IReset,
+	IToggleRtl,
+	IToggleFixedNav,
+	IToggleFixedHeader,
+	IToggleBoxMode,
+	IToggleMenu,
+	ISetFullscreen,
+	INavCollapseLeave,
+	INavContentLeave,
+	IToggleNav,
+	ISetLayout
+} from './TemplateActionType';
 import {
-  SET_HEADER_COLOR,
-  SET_LAYOUT_TYPE,
-  RESET,
-  TOGGLE_RTL,
-  TOGGLE_FIXED_NAV,
-  TOGGLE_FIXED_HEADER,
-  TOGGLE_BOX_MODE,
-  TOGGLE_MENU,
-  NAV_COLLAPSE_LEAVE,
-  NAV_CONTENT_LEAVE,
-  TOGGLE_NAV,
-  SET_LAYOUT,
-  SET_FULLSCREEN,
-} from "./TemplateActions";
-import { ITemplateMenu } from "./ITemplateState";
+	SET_HEADER_COLOR,
+	SET_LAYOUT_TYPE,
+	RESET,
+	TOGGLE_RTL,
+	TOGGLE_FIXED_NAV,
+	TOGGLE_FIXED_HEADER,
+	TOGGLE_BOX_MODE,
+	TOGGLE_MENU,
+	NAV_COLLAPSE_LEAVE,
+	NAV_CONTENT_LEAVE,
+	TOGGLE_NAV,
+	SET_LAYOUT,
+	SET_FULLSCREEN
+} from './TemplateActions';
+import { ITemplateMenu } from './ITemplateState';
 
 export function setHeaderColor(color: string): ISetHeaderColor {
-  return {
-    type: SET_HEADER_COLOR,
-    headerBackColor: color,
-  };
+	return {
+		type: SET_HEADER_COLOR,
+		headerBackColor: color
+	};
 }
 
 export function setLayoutType(type: string): ISetLayoutType {
-  return {
-    type: SET_LAYOUT_TYPE,
-    layoutType: type,
-  };
+	return {
+		type: SET_LAYOUT_TYPE,
+		layoutType: type
+	};
 }
 
 export function reset(): IReset {
-  return {
-    type: RESET,
-  };
+	return {
+		type: RESET
+	};
 }
 
 export function toggleRtl(): IToggleRtl {
-  return {
-    type: TOGGLE_RTL,
-  };
+	return {
+		type: TOGGLE_RTL
+	};
 }
 
 export function toggleFixedNav(): IToggleFixedNav {
-  return {
-    type: TOGGLE_FIXED_NAV,
-  };
+	return {
+		type: TOGGLE_FIXED_NAV
+	};
 }
 
 export function toggleFixedHeader(): IToggleFixedHeader {
-  return {
-    type: TOGGLE_FIXED_HEADER,
-  };
+	return {
+		type: TOGGLE_FIXED_HEADER
+	};
 }
 
 export function toggleBoxMode(): IToggleBoxMode {
-  return {
-    type: TOGGLE_BOX_MODE,
-  };
+	return {
+		type: TOGGLE_BOX_MODE
+	};
 }
 
 export function toggleMenu(menu: ITemplateMenu): IToggleMenu {
-  return {
-    type: TOGGLE_MENU,
-    menu,
-  };
+	return {
+		type: TOGGLE_MENU,
+		menu
+	};
 }
 
 export function navCollapseLeave(menu: ITemplateMenu): INavCollapseLeave {
-  return {
-    type: NAV_COLLAPSE_LEAVE,
-    menu,
-  };
+	return {
+		type: NAV_COLLAPSE_LEAVE,
+		menu
+	};
 }
 
 export function navContentLeave(): INavContentLeave {
-  return {
-    type: NAV_CONTENT_LEAVE,
-  };
+	return {
+		type: NAV_CONTENT_LEAVE
+	};
 }
 
 export function toggleNav(): IToggleNav {
-  return {
-    type: TOGGLE_NAV,
-  };
+	return {
+		type: TOGGLE_NAV
+	};
 }
 
 export function setLayout(layout: string): ISetLayout {
-  return {
-    type: SET_LAYOUT,
-    layout,
-  };
+	return {
+		type: SET_LAYOUT,
+		layout
+	};
 }
 
 export function setFullscreen(fullscreen: boolean): ISetFullscreen {
-  return {
-    type: SET_FULLSCREEN,
-    fullscreen,
-  };
+	return {
+		type: SET_FULLSCREEN,
+		fullscreen
+	};
 }

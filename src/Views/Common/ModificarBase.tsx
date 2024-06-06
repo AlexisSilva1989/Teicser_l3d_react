@@ -161,16 +161,12 @@ export const ModificarBase = <
           setLoading(() => false);
         })
         .catch((e: AxiosError) => {
-          const messageError =
-            e.response && e.response.data.hasOwnProperty("errors")
-              ? e.response.data.errors[Object.keys(e.response.data.errors)[0]]
-              : caps("errors:base.load", {
-                  element: localize(props.errorElement),
-                });
-          addToast(messageError, {
-            appearance: "error",
-            autoDismiss: true,
-          });
+          const messageError = e.response && e.response.data.hasOwnProperty('errors') ? e.response.data.errors[Object.keys(e.response.data.errors)[0]] 
+						: caps('errors:base.load', { element: localize(props.errorElement) });
+					addToast(messageError, {
+						appearance: 'error',
+						autoDismiss: true,
+					});
           //pushError(caps('errors:base.load', { element: localize(props.errorElement) }));
         });
     }
@@ -238,15 +234,12 @@ export const ModificarBase = <
       })
       .catch((e: AxiosError) => {
         if (e.response) {
-          const messageError = e.response.data.hasOwnProperty("errors")
-            ? e.response.data.errors[Object.keys(e.response.data.errors)[0]]
-            : caps("errors:base.update", {
-                element: localize(props.errorElement),
-              });
-          addToast(messageError, {
-            appearance: "error",
-            autoDismiss: true,
-          });
+          const messageError = e.response.data.hasOwnProperty('errors') ? e.response.data.errors[Object.keys(e.response.data.errors)[0]] 
+						: caps('errors:base.update', { element: localize(props.errorElement) });
+					addToast(messageError, {
+						appearance: 'error',
+						autoDismiss: true,
+					});
           //pushError(caps('errors:base.update', { element: localize(props.errorElement) }));
         }
       });
@@ -267,15 +260,11 @@ export const ModificarBase = <
           autoDismiss: true,
         });
       })
-      .catch((e: AxiosError) => {
-        const messageError =
-          e.response && e.response.data.hasOwnProperty("errors")
-            ? e.response.data.errors[Object.keys(e.response.data.errors)[0]]
-            : caps("errors:base.delete", {
-                element: localize(props.errorElement),
-              });
+      .catch((e : AxiosError) => {
+        const messageError = e.response && e.response.data.hasOwnProperty('errors') ? e.response.data.errors[Object.keys(e.response.data.errors)[0]] 
+          : caps('errors:base.delete', { element: localize(props.errorElement) });
         addToast(messageError, {
-          appearance: "error",
+          appearance: 'error',
           autoDismiss: true,
         });
         //pushError(caps('errors:base.delete', { element: localize(props.errorElement) }));

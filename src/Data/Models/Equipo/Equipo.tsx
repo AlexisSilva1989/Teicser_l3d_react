@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment } from 'react';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { IDataTableColumn } from "react-data-table-component";
 import { IntlShape } from "react-intl";
@@ -6,73 +6,66 @@ import { Utils } from "../../../Common/Utils/Utils";
 
 export const tiposEquipos = [
   {
-    label: "SAG",
-    value: "SAG",
+    label: 'SAG',
+    value: 'SAG'
   },
   {
-    label: "BOLAS",
-    value: "BOLAS",
-  },
+    label: 'BOLAS',
+    value: 'BOLAS'
+  }
 ];
 
-export const tiposEquiposWithAll: { value: string; label: string }[] = [
-  {
-    label: "labels:common.all",
-    value: "-1",
-  },
-].concat(tiposEquipos);
+export const tiposEquiposWithAll: { value: string; label: string; }[] = [{
+  label: 'labels:common.all',
+  value: '-1'
+}].concat(tiposEquipos);
 
 export interface Equipo {
-  id: string;
-  nombre: string;
-  status: string;
-  linea_trabajo: number;
+  id: string
+  nombre: string
+  status: string
+  linea_trabajo: number
 }
 
-export interface EquipoSingle {
-  nombre: string | undefined;
-  tipo: string | undefined;
-}
+export interface EquipoSingle { nombre: string | undefined, tipo: string | undefined }
 export interface EquipoTipo extends Equipo {
   equipo_tipo: {
-    id: string;
-    nombre_corto: string;
-  };
+    id: string
+    nombre_corto: string
+  }
 }
 
 export interface EquiposPorTipo {
-  id: number;
-  nombre_corto: string;
-  equipos: (Equipo & { id: number })[];
+  id: number
+  nombre_corto: string
+  equipos: (Equipo & { id: number })[]
 }
 
 export interface EquipmentWithComponents extends EquipoTipo {
-  componentes: string[];
+  componentes: string[]
 }
 
 export interface ItemOrderEquip {
-  id: number | string;
-  name: string;
+  id: number | string,
+  name: string
 }
 
 export interface IDataFormEquipo {
-  id?: string;
-  name: string;
-  tipo_equipo: string;
-  linea_trabajo?: number;
-  file_scaler?: any;
-  file_model?: any;
-  status?: string;
-  perfil_nominal?: object[];
-  perfil_critico?: object[];
-  file_checkpoint?: any;
-  server_selected?: string[];
-  components_selected?: string[];
+  id?: string
+  name: string
+  tipo_equipo: string
+  linea_trabajo?: number
+  file_scaler?: any
+  file_model?: any
+  status?: string
+  perfil_nominal?: object[]
+  perfil_critico?: object[]
+  file_checkpoint?: any
+  server_selected?: string[]
+  components_selected?: string[]
 }
 
-export const EquipoColumns: (
-  intl: IntlShape
-) => IDataTableColumn<EquipoTipo>[] = (intl) => {
+export const EquipoColumns: (intl: IntlShape) => IDataTableColumn<EquipoTipo>[] = (intl) => {
   const header = Utils.capitalize(intl);
   return [
     // {
@@ -81,75 +74,64 @@ export const EquipoColumns: (
     //   format: (equipo) => equipo.id.toString().padStart(6, '0')
     // },
     {
-      selector: "nombre",
-      name: header("columns:name"),
+      selector: 'nombre',
+      name: header('columns:name'),
     },
     {
-      selector: "tipo",
-      name: header("columns:type"),
-      format: (equipo) => equipo.equipo_tipo.nombre_corto,
+      selector: 'tipo',
+      name: header('columns:type'),
+      format: (equipo) => equipo.equipo_tipo.nombre_corto
     },
     {
-      selector: "linea_trabajo",
-      name: "Línea de trabajo",
+      selector: 'linea_trabajo',
+      name: 'Línea de trabajo',
     },
     {
-      selector: "activo",
-      name: header("columns:active"),
-      format: (equipo) =>
-        header(equipo.status ? "labels:common.yes" : "labels:common.no"),
-    },
+      selector: 'activo',
+      name: header('columns:active'),
+      format: (equipo) => header(equipo.status ? 'labels:common.yes' : 'labels:common.no')
+    }
   ];
 };
 
-export const EquipmentWithComponentsColumns: (
-  intl: IntlShape
-) => IDataTableColumn<EquipmentWithComponents>[] = (intl) => {
+export const EquipmentWithComponentsColumns: (intl: IntlShape) => IDataTableColumn<EquipmentWithComponents>[] = (intl) => {
   const header = Utils.capitalize(intl);
   return [
     {
-      selector: "id",
-      name: header("columns:id"),
-      format: (equipo) => equipo.id.toString().padStart(6, "0"),
+      selector: 'id',
+      name: header('columns:id'),
+      format: (equipo) => equipo.id.toString().padStart(6, '0')
     },
     {
-      selector: "nombre",
-      name: header("columns:name"),
-      format: (equipo) => equipo.nombre,
+      selector: 'nombre',
+      name: header('columns:name'),
+      format: (equipo) => equipo.nombre
     },
     {
-      selector: "tipo",
-      name: header("columns:type"),
-      format: (equipo) => equipo.equipo_tipo.nombre_corto,
+      selector: 'tipo',
+      name: header('columns:type'),
+      format: (equipo) => equipo.equipo_tipo.nombre_corto
     },
     {
-      name: "Componentes",
+      name: 'Componentes',
       center: true,
-      cell: (equipo) =>
-        equipo.componentes.length > 0 ? (
-          <>
-            <OverlayTrigger
-              placement="top"
-              overlay={
-                <Tooltip id="info-components" key="info-components">
-                  {equipo.componentes.map((componente, index) => (
-                    <Fragment key={`component-eq-${index}`}>
-                      <span>{componente}</span>
-                      <br />
-                    </Fragment>
-                  ))}
-                </Tooltip>
+      cell: equipo => equipo.componentes.length > 0 ? <>
+        <OverlayTrigger
+          placement='top'
+          overlay={
+            <Tooltip id='info-components' key="info-components">
+              {
+                equipo.componentes.map((componente, index) => <Fragment key={`component-eq-${index}`}>
+                  <span>{componente}</span><br />
+                </Fragment>)
               }
-            >
-              <i
-                style={{ fontSize: "16px", marginLeft: "5px" }}
-                className="fas fa-eye text-primary"
-              />
-            </OverlayTrigger>
-          </>
-        ) : (
-          "N/A"
-        ),
+            </Tooltip>
+          }
+        >
+          <i style={{ fontSize: "16px", marginLeft: "5px" }} className='fas fa-eye text-primary' />
+        </OverlayTrigger>
+
+      </> : 'N/A',
     },
   ];
 };

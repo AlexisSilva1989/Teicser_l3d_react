@@ -358,6 +358,7 @@ const ListaBitacora = () => {
     const formData = new FormData();
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
 
+
     formData.append("id", data.id.toString());
     data.description && formData.append("description", data.description);
     data.date &&
