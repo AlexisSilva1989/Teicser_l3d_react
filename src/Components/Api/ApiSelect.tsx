@@ -36,13 +36,13 @@ interface Props<T> {
   errorForm?: FieldError;
   onFinishLoad?: (optionsSize: number) => void;
   onStartLoad?: () => void;
+  disabled?: boolean;
 }
 
 interface State<T> {
   data: T[];
   loading: boolean;
   init: boolean;
-  disabled: boolean;
 }
 
 export interface ValueDisplay {
@@ -64,16 +64,12 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
   const initial: State<T> = {
     data: [],
     loading: true,
-    disabled: true,
     init: false,
   };
   const [state, setState] = useState(initial);
 
   const setLoading = useCallback((loading: boolean) => {
     setState((s) => $u(s, { $merge: { loading } }));
-    if (!props.isDisabled) {
-      setState((s) => $u(s, { disabled: { $set: loading } }));
-    }
   }, []);
 
   const [valueOptionProps, setValueOptionProps] = useState<OptionType>();
@@ -150,7 +146,6 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
                 ) {
                   handleChange(selector(d[0]));
                 }
-                // onChange(valueInObject ? selector(d[0]) :  selector(d[0]).value );
               }
               props.onFinishLoad && props.onFinishLoad(d.length);
             }
@@ -231,7 +226,7 @@ export const ApiSelect = <T extends unknown>(props: Props<T>) => {
         getOptionValue={({ value }) => value}
         onChange={handleChange}
         value={optionsValue}
-        isDisabled={props.isDisabled}
+        isDisabled={props.disabled} // Aquí se usa props.disabled
         styles={{
           control: (base) => ({
             ...base,
