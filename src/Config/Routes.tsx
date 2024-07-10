@@ -54,6 +54,7 @@ import ListaBitacora from "../Views/Masters/Bitacora/ListaBitacora";
 import TimeLineChrono from "../Views/Masters/Bitacora/TimeLineChrono";
 import ListaBitacoraComponentes from "../Views/Masters/Bitacora/ListaBitacoraComponentes";
 import ListaTipoEventos from "../Views/Masters/Bitacora/ListaTipoEventos";
+import DataLake from "../Views/Masters/DataLake/DataLake";
 
 interface Route {
   path: string;
@@ -241,6 +242,10 @@ const routes: RouteGroup[] = [
   {
     prefix: "routes:base.data_op",
     routes: [{ path: "routes:meta.base", component: <DatosOperativos /> }],
+  },
+  {
+    prefix:"routes:base.operational_data",
+    routes:[{path:"routes:meta.base",component:<DataLake/>}]
   },
   {
     prefix: "routes:base.projections",

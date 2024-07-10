@@ -924,7 +924,7 @@ export default function DatosOperativos() {
   </>
   return (
     <>
-      <BaseContentView title='titles:data_op'>
+      <BaseContentView title='titles:'>
         <Col md={3}>
           <ApiSelect<EquipoTipo>
             label='Equipo'
