@@ -244,7 +244,7 @@ const routes: RouteGroup[] = [
     routes: [{ path: "routes:meta.base", component: <DatosOperativos /> }],
   },
   {
-    prefix:"routes:base.operational_data",
+    prefix:"routes:base.data_lake",
     routes:[{path:"routes:meta.base",component:<DataLake/>}]
   },
   {
