@@ -42,6 +42,7 @@ export default function DataLake() {
 	const [loadingDataTable, setLoadingDataTable] = useState(false);
 	const [reloadTable, setReloadTable] = useState<boolean>(false);
 	const [isEditing, setIsEditing] = useState<boolean>(false);
+	const [tempValues, setTempValues] = useState<{ [key: string]: any }>({});
 
 	const updateComponentes = async (equipoId: string) => {
 		setIdComponentSelected(undefined);
@@ -82,18 +83,18 @@ export default function DataLake() {
 			downloadable: false,
 		};
 		await ax
-			.get($j('dataleake'), { params })
+			.get($j('service_render', 'data_pi'), { params })
 			.then((response) => {
 				const columnsDataOperacional = response.data.header.map((name: string) => {
 					return {
 						key: name,
 						name,
 						selector: name,
-						cell: (row: any) => {
+						cell: (row: any, rowIndex: number) => {
 							if (isEditing) {
 								if (name === 'ESTADO') {
 									return (
-										<select value={row[name]} onChange={(e) => handleEditCell(row, name, e.target.value)}>
+										<select defaultValue={row[name]} onChange={(e) => handleTempEdit(rowIndex, name, e.target.value)}>
 											{estadoOptions.map((option) => (
 												<option key={option} value={option}>
 													{option}
@@ -103,7 +104,7 @@ export default function DataLake() {
 									);
 								} else if (name === 'SENTIDO') {
 									return (
-										<select value={row[name]} onChange={(e) => handleEditCell(row, name, e.target.value)}>
+										<select defaultValue={row[name]} onChange={(e) => handleTempEdit(rowIndex, name, e.target.value)}>
 											{sentidoOptions.map((option) => (
 												<option key={option} value={option}>
 													{option}
@@ -112,12 +113,12 @@ export default function DataLake() {
 										</select>
 									);
 								} else if (typeof row[name] === 'number') {
+									const key = `${rowIndex}-${name}`;
 									return (
 										<input
 											type='number'
-											value={row[name]}
-											onChange={(e) => handleEditCell(row, name, parseFloat(e.target.value))}
-											onBlur={(e) => handleEditCell(row, name, parseFloat(e.target.value))}
+											defaultValue={row[name]}
+											onChange={(e) => handleTempEdit(rowIndex, name, parseFloat(e.target.value))}
 										/>
 									);
 								}
@@ -144,18 +145,19 @@ export default function DataLake() {
 			});
 	}, [addToast, fechaFinal, idComponentSelected, idEquipoSelected, isEditing, fechaInicial]);
 
-	const handleEditCell = (row: any, field: string, value: any) => {
-		setTableData((prevData) =>
-			prevData.map((r) => {
-				if (r === row) {
-					return {
-						...r,
-						[field]: value,
-					};
-				}
-				return r;
-			})
-		);
+	const handleEditCell = (rowIndex: number, field: string, value: any) => {
+		setTableData((prevData) => {
+			const newData = [...prevData];
+			newData[rowIndex][field] = value;
+			return newData;
+		});
+	};
+
+	const handleTempEdit = (rowIndex: number, field: string, value: any) => {
+		setTempValues((prevValues) => ({
+			...prevValues,
+			[`${rowIndex}-${field}`]: value
+		}));
 	};
 
 	const downloadExcel = async () => {
@@ -198,14 +200,24 @@ export default function DataLake() {
 	const toggleEditing = () => {
 		if (isEditing) {
 			// Save changes
-			setOriginalData(tableData);
+			setTableData((prevData) => {
+				const newData = [...prevData];
+				for (const [key, value] of Object.entries(tempValues)) {
+					const [rowIndex, field] = key.split('-');
+					if (newData[Number(rowIndex)]) {
+						newData[Number(rowIndex)][field] = value;
+					}
+				}
+				return newData;
+			});
+			setTempValues({});
 		}
 		setIsEditing(!isEditing);
 	};
 
 	const handleChange = (rowIndex: number, key: string, value: any) => {
 		setTableData((prevData) => {
-			const newData = [...prevData]; //sss
+			const newData = [...prevData];
 			newData[rowIndex][key] = value;
 			return newData;
 		});
@@ -217,10 +229,11 @@ export default function DataLake() {
 				return {
 					...column,
 					cell: (row: any, rowIndex: number) => {
+						const key = `${rowIndex}-${column.name}`;
 						if (['ESTADO', 'SENTIDO'].includes(column.name)) {
 							const options = column.name === 'ESTADO' ? estadoOptions : sentidoOptions;
 							return (
-								<select value={row[column.name]} onChange={(e) => handleChange(rowIndex, column.name, e.target.value)}>
+								<select defaultValue={row[column.name]} onChange={(e) => handleTempEdit(rowIndex, column.name, e.target.value)}>
 									{options.map((option) => (
 										<option key={option} value={option}>
 											{option}
@@ -233,8 +246,8 @@ export default function DataLake() {
 							return (
 								<input
 									type='number'
-									value={row[column.name]}
-									onChange={(e) => handleChange(rowIndex, column.name, parseFloat(e.target.value))}
+									defaultValue={row[column.name]}
+									onChange={(e) => handleTempEdit(rowIndex, column.name, parseFloat(e.target.value))}
 								/>
 							);
 						}
@@ -244,7 +257,7 @@ export default function DataLake() {
 			}
 			return column;
 		});
-	}, [isEditing, tableHeader, tableData]);
+	}, [isEditing, tableHeader]);
 
 	return (
 		<>
