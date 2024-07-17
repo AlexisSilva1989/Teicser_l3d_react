@@ -178,6 +178,38 @@ export default function DataLake() {
 		$d(blob, nombreArchivo);
 	};
 
+	const uploadData = async () => {
+		if (!idEquipoSelected || !idComponentSelected) {
+			addToast('Seleccione equipo y componente', {
+				appearance: 'warning',
+				autoDismiss: true,
+			});
+			return;
+		}
+		const payload = {
+			equipoId: idEquipoSelected,
+			componenteId: idComponentSelected,
+			downloadable: false,
+			data: tableData,
+		};
+		await ax
+			.post($j('service_render', 'data_pi'), payload)
+			.then(() => {
+				addToast('Datos cargados exitosamente', {
+					appearance: 'success',
+					autoDismiss: true,
+				});
+			})
+			.catch((e) => {
+				if (e.response) {
+					addToast('Error al cargar los datos', {
+						appearance: 'error',
+						autoDismiss: true,
+					});
+				}
+			});
+	};
+
 	useEffect(() => {
 		if (idEquipoSelected == undefined) {
 			return;
@@ -349,6 +381,14 @@ export default function DataLake() {
 						<Button onClick={downloadExcel} disabled={loadingData || componentsForTraining.length === 0 || tableData.length === 0} className='w-100 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-file-download fa-lg'} />
 							<span className='mx-2'>Descargar</span>
+						</Button>
+					</Col>
+
+					<Col md={2} className='pt-2'>
+						<JumpLabel />
+						<Button onClick={uploadData} disabled={loadingData || componentsForTraining.length === 0 || tableData.length === 0} className='w-100 d-flex justify-content-center align-items-center'>
+							<i className={'mx-2 fas fa-upload fa-lg'} />
+							<span className='mx-2'>Cargar</span>
 						</Button>
 					</Col>
 				</Row>
