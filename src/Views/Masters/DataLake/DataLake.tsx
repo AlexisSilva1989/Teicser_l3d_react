@@ -159,7 +159,7 @@ export default function DataLake() {
 			data: tableData,
 		};
 		await ax
-			.post($j('service_render', 'data_pi'), payload)
+			.post($j('dataleake', 'update'), payload)
 			.then(() => {
 				addToast('Datos cargados exitosamente', {
 					appearance: 'success',
