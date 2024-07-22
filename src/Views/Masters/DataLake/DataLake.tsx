@@ -8,7 +8,6 @@ import { ApiTable } from '../../../Components/Api/ApiTable';
 import { BaseContentView } from '../../Common/BaseContentView';
 import { ApiSelect } from '../../../Components/Api/ApiSelect';
 import { EquipoTipo } from '../../../Data/Models/Equipo/Equipo';
-import { IComponente } from '../../../Data/Models/Componentes/Componentes';
 import { Datepicker } from '../../../Components/Forms/Datepicker';
 import { JumpLabel } from '../../../Components/Common/JumpLabel';
 
@@ -22,6 +21,7 @@ interface IColumnsTable {
 
 const estadoOptions = ['FUNCIONANDO', 'DETENIDO'];
 const sentidoOptions = ['DIRECTO', 'INVERSO'];
+const minDate = '2023-04-01'; // Fecha mínima permitida
 
 export default function DataLake() {
 	const { capitalize: caps } = useFullIntl();
@@ -31,9 +31,6 @@ export default function DataLake() {
 	const [idEquipoSelected, setIdEquipoSelected] = useState<string | undefined>();
 	const [nombreEquipoSelected, setNombreEquipoSelected] = useState<string | undefined>();
 	const [tipoEquipoSelected, setTipoEquipoSelected] = useState<string | undefined>(undefined);
-	const [idComponentSelected, setIdComponentSelected] = useState<string | undefined>(undefined);
-	const [nombreComponentSelected, setNombreComponentSelected] = useState<string | undefined>(undefined);
-	const [componentsForTraining, setComponentsForTraining] = useState<IComponente[]>([]);
 	const [fechaInicial, setFechaInicial] = useState<string | undefined>();
 	const [fechaFinal, setFechaFinal] = useState<string | undefined>();
 	const [tableData, setTableData] = useState<Array<any>>([]);
@@ -44,46 +41,17 @@ export default function DataLake() {
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const [tempValues, setTempValues] = useState<{ [key: string]: any }>({});
 
-	const updateComponentes = async (equipoId: string) => {
-		setIdComponentSelected(undefined);
-		setLoadingData(true);
-		await ax
-			.get<IComponente[]>('service_render/equipos/componentes_asignados', { params: { equipo_id: equipoId } })
-			.then((response) => {
-				setComponentsForTraining(response.data);
-				setIdComponentSelected(response.data.length > 0 ? response.data[0].id : undefined);
-				setNombreComponentSelected(response.data.length > 0 ? response.data[0].nombre : undefined);
-			})
-			.catch((e) => {
-				if (e.response) {
-					addToast(
-						caps('errors:base.load', {
-							element: 'componentes',
-						}),
-						{
-							appearance: 'error',
-							autoDismiss: true,
-						}
-					);
-				}
-			})
-			.finally(() => {
-				setLoadingData(false);
-			});
-	};
-
 	const getDatosOperacionales = useCallback(async () => {
 		if (!fechaFinal) return; // No hacer nada si no hay fecha final
 		setLoadingDataTable(true);
 		const params = {
 			equipoId: idEquipoSelected,
-			componenteId: idComponentSelected,
 			fecha_inicial: fechaInicial,
 			fecha_final: fechaFinal,
 			downloadable: false,
 		};
 		await ax
-			.get($j('service_render', 'data_pi'), { params })
+			.get($j('dataleake'), { params })
 			.then((response) => {
 				const columnsDataOperacional = response.data.header.map((name: string) => {
 					return {
@@ -143,7 +111,7 @@ export default function DataLake() {
 			.finally(() => {
 				setLoadingDataTable(false);
 			});
-	}, [addToast, fechaFinal, idComponentSelected, idEquipoSelected, isEditing, fechaInicial]);
+	}, [addToast, fechaFinal, idEquipoSelected, isEditing, fechaInicial]);
 
 	const handleEditCell = (rowIndex: number, field: string, value: any) => {
 		setTableData((prevData) => {
@@ -162,8 +130,7 @@ export default function DataLake() {
 
 	const downloadExcel = async () => {
 		const equipoNombre = nombreEquipoSelected?.replace(/\s+/g, '_');
-		const componentNombre = nombreComponentSelected?.replace(/\s+/g, '_');
-		const nombreArchivo = `${equipoNombre}_${componentNombre}_${$m().format('YYYYMMDDHHmmss')}.xlsx`;
+		const nombreArchivo = `${equipoNombre}_${$m().format('YYYYMMDDHHmmss')}.xlsx`;
 
 		const worksheet = $x.utils.json_to_sheet(tableData);
 		const workbook = $x.utils.book_new();
@@ -179,8 +146,8 @@ export default function DataLake() {
 	};
 
 	const uploadData = async () => {
-		if (!idEquipoSelected || !idComponentSelected) {
-			addToast('Seleccione equipo y componente', {
+		if (!idEquipoSelected) {
+			addToast('Seleccione equipo', {
 				appearance: 'warning',
 				autoDismiss: true,
 			});
@@ -188,7 +155,6 @@ export default function DataLake() {
 		}
 		const payload = {
 			equipoId: idEquipoSelected,
-			componenteId: idComponentSelected,
 			downloadable: false,
 			data: tableData,
 		};
@@ -211,17 +177,10 @@ export default function DataLake() {
 	};
 
 	useEffect(() => {
-		if (idEquipoSelected == undefined) {
-			return;
-		}
-		updateComponentes(idEquipoSelected);
-	}, [idEquipoSelected]);
-
-	useEffect(() => {
-		if (fechaInicial && fechaFinal && idComponentSelected) {
+		if (fechaInicial && fechaFinal && idEquipoSelected) {
 			setReloadTable(true);
 		}
-	}, [fechaInicial, fechaFinal, idComponentSelected]);
+	}, [fechaInicial, fechaFinal, idEquipoSelected]);
 
 	useEffect(() => {
 		if (reloadTable) {
@@ -318,75 +277,40 @@ export default function DataLake() {
 						/>
 					</Col>
 
-					<Col md={3}>
-						<ApiSelect<IComponente>
-							name='componente'
-							label='Componente'
-							placeholder='Seleccione componente'
-							source={componentsForTraining}
-							value={idComponentSelected}
-							selector={(option: IComponente) => {
-								return {
-									label: option.nombre,
-									value: option.id.toString(),
-								};
+					<Col md={2}>
+						<Datepicker
+							label='Fecha inicial'
+							value={fechaInicial}
+							minDate={minDate}
+							onChange={(date) => {
+								setFechaInicial(date);
 							}}
-							valueInObject={true}
-							onChange={(data) => {
-								setIdComponentSelected(data.value ?? data);
-								data.label && setNombreComponentSelected(data.label);
+						/>
+					</Col>
+					<Col md={2}>
+						<Datepicker
+							label='Fecha final'
+							value={fechaFinal}
+							minDate={fechaInicial ? fechaInicial : minDate}
+							onChange={(date) => {
+								setFechaFinal(date);
+								setReloadTable(true);
 							}}
-							isLoading={loadingData}
-							isDisabled={loadingData}
-							errors={componentsForTraining.length === 0 && !loadingData ? ['El equipo seleccionado no tiene componentes entrenados'] : []}
+							disabled={!fechaInicial} // Deshabilitar fecha final si no hay fecha inicial
 						/>
 					</Col>
 
-					{idComponentSelected && (
-						<>
-							<Col md={2}>
-								<Datepicker
-									label='Fecha inicial'
-									value={fechaInicial}
-									onChange={(date) => {
-										setFechaInicial(date);
-									}}
-								/>
-							</Col>
-							<Col md={2}>
-								<Datepicker
-									label='Fecha final'
-									value={fechaFinal}
-									minDate={fechaInicial}
-									onChange={(date) => {
-										setFechaFinal(date);
-										setReloadTable(true);
-									}}
-									disabled={!fechaInicial} // Deshabilitar fecha final si no hay fecha inicial
-								/>
-							</Col>
-						</>
-					)}
-
-					<Col md={2} className='pt-2'>
+					<Col md={5} className='pt-2 d-flex justify-content-end align-items-center'>
 						<JumpLabel />
-						<Button onClick={toggleEditing} disabled={tableData.length === 0} className='w-100 d-flex justify-content-center align-items-center'>
+						<Button onClick={toggleEditing} disabled={tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-edit fa-lg'} />
 							<span className='mx-2'>{isEditing ? 'Guardar' : 'Editar'}</span>
 						</Button>
-					</Col>
-
-					<Col md={2} className='pt-2'>
-						<JumpLabel />
-						<Button onClick={downloadExcel} disabled={loadingData || componentsForTraining.length === 0 || tableData.length === 0} className='w-100 d-flex justify-content-center align-items-center'>
+						<Button onClick={downloadExcel} disabled={loadingData || tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-file-download fa-lg'} />
 							<span className='mx-2'>Descargar</span>
 						</Button>
-					</Col>
-
-					<Col md={2} className='pt-2'>
-						<JumpLabel />
-						<Button onClick={uploadData} disabled={loadingData || componentsForTraining.length === 0 || tableData.length === 0} className='w-100 d-flex justify-content-center align-items-center'>
+						<Button onClick={uploadData} disabled={loadingData || tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-upload fa-lg'} />
 							<span className='mx-2'>Cargar</span>
 						</Button>
