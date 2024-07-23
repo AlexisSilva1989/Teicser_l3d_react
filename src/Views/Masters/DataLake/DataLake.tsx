@@ -154,7 +154,7 @@ export default function DataLake() {
 			return;
 		}
 		const payload = {
-			equipoId: idEquipoSelected,
+			equipoId: parseInt(idEquipoSelected),
 			downloadable: false,
 			data: tableData,
 		};
