@@ -10,6 +10,7 @@ import { ApiSelect } from '../../../Components/Api/ApiSelect';
 import { EquipoTipo } from '../../../Data/Models/Equipo/Equipo';
 import { Datepicker } from '../../../Components/Forms/Datepicker';
 import { JumpLabel } from '../../../Components/Common/JumpLabel';
+import { useDashboard } from '../../../Common/Hooks/useDashboard';
 
 interface IColumnsTable {
   key: string
@@ -27,7 +28,7 @@ export default function DataLake() {
 	const { capitalize: caps } = useFullIntl();
 	const { addToast } = useToasts();
 
-	const [loadingData, setLoadingData] = useState(true);
+	const {setLoading} = useDashboard();
 	const [idEquipoSelected, setIdEquipoSelected] = useState<string | undefined>();
 	const [nombreEquipoSelected, setNombreEquipoSelected] = useState<string | undefined>();
 	const [tipoEquipoSelected, setTipoEquipoSelected] = useState<string | undefined>(undefined);
@@ -44,6 +45,7 @@ export default function DataLake() {
 	const getDatosOperacionales = useCallback(async () => {
 		if (!fechaFinal) return; // No hacer nada si no hay fecha final
 		setLoadingDataTable(true);
+		setLoading(true)
 		const params = {
 			equipoId: idEquipoSelected,
 			fecha_inicial: fechaInicial,
@@ -110,6 +112,7 @@ export default function DataLake() {
 			})
 			.finally(() => {
 				setLoadingDataTable(false);
+				setLoading(false)
 			});
 	}, [addToast, fechaFinal, idEquipoSelected, isEditing, fechaInicial]);
 
@@ -158,6 +161,7 @@ export default function DataLake() {
 			downloadable: false,
 			data: tableData,
 		};
+		setLoading(true);
 		await ax
 			.post($j('dataleake', 'update'), payload)
 			.then(() => {
@@ -173,7 +177,10 @@ export default function DataLake() {
 						autoDismiss: true,
 					});
 				}
-			});
+			})
+			.finally(()=>{
+				setLoading(false);}
+			);
 	};
 
 	useEffect(() => {
