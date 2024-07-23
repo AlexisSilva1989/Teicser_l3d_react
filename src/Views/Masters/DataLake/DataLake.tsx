@@ -21,7 +21,7 @@ interface IColumnsTable {
 
 const estadoOptions = ['FUNCIONANDO', 'DETENIDO'];
 const sentidoOptions = ['DIRECTO', 'INVERSO'];
-const minDate = '2023-04-01'; // Fecha mínima permitida
+const minDate = '01-04-2023'; // Fecha mínima permitida
 
 export default function DataLake() {
 	const { capitalize: caps } = useFullIntl();
@@ -306,11 +306,11 @@ export default function DataLake() {
 							<i className={'mx-2 fas fa-edit fa-lg'} />
 							<span className='mx-2'>{isEditing ? 'Guardar' : 'Editar'}</span>
 						</Button>
-						<Button onClick={downloadExcel} disabled={loadingData || tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
+						<Button onClick={downloadExcel} disabled={tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-file-download fa-lg'} />
 							<span className='mx-2'>Descargar</span>
 						</Button>
-						<Button onClick={uploadData} disabled={loadingData || tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
+						<Button onClick={uploadData} disabled={tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-upload fa-lg'} />
 							<span className='mx-2'>Cargar</span>
 						</Button>
