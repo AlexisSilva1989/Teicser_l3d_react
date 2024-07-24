@@ -996,7 +996,7 @@ export default function DatosOperativos() {
               onClick={() => { downloadExcel() }}
               disabled={loadingData || componentsForTraining.length === 0 || tableDataOp.length === 0}>
               <i className={'mx-2 fas fa-file-download fa-lg'} />
-              <span className='mx-2' >Descargar</span>
+              <span className='mx-2' >Actualizar</span>
             </Button>
           </Col>
         </Col>

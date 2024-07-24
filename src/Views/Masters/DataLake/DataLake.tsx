@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState, useCallback, useMemo } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Button, Col, Row, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useToasts } from 'react-toast-notifications';
 import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
 import { ax } from '../../../Common/Utils/AxiosCustom';
@@ -261,7 +261,7 @@ export default function DataLake() {
 		<>
 			<BaseContentView title='titles:data_lake'>
 				<Row>
-					<Col md={3}>
+					<Col md={2}>
 						<ApiSelect<EquipoTipo>
 							label='Equipo'
 							name='equipo_select'
@@ -307,20 +307,25 @@ export default function DataLake() {
 						/>
 					</Col>
 
-					<Col md={5} className='pt-2 d-flex justify-content-end align-items-center'>
+					<Col md={6} className='pt-2 d-flex justify-content-end align-items-center'>
 						<JumpLabel />
-						<Button onClick={toggleEditing} disabled={tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
+						<Button variant="outline-primary" onClick={toggleEditing} disabled={tableData.length === 0} className='btn-outline-primary mx-2 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-edit fa-lg'} />
 							<span className='mx-2'>{isEditing ? 'Guardar' : 'Editar'}</span>
 						</Button>
-						<Button onClick={downloadExcel} disabled={tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
+						<Button variant="outline-primary" onClick={downloadExcel} disabled={tableData.length === 0} className='btn-outline-primary mx-2 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-file-download fa-lg'} />
 							<span className='mx-2'>Descargar</span>
 						</Button>
-						<Button onClick={uploadData} disabled={tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
-							<i className={'mx-2 fas fa-upload fa-lg'} />
-							<span className='mx-2'>Cargar</span>
-						</Button>
+						<OverlayTrigger
+							placement="top"
+							overlay={<Tooltip id="button-tooltip">Al presionar este botón, se actualizarán los datos operativos existentes y se agregarán aquellos que no estén presentes.</Tooltip>}
+						>
+							<Button onClick={uploadData} disabled={tableData.length === 0} className='mx-3 d-flex justify-content-center align-items-center'>
+								<i className={'mx-3 fas fa-upload fa-lg'} />
+								<span className='mx-3'>Actualizar Datos</span>
+							</Button>
+						</OverlayTrigger>
 					</Col>
 				</Row>
 
