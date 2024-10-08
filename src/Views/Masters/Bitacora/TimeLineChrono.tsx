@@ -199,22 +199,25 @@ const TimeLineChrono = () => {
 	const media = useMedia('(min-width: 768px)');
 
 	const parseEventsToChronoItems = (data: ITimeline[]): CardContent[] => {
+		console.log(data);
 		return data.map((event) => ({
 			id: event.id.toString(),
 			title: event.date,
 			cardTitle: event.title,
-			// url: "http://www.history.com",
 			cardSubtitle: event.subtitle ?? event.date,
-			// cardDetailedText: event.description,
-			// media: {
-			//   type: "IMAGE",
-			//   source: {
-			//     url: "https://picsum.photos/512/512",
-			//   },
-			// },
 			events: event?.events,
+			...(event.media && event.media.length > 0 ? {
+				media: event.media.map(mediaItem => ({
+					type: 'IMAGE',
+					source: {
+						url: mediaItem.url, // Aquí tomas el url de cada elemento en el array
+					},
+				})),
+			} : {}),
 		}));
 	};
+	
+	
 
 	const getZoomLevel = (diffDate: number) => {
 		if (diffDate >= 0 && diffDate <= 6) return 3;

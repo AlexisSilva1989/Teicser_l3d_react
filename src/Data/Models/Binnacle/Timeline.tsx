@@ -32,6 +32,14 @@ export interface IMediaTimeline {
   url: string;
 }
 
+export interface Media {
+  type: string; // o 'IMAGE' si es un valor fijo
+  source: {
+      url: string; // Debe ser un string
+  }
+}
+
 export interface CardContent extends TimelineItem {
   events?: EventsTimelineCard[];
+  media?: Media[]; // Asegúrate de que esto sea un array
 }
