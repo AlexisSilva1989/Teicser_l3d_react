@@ -39,7 +39,12 @@ export interface Media {
   }
 }
 
-export interface CardContent extends TimelineItem {
+export interface CardContent extends Omit<TimelineItem, 'media'>  {
+  events?: EventsTimelineCard[];
+  media?: Media[] | undefined; // Cambiado para que coincida con TimelineItem
+}
+
+export interface CardContentWithMediaArray extends Omit<TimelineItem, 'media'> {
   events?: EventsTimelineCard[];
   media?: Media[] | undefined; // Asegúrate de que esto sea un array
 }
