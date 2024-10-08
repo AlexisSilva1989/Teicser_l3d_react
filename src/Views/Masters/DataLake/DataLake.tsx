@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState, useCallback, useMemo } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Button, Col, Row, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useToasts } from 'react-toast-notifications';
 import { useFullIntl } from '../../../Common/Hooks/useFullIntl';
 import { ax } from '../../../Common/Utils/AxiosCustom';
@@ -10,6 +10,7 @@ import { ApiSelect } from '../../../Components/Api/ApiSelect';
 import { EquipoTipo } from '../../../Data/Models/Equipo/Equipo';
 import { Datepicker } from '../../../Components/Forms/Datepicker';
 import { JumpLabel } from '../../../Components/Common/JumpLabel';
+import { useDashboard } from '../../../Common/Hooks/useDashboard';
 
 interface IColumnsTable {
   key: string
@@ -27,7 +28,7 @@ export default function DataLake() {
 	const { capitalize: caps } = useFullIntl();
 	const { addToast } = useToasts();
 
-	const [loadingData, setLoadingData] = useState(true);
+	const {setLoading} = useDashboard();
 	const [idEquipoSelected, setIdEquipoSelected] = useState<string | undefined>();
 	const [nombreEquipoSelected, setNombreEquipoSelected] = useState<string | undefined>();
 	const [tipoEquipoSelected, setTipoEquipoSelected] = useState<string | undefined>(undefined);
@@ -44,6 +45,7 @@ export default function DataLake() {
 	const getDatosOperacionales = useCallback(async () => {
 		if (!fechaFinal) return; // No hacer nada si no hay fecha final
 		setLoadingDataTable(true);
+		setLoading(true)
 		const params = {
 			equipoId: idEquipoSelected,
 			fecha_inicial: fechaInicial,
@@ -110,6 +112,7 @@ export default function DataLake() {
 			})
 			.finally(() => {
 				setLoadingDataTable(false);
+				setLoading(false)
 			});
 	}, [addToast, fechaFinal, idEquipoSelected, isEditing, fechaInicial]);
 
@@ -158,6 +161,7 @@ export default function DataLake() {
 			downloadable: false,
 			data: tableData,
 		};
+		setLoading(true);
 		await ax
 			.post($j('dataleake', 'update'), payload)
 			.then(() => {
@@ -173,7 +177,10 @@ export default function DataLake() {
 						autoDismiss: true,
 					});
 				}
-			});
+			})
+			.finally(()=>{
+				setLoading(false);}
+			);
 	};
 
 	useEffect(() => {
@@ -254,7 +261,7 @@ export default function DataLake() {
 		<>
 			<BaseContentView title='titles:data_lake'>
 				<Row>
-					<Col md={3}>
+					<Col md={2}>
 						<ApiSelect<EquipoTipo>
 							label='Equipo'
 							name='equipo_select'
@@ -300,20 +307,25 @@ export default function DataLake() {
 						/>
 					</Col>
 
-					<Col md={5} className='pt-2 d-flex justify-content-end align-items-center'>
+					<Col md={6} className='pt-2 d-flex justify-content-end align-items-center'>
 						<JumpLabel />
-						<Button onClick={toggleEditing} disabled={tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
+						<Button variant="outline-primary" onClick={toggleEditing} disabled={tableData.length === 0} className='btn-outline-primary mx-2 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-edit fa-lg'} />
 							<span className='mx-2'>{isEditing ? 'Guardar' : 'Editar'}</span>
 						</Button>
-						<Button onClick={downloadExcel} disabled={tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
+						<Button variant="outline-primary" onClick={downloadExcel} disabled={tableData.length === 0} className='btn-outline-primary mx-2 d-flex justify-content-center align-items-center'>
 							<i className={'mx-2 fas fa-file-download fa-lg'} />
 							<span className='mx-2'>Descargar</span>
 						</Button>
-						<Button onClick={uploadData} disabled={tableData.length === 0} className='mx-2 d-flex justify-content-center align-items-center'>
-							<i className={'mx-2 fas fa-upload fa-lg'} />
-							<span className='mx-2'>Cargar</span>
-						</Button>
+						<OverlayTrigger
+							placement="top"
+							overlay={<Tooltip id="button-tooltip">Al presionar este botón, se actualizarán los datos operativos existentes y se agregarán aquellos que no estén presentes.</Tooltip>}
+						>
+							<Button onClick={uploadData} disabled={tableData.length === 0} className='mx-3 d-flex justify-content-center align-items-center'>
+								<i className={'mx-3 fas fa-upload fa-lg'} />
+								<span className='mx-3'>Actualizar Datos</span>
+							</Button>
+						</OverlayTrigger>
 					</Col>
 				</Row>
 
