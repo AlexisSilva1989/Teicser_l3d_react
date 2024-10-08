@@ -41,5 +41,5 @@ export interface Media {
 
 export interface CardContent extends TimelineItem {
   events?: EventsTimelineCard[];
-  media?: Media[]; // Asegúrate de que esto sea un array
+  media?: Media[] | undefined; // Asegúrate de que esto sea un array
 }
