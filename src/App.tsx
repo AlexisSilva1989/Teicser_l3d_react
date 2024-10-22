@@ -49,7 +49,7 @@ export const App = () => {
 							<DocumentTitle title={nameCurrentModule}>
 								<AdminLayout />
 							</DocumentTitle> 
-						: 
+						: 						
 							<Switch>
 								<Route path='/crear_contraseña/token=:token&email=:email' component={CreateContrasena} />
 								<Route path='/restablecer_contraseña' component={RestablecerContrasena} />

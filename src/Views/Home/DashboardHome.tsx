@@ -25,7 +25,7 @@ export const DashboardHome = () => {
     const BALLEquipments = equiptmentsByType?.find((type: any) => type.nombre_corto === "MOBO")?.equipos ?? [];
 
     const handleMillCardClick = (id: number) => {
-        history.push($j(localize('routes:base.projections')), { data: { id: id } })
+        // history.push($j(localize('routes:base.projections')), { data: { id: id } })
     }
 
     useEffect(() => {
