@@ -36,6 +36,7 @@ export const ModificarEmpresa = () => {
 	/* State hooks */
 	const [empresa, setEmpresa] = useState<Empresa>();
 	const [isLoad , setLoad ] = useState<boolean>(true);
+	const [qrImage, setQrImage] = useState<string>('');
 
 	useEffect(() => {
 		async function fetch() {
@@ -50,6 +51,24 @@ export const ModificarEmpresa = () => {
 		}
 		fetch();
 	}, [api]);
+
+	useEffect(() => {
+        // Función para obtener la imagen QR del backend
+        async function fetchQrImage() {
+            try {
+                const response = await fetch('http://localhost:1131/qr'); // Ruta al endpoint del backend
+                const data = await response.json();
+                setQrImage(data.qr); // Almacenar la imagen en estado
+            } catch (error) {
+                console.error('Error obteniendo QR:', error);
+            }
+        }
+
+        fetchQrImage(); // Obtener la primera imagen
+        const interval = setInterval(fetchQrImage, 10000); // Repetir cada 5 segundos
+
+        return () => clearInterval(interval); // Limpiar el intervalo al desmontar
+    }, []);
 
 	async function onSubmit(data: any) {
 		setLoading(true);
@@ -202,6 +221,14 @@ export const ModificarEmpresa = () => {
 								placeholder: 'validations:required',
 								span: 12
 							},
+							{
+								label: 'QR-BOT WS',
+								type: FILE_INPUT_PREVIEW,
+								name: 'qr_image',
+								accept: ["jpg", "jpeg", "png"],
+								span: 6,
+								src: qrImage
+							}
 						]}
 					/>
 				)
