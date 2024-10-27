@@ -12,6 +12,7 @@ import { AxiosError } from 'axios';
 import { ax } from '../../../Common/Utils/AxiosCustom';
 import { useDashboard } from '../../../Common/Hooks/useDashboard';
 import { useEmpresa } from '../../../Common/Hooks/useEmpresa';
+import { apiWSUrl } from '../../../Config/Api';
 
 export const ModificarEmpresa = () => {
 	interface TRaw {
@@ -56,7 +57,7 @@ export const ModificarEmpresa = () => {
         // Función para obtener la imagen QR del backend
         async function fetchQrImage() {
             try {
-                const response = await fetch('http://localhost:1131/qr'); // Ruta al endpoint del backend
+                const response = await fetch(apiWSUrl+'/qr'); // Ruta al endpoint del backend
                 const data = await response.json();
                 setQrImage(data.qr); // Almacenar la imagen en estado
             } catch (error) {
