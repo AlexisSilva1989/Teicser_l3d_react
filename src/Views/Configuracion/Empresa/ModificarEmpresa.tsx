@@ -58,7 +58,8 @@ export const ModificarEmpresa = () => {
         async function fetchQrImage() {
             try {
                 const response = await fetch(apiWSUrl+'/qr'); // Ruta al endpoint del backend
-                const data = await response.json();
+                
+				const data = await response.json();
                 setQrImage(data.qr); // Almacenar la imagen en estado
             } catch (error) {
                 console.error('Error obteniendo QR:', error);
