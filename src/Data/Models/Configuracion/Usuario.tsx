@@ -25,11 +25,11 @@ export const UsuarioColumns: (intl: IntlShape) => IDataTableColumn<Usuario>[] = 
 			name: header('columns:name'),
 			format: (x) => x.nombre ?? header('labels:common.not_applicable')
 		},
-		{
-			selector: 'trabajador',
-			name: header('columns:worker'),
-			format: (x) => (x.nombre_trabajador ? x.nombre_trabajador : header('labels:common.not_applicable'))
-		},
+		// {
+		// 	selector: 'trabajador',
+		// 	name: header('columns:worker'),
+		// 	format: (x) => (x.nombre_trabajador ? x.nombre_trabajador : header('labels:common.not_applicable'))
+		// },
 		{
 			selector: 'rol',
 			name: header('columns:role'),

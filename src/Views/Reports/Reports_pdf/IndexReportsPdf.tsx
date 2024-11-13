@@ -174,7 +174,7 @@ export const IndexReportsPdf = () => {
 
     setLoading(true);
     await ax
-      .patch("pdf_save", formData, headers)
+      .post("pdf_save", formData, headers)
       .then((response) => {
         doReloadTable();
         addToast(caps("success:base.success"), {

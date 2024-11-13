@@ -493,6 +493,12 @@ const TimeLineChrono = () => {
 						!reload && (
 							<Row>
 								<Col>
+								{events.length === 0 ? (
+									<div style={{ color: 'red', fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center' }}>
+									Sin resultados
+								  </div>
+						
+									):(
 									<Chrono
 										items={events}
 										mode={CHRONO_DIRECTION[timelineDirection]}
@@ -511,6 +517,7 @@ const TimeLineChrono = () => {
 											<TimeLineCardContent key={event.id} event={event} />
 										))}
 									</Chrono>
+									)}
 								</Col>
 							</Row>
 						)
